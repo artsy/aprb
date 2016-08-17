@@ -75,6 +75,20 @@ execute "compile-mix-deps" do
   cwd deploy_target
 end
 
+execute "mix-ecto-create" do
+  command "mix ecto.migrate"
+  user deploy_user
+  environment runtime_environment
+  cwd deploy_target
+end
+
+execute "mix-ecto-migrate" do
+  command "mix ecto.migrate"
+  user deploy_user
+  environment runtime_environment
+  cwd deploy_target
+end
+
 command = 'mix run --no-halt'
 
 supervisor_service application_name do
