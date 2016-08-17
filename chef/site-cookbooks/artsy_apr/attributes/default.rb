@@ -1,7 +1,7 @@
 default[:application_name] = "apr"
 
 default[:apr][:erlang_version] = '1:18.3'
-default[:apr][:elixir_version] = '1.3'
+default[:apr][:elixir_version] = '1.3.2-1'
 
 # nodejs
 override['nodejs']['version'] = '6.2.0'
