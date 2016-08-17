@@ -55,7 +55,7 @@ defmodule Aprb.Api.Slack do
         true ->
           "Unknown command! Supported commands: list, my-subs, subscribe <list of topics>"
       end
-      text(conn, %{ response: response })
+      text(conn, response)
     end
   end
 end
