@@ -28,7 +28,7 @@ defmodule Aprb.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [ {:maru, "~> 0.10"}, 
+    [ {:maru, "~> 0.10"},
       {:kafka_ex, "~> 0.5.0"},
       {:poison, "~> 2.0"},
       {:slack, "~> 0.7.0"},

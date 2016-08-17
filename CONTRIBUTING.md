@@ -52,7 +52,7 @@ git checkout -b my-feature-branch
 
 ## Write Tests
 
-Write tests for all new features and fixes. Run tests with `npm test`.
+Write tests for all new features and fixes. Run tests with `mix test`.
 
 We definitely appreciate pull requests that highlight or reproduce a problem, even without a fix.
 
