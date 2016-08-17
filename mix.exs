@@ -7,6 +7,7 @@ defmodule Aprb.Mixfile do
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     aliases: [test: "test --no-start"],
      deps: deps()]
   end
 
@@ -28,11 +29,11 @@ defmodule Aprb.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [ {:maru, "~> 0.10"},
+    [ {:maru, github: "falood/maru"},
       {:kafka_ex, "~> 0.5.0"},
       {:poison, "~> 2.0"},
       {:slack, "~> 0.7.0"},
-      {:websocket_client, git: "https://github.com/jeremyong/websocket_client"},
+      {:websocket_client, github: "jeremyong/websocket_client"},
       {:postgrex, ">= 0.0.0"},
       {:ecto, "~> 2.0.0"} ]
   end
