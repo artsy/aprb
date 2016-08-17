@@ -152,6 +152,7 @@ GEM
     plist (3.2.0)
     proxifier (1.0.3)
     rack (1.6.4)
+    rake (11.1.2)
     retryable (2.0.4)
     ridley (4.6.1)
       addressable
@@ -225,9 +226,7 @@ PLATFORMS
 DEPENDENCIES
   chef
   momentum!
-
-RUBY VERSION
-   ruby 2.2.2p95
+  rake
 
 BUNDLED WITH
    1.12.5

@@ -7,3 +7,4 @@ Encoding.default_internal = Encoding::UTF_8
 
 gem 'chef'
 gem 'momentum', :git => 'git@github.com:artsy/momentum.git'
+gem 'rake'
