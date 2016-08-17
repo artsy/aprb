@@ -7,6 +7,7 @@ defmodule Aprb do
     import Supervisor.Spec, warn: false
 
     children = [
+      supervisor(Aprb.Repo, []),
       worker(Task, [Aprb.EventReceiver, :start_link, ["users"]], id: :users),
       worker(Task, [Aprb.EventReceiver, :start_link, ["subscriptions"]], id: :subscriptions),
       worker(Task, [Aprb.EventReceiver, :start_link, ["inquiries"]], id: :inquiries)

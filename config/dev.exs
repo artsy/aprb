@@ -1,7 +1,5 @@
 use Mix.Config
 
-config :slack, api_token: System.get_env("SLACK_API_TOKEN")
-
 config :kafka_ex,
   brokers: [{"ip-10-0-0-49.ec2.internal", 9092}, {"ip-10-0-0-248.ec2.internal", 9092}],
   consumer_group: System.get_env("KAFKA_CONSUMER_GROUP") || "kafka_ex_2_local",

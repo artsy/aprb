@@ -7,6 +7,7 @@ Install Terraform >= v0.6.16
 ```
 export AWS_ACCESS_KEY_ID=ASDHA2365236ASDDAS
 export AWS_SECRET_ACCESS_KEY=232tgsdfsSDG/sdge3wsd/FGF59
+export AWS_REGION=us-east-1
 ```
 
 - Configure remote state with `terraform remote config -backend=s3 -backend-config="bucket=artsy-terraform" -backend-config="key=aprb/terraform.tfstate" -backend-config="region=us-east-1"`
