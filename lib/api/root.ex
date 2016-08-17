@@ -10,5 +10,4 @@ defmodule Aprb.Api.Root do
   end
 
   mount Aprb.Api.Slack
-
 end
