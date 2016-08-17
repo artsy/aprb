@@ -42,9 +42,8 @@ defmodule Aprb.Api.Slack do
 
       response = cond do
         params[:text] == "topics" ->
-          Repo.all(
-            from topics in Topic,
-            select: topics.name)
+          Repo.all( from topics in Topic, select: topics.name)
+            |> Enum.join(" ")
 
         params[:text] == "subscriptions" ->
           Repo.preload(subscriber, :topics).topics
