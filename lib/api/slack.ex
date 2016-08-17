@@ -41,12 +41,12 @@ defmodule Aprb.Api.Slack do
         end
 
       response = cond do
-        params[:text] == "list" ->
+        params[:text] == "topics" ->
           Repo.all(
             from topics in Topic,
             select: topics.name)
 
-        params[:text] == "my-subs" ->
+        params[:text] == "subscriptions" ->
           Repo.preload(subscriber, :topics).topics
 
         Regex.match?( ~r/subscribe/ , params[:text])  ->
