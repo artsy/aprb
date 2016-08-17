@@ -8,6 +8,6 @@ defmodule Aprb.Api.Root do
       json_decoder: Poison,
       parsers: [:urlencoded, :json, :multipart]
   end
-
+  mount Aprb.Api.Ping
   mount Aprb.Api.Slack
 end
