@@ -22,7 +22,7 @@ defmodule Aprb.Api.Slack do
       if System.get_env("SLACK_SLASH_COMMAND_TOKEN") != params[:token] do
         conn
           |> put_status(403)
-          |> json(%{message: "Unauthorized"})
+          |> text("Unauthorized")
           |> halt()
       end
 
@@ -34,7 +34,7 @@ defmodule Aprb.Api.Slack do
               {:ok, new_subscriber} ->
                 subscriber = new_subscriber
               {:error, _changeset} ->
-                json(conn, %{ message: "Can't create user"})
+                text(conn, %{ message: "Can't create user"})
             end
           existing_subscriber ->
             existing_subscriber
@@ -55,7 +55,7 @@ defmodule Aprb.Api.Slack do
         true ->
           "Unknown command! Supported commands: list, my-subs, subscribe <list of topics>"
       end
-      json(conn, %{ response: response })
+      text(conn, %{ response: response })
     end
   end
 end
