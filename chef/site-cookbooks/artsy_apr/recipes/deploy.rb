@@ -75,25 +75,7 @@ execute "compile-mix-deps" do
   cwd deploy_target
 end
 
-execute "install-npm-packages" do
-  command "npm install"
-  cwd deploy_target
-end
-
-execute "brunch-build" do
-  command "node node_modules/brunch/bin/brunch build --production"
-  user deploy_user
-  cwd deploy_target
-end
-
-execute "phoenix-digest" do
-  command "mix phoenix.digest"
-  user deploy_user
-  environment runtime_environment
-  cwd deploy_target
-end
-
-command = 'mix phoenix.server'
+command = 'mix run --no-halt'
 
 supervisor_service application_name do
   user deploy_user
