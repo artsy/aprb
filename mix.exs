@@ -15,7 +15,7 @@ defmodule Aprb.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     [ mod: {Aprb, []},
-      applications: [:logger, :maru, :kafka_ex, :slack]]
+      applications: [:logger, :maru, :kafka_ex, :slack, :postgrex, :ecto]]
   end
 
   # Dependencies can be Hex packages:
