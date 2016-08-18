@@ -23,7 +23,8 @@ defmodule Aprb.Api.Slack do
         conn
           |> put_status(403)
           |> text("Unauthorized")
-          |> halt()
+
+        raise("Unauthorized")
       end
 
       subscriber = case Repo.get_by(Subscriber, user_id: params[:user_id]) do
