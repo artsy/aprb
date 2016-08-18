@@ -10,7 +10,8 @@ defmodule Aprb do
       supervisor(Aprb.Repo, []),
       worker(Task, [Aprb.EventReceiver, :start_link, ["users"]], id: :users),
       worker(Task, [Aprb.EventReceiver, :start_link, ["subscriptions"]], id: :subscriptions),
-      worker(Task, [Aprb.EventReceiver, :start_link, ["inquiries"]], id: :inquiries)
+      worker(Task, [Aprb.EventReceiver, :start_link, ["inquiries"]], id: :inquiries),
+      worker(Task, [Aprb.EventReceiver, :start_link, ["purchases"]], id: :purchases)
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

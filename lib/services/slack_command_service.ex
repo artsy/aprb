@@ -55,6 +55,7 @@ defmodule Aprb.Service.SlackCommandService do
           end
         end
         ":+1: Subscribed to #{Enum.join(subscribed_topics, " ")}"
+
       true ->
         "Unknown command! Supported commands: topics, subscriptions, subscribe <list of topics>, unsubscribe <list of topics>"
     end
