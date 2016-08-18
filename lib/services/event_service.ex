@@ -42,6 +42,15 @@ defmodule Aprb.Service.EventService do
 
       "purchases" ->
         %{text: ":shake: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} https://www.artsy.net/artwork/#{event["properties"]["artwork"]["id"]}",
+          attachments: "[{
+                          \"fields\": [
+                            {
+                              \"title\": \"Price\",
+                              \"value\": \"#{event["properties"]["sale_price"]}\",
+                              \"short\": true
+                            }
+                          ]
+                        }]",
           unfurl_links: true }
     end
   end
