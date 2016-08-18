@@ -60,6 +60,6 @@ defmodule Aprb.Service.SlackCommandService do
         "Unknown command! Supported commands: topics, subscriptions, subscribe <list of topics>, unsubscribe <list of topics>"
     end
 
-    response
+    %{ response_type: "in_channel", text: response }
   end
 end

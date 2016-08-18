@@ -25,7 +25,7 @@ defmodule Aprb.Api.Slack do
 
         raise("Unauthorized")
       end
-      text(conn, SlackCommandService.process_command(params))
+      json(conn, SlackCommandService.process_command(params))
     end
   end
 end
