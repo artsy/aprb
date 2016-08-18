@@ -6,15 +6,11 @@ config :kafka_ex,
   disable_default_worker: false,
   sync_timeout: 1000 #Timeout used synchronous requests from kafka. Defaults to 1000ms.
 
-config :aprb, ecto_repos: [Aprb.Repo]
-
 config :maru, Aprb.Api.Root,
   http: [port: 4000]
 
 config :aprb, Aprb.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
   database: "aprb_dev",
   hostname: "localhost",
   pool_size: 10
