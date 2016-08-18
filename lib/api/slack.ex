@@ -23,10 +23,10 @@ defmodule Aprb.Api.Slack do
         conn
           |> put_status(403)
           |> text("Unauthorized")
-          |> halt()
+          |> halt
       end
 
-      subscriber = case Repo.get_by(Subscriber, user_id: params[:user_id]) do
+      subscriber = case Repo.get_by(Subscriber, channel_id: params[:channel_id]) do
           nil ->
             # create new subscriber
             sub_changeset = Subscriber.changeset(%Subscriber{}, Map.take(params, [:team_id, :team_domain, :channel_id, :channel_name, :user_id, :user_name]))
@@ -34,7 +34,7 @@ defmodule Aprb.Api.Slack do
               {:ok, new_subscriber} ->
                 subscriber = new_subscriber
               {:error, _changeset} ->
-                text(conn, %{ message: "Can't create user"})
+                text(conn, "Can't create subscriber")
             end
           existing_subscriber ->
             existing_subscriber
@@ -48,11 +48,25 @@ defmodule Aprb.Api.Slack do
         params[:text] == "subscriptions" ->
           Repo.preload(subscriber, :topics).topics
 
-        Regex.match?( ~r/subscribe/ , params[:text])  ->
+        Regex.match?( ~r/unsubscribe/ , params[:text])  ->
+          [command | topic_names] = String.split(text, ~r{\s}, parts: 2)
           # add subscriptions
-          IO.inspect params[:text]
+          for topic_name <- String.split(topic_names, ~r{\s}) do
+            topic = Repo.get_by!(Topic, name: topic)
+            Repo.delete(from s in Subscription,
+              where: subscriber_id == ^subscriber.id and topic_id == ^topic.id)
+          end
+
+        Regex.match?( ~r/subscribe/ , params[:text])  ->
+          [command | topic_names] = String.split(text, ~r{\s}, parts: 2)
+          # add subscriptions
+          for topic_name <- String.split(topic_names, ~r{\s}) do
+            topic = Repo.get_by!(Topic, name: topic)
+            subscription = Ecto.build_assoc(subscriber, :subscriptions, topic_id: topic_id)
+            Repo.insert_or_update(subscription)
+          end
         true ->
-          "Unknown command! Supported commands: list, my-subs, subscribe <list of topics>"
+          "Unknown command! Supported commands: topics, subscriptions, subscribe <list of topics>, unsubscribe <list of topics>"
       end
       text(conn, response)
     end

@@ -23,6 +23,6 @@ defmodule Aprb.Subscriber do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
-    |> unique_constraint(:user_id)
+    |> unique_constraint(:channel_id)
   end
 end
