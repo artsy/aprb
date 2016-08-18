@@ -1,6 +1,7 @@
 defmodule Aprb.Api.SlackTest do
   use ExUnit.Case, async: true
   use Maru.Test, for: Aprb.Api.Slack
+  import Aprb.Factory
   alias Aprb.{Repo, Subscriber, Topic, Subscription}
 
   setup_all do
@@ -15,10 +16,6 @@ defmodule Aprb.Api.SlackTest do
   setup do
     Ecto.Adapters.SQL.Sandbox.mode(Repo, { :shared, self() })
     Ecto.Adapters.SQL.Sandbox.checkout(Repo)
-
-    Repo.insert(Topic.changeset(%Topic{}, %{name: "subscriptions"}))
-    Repo.insert(Topic.changeset(%Topic{}, %{name: "users"}))
-    Repo.insert(Topic.changeset(%Topic{}, %{name: "inquiries"}))
     :ok
   end
 
@@ -47,7 +44,7 @@ defmodule Aprb.Api.SlackTest do
           "channel_name":"aprb",
           "user_id":"U123456",
           "user_name":"apr",
-          "command":"subscribe",
+          "command":"apr",
           "text":"inquiries",
           "response_url":"https://slack.example.com"
         }))
@@ -56,12 +53,13 @@ defmodule Aprb.Api.SlackTest do
     end
   end
 
-  test "creates subscriber when receiving proper token" do
+  test "subscribes to a topic when receiving subscribe command with proper token" do
     opts = [
       parsers: [Plug.Parsers.JSON],
       pass: ["*/*"],
       json_decoder: Poison
     ]
+    topic1 = insert(:topic)
     conn = build_conn()
       |> Plug.Conn.put_req_header("content-type", "application/json")
       |> put_body_or_params(~s({
@@ -73,15 +71,51 @@ defmodule Aprb.Api.SlackTest do
           "user_id":"U123456",
           "user_name":"apr",
           "command":"apr",
-          "text":"subscribe subscriptions users",
+          "text":"subscribe #{topic1.name} users",
           "response_url":"https://slack.example.com"
         }))
       |> put_plug(Plug.Parsers, opts)
       |> post("/slack")
+    assert conn.status == 200
+    assert conn.resp_body == ":+1: Subscribed to #{topic1.name} "
     assert Repo.one(Subscriber).channel_id == "C123456"
     subscriber = Repo.get_by(Subscriber, channel_id: "C123456")
     subscriber = Repo.preload(subscriber, :topics)
     assert(Enum.count(subscriber.topics)) == 1
     assert(List.first(subscriber.topics).name) == "subscriptions"
+  end
+
+
+  test "unsubscribes from a topic when receiving unsubscribe command with proper token" do
+    opts = [
+      parsers: [Plug.Parsers.JSON],
+      pass: ["*/*"],
+      json_decoder: Poison
+    ]
+    topic1 = insert(:topic)
+    subscriber = insert(:subscriber)
+    subscription = insert(:subscription, subscriber: subscriber, topic: topic1)
+    conn = build_conn()
+      |> Plug.Conn.put_req_header("content-type", "application/json")
+      |> put_body_or_params(~s({
+          "token":"token",
+          "team_id":"T123456",
+          "team_domain":"example",
+          "channel_id":"#{subscriber.channel_id}",
+          "channel_name":"aprb",
+          "user_id":"U123456",
+          "user_name":"apr",
+          "command":"apr",
+          "text":"unsubscribe #{topic1.name} users",
+          "response_url":"https://slack.example.com"
+        }))
+      |> put_plug(Plug.Parsers, opts)
+      |> post("/slack")
+
+    assert conn.status == 200
+    assert conn.resp_body == ":+1: Unsubscribed from #{topic1.name} "
+    subscriber = Repo.get_by(Subscriber, channel_id: subscriber.channel_id)
+    subscriber = Repo.preload(subscriber, :topics)
+    assert(Enum.count(subscriber.topics)) == 0
   end
 end

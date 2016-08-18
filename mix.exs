@@ -8,7 +8,8 @@ defmodule Aprb.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      aliases: aliases(),
-     deps: deps()]
+     deps: deps(),
+     elixirc_paths: elixirc_paths(Mix.env)]
   end
 
   def application do
@@ -27,6 +28,10 @@ defmodule Aprb.Mixfile do
       {:slack, "~> 0.7.0"},
       {:websocket_client, github: "jeremyong/websocket_client"},
       {:postgrex, ">= 0.0.0"},
-      {:ecto, "~> 2.0.0"} ]
+      {:ecto, "~> 2.0.0"},
+      {:ex_machina, "~> 1.0", only: :test} ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 end
