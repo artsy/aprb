@@ -4,7 +4,7 @@ defmodule Aprb.Service.EventService do
     proccessed_message = process_event(event, topic)
     # broadcast a message to a topic
     for subscriber <- get_topic_subscribers(topic) do
-      Slack.Web.Chat.post_message("##{subscriber.channel_name}", proccessed_message[:text], %{attachments: proccessed_message[:attachments], unfurl_links: proccessed_message[:unfurl_links]})
+      Slack.Web.Chat.post_message("##{subscriber.channel_name}", proccessed_message[:text], %{attachments: proccessed_message[:attachments], unfurl_links: proccessed_message[:unfurl_links], as_user: true})
     end
   end
 
@@ -40,7 +40,6 @@ defmodule Aprb.Service.EventService do
           unfurl_links: true }
 
       "purchases" ->
-        IO.inspect event
         %{text: ":shake: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} https://www.artsy.net/artwork/#{event["properties"]["artwork"]["id"]}",
           attachments: "[{
                           \"fields\": [
