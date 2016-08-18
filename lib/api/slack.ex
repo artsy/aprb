@@ -1,4 +1,3 @@
-require IEx
 defmodule Aprb.Api.Slack do
   use Maru.Router
   import Ecto.Query

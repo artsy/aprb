@@ -1,20 +1,25 @@
-require IEx
 defmodule Aprb.Api.SlackTest do
   use ExUnit.Case, async: true
   use Maru.Test, for: Aprb.Api.Slack
   alias Aprb.{Repo, Subscriber, Topic, Subscription}
+
   setup_all do
-    Repo.insert(Topic.changeset(%Topic{}, %{name: "subscriptions"}))
-    Repo.insert(Topic.changeset(%Topic{}, %{name: "users"}))
-    Repo.insert(Topic.changeset(%Topic{}, %{name: "inquiries"}))
-    :ok
-  end
-  setup do
     System.put_env("SLACK_SLASH_COMMAND_TOKEN", "token")
 
     on_exit fn ->
       System.delete_env("SLACK_SLASH_COMMAND_TOKEN")
     end
+    :ok
+  end
+
+  setup do
+    Ecto.Adapters.SQL.Sandbox.mode(Repo, { :shared, self() })
+    Ecto.Adapters.SQL.Sandbox.checkout(Repo)
+
+    Repo.insert(Topic.changeset(%Topic{}, %{name: "subscriptions"}))
+    Repo.insert(Topic.changeset(%Topic{}, %{name: "users"}))
+    Repo.insert(Topic.changeset(%Topic{}, %{name: "inquiries"}))
+    :ok
   end
 
   test "requires a token" do
@@ -76,7 +81,6 @@ defmodule Aprb.Api.SlackTest do
     assert Repo.one(Subscriber).channel_id == "C123456"
     subscriber = Repo.get_by(Subscriber, channel_id: "C123456")
     subscriber = Repo.preload(subscriber, :topics)
-    IEx.pry
     assert(Enum.count(subscriber.topics)) == 1
     assert(List.first(subscriber.topics).name) == "subscriptions"
   end
