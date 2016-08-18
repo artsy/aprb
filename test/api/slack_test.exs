@@ -77,7 +77,7 @@ defmodule Aprb.Api.SlackTest do
       |> put_plug(Plug.Parsers, opts)
       |> post("/slack")
     assert conn.status == 200
-    assert conn.resp_body == ":+1: Subscribed to #{topic1.name} "
+    assert conn.resp_body == "{\"text\":\":+1: Subscribed to #{topic1.name} \",\"response_type\":\"in_channel\"}"
     assert Repo.one(Subscriber).channel_id == "C123456"
     subscriber = Repo.get_by(Subscriber, channel_id: "C123456")
     subscriber = Repo.preload(subscriber, :topics)
@@ -113,7 +113,7 @@ defmodule Aprb.Api.SlackTest do
       |> post("/slack")
 
     assert conn.status == 200
-    assert conn.resp_body == ":+1: Unsubscribed from #{topic1.name} "
+    assert conn.resp_body == "{\"text\":\":+1: Unsubscribed from #{topic1.name} \",\"response_type\":\"in_channel\"}"
     subscriber = Repo.get_by(Subscriber, channel_id: subscriber.channel_id)
     subscriber = Repo.preload(subscriber, :topics)
     assert(Enum.count(subscriber.topics)) == 0
