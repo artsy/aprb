@@ -35,11 +35,11 @@ defmodule Aprb.EventReceiver do
     event = Poison.decode!(message.value)
     case channel do
       "users" ->
-        ":heart:  #{event["subject"]["display"]} #{event["verb"]} #{event["properties"]["artist"]["name"]}"
+        ":heart: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} #{event["properties"]["artist"]["name"]}"
       "subscriptions" ->
-        ":moneybag: #{event["subject"]["display"]} #{event["verb"]} #{event["properties"]["partner"]["name"]}"
+        ":moneybag: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} #{event["properties"]["partner"]["name"]}"
       "inquiries" ->
-        ":shaka: #{event["subject"]["display"]} #{event["verb"]} #{event["properties"]["inquireable"]["name"]}"
+        ":shaka: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} #{event["properties"]["inquireable"]["name"]}"
     end
   end
 
@@ -47,5 +47,11 @@ defmodule Aprb.EventReceiver do
     topic = Repo.get_by(Topic, name: topic_name)
               |> Repo.preload(:subscribers)
     topic.subscribers
+  end
+
+  defp cleanup_name(full_name) do
+    full_name
+      |> String.split
+      |> List.first
   end
 end
