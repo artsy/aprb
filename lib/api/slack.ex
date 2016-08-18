@@ -40,33 +40,45 @@ defmodule Aprb.Api.Slack do
           existing_subscriber ->
             existing_subscriber
         end
+
       response = cond do
         params[:text] == "topics" ->
           Repo.all( from topics in Topic, select: topics.name)
             |> Enum.join(" ")
 
         params[:text] == "subscriptions" ->
-          Repo.preload(subscriber, :topics).topics
+          current_topics = Repo.preload(subscriber, :topics).topics
+            |> Enum.map(fn(topic) -> topic.name end)
+            |> Enum.join(" ")
+          "Subscribed topics: #{current_topics}"
 
         Regex.match?( ~r/unsubscribe/ , params[:text])  ->
           [command | topic_names] = String.split(params[:text], ~r{\s}, parts: 2)
           # add subscriptions
-          for topic_name <- String.split(topic_names, ~r{\s}) do
-            topic = Repo.get_by!(Topic, name: topic_name)
-            Repo.delete(from s in Subscription,
-              where: s.subscriber_id == ^subscriber.id and s.topic_id == ^topic.id)
+          removed_topics = for topic_name <- List.first(topic_names) |> String.split(~r{\s}) do
+            topic = Repo.get_by(Topic, name: topic_name)
+            if topic do
+              subscription = Repo.get_by(Subscription, subscriber_id: subscriber.id, topic_id: topic.id)
+              if subscription do
+                Repo.delete(subscription)
+                topic_name
+              end
+            end            
           end
-          "Unsubscribed #{topic_names}!"
+          ":+1: Unsubscribed from #{Enum.join(removed_topics, " ")}"
 
         Regex.match?( ~r/subscribe/ , params[:text])  ->
           [command | topic_names] = String.split(params[:text], ~r{\s}, parts: 2)
           # add subscriptions
-          for topic_name <- List.first(topic_names) |> String.split(~r{\s}) do
-            topic = Repo.get_by!(Topic, name: topic_name)
-            subscription = Ecto.build_assoc(subscriber, :subscriptions, topic_id: topic.id)
-            Repo.insert!(subscription)
+          subscribed_topics = for topic_name <- List.first(topic_names) |> String.split(~r{\s}) do
+            topic = Repo.get_by(Topic, name: topic_name)
+            if topic do
+              subscription = Ecto.build_assoc(subscriber, :subscriptions, topic_id: topic.id)
+              Repo.insert!(subscription)
+              topic_name
+            end
           end
-          "Subscribed to #{topic_names}!"
+          ":+1: Subscribed to #{Enum.join(subscribed_topics, " ")}"
         true ->
           "Unknown command! Supported commands: topics, subscriptions, subscribe <list of topics>, unsubscribe <list of topics>"
       end
