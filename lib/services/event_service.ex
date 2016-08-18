@@ -39,6 +39,10 @@ defmodule Aprb.Service.EventService do
       "inquiries" ->
         %{text: ":shaka: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} on https://www.artsy.net/artwork/#{event["properties"]["inquireable"]["id"]}",
           unfurl_links: true }
+
+      "purchases" ->
+        %{text: ":shake: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} https://www.artsy.net/artwork/#{event["properties"]["artwork"]["id"]}",
+          unfurl_links: true }
     end
   end
 
