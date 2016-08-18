@@ -6,7 +6,6 @@ defmodule Aprb.Subscription do
     belongs_to :topic, Aprb.Topic
     belongs_to :subscriber, Aprb.Subscriber
 
-    timestamps
   end
 
   @required_fields ~w(topic_id subscriber_id)

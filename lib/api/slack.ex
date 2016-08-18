@@ -1,8 +1,9 @@
+require IEx
 defmodule Aprb.Api.Slack do
   use Maru.Router
   import Ecto.Query
 
-  alias Aprb.{Repo, Topic, Subscriber}
+  alias Aprb.{Repo, Topic, Subscriber, Subscription}
   namespace :slack do
     desc "Process slash commands from Slack."
     params do
@@ -40,7 +41,6 @@ defmodule Aprb.Api.Slack do
           existing_subscriber ->
             existing_subscriber
         end
-
       response = cond do
         params[:text] == "topics" ->
           Repo.all( from topics in Topic, select: topics.name)
@@ -50,22 +50,24 @@ defmodule Aprb.Api.Slack do
           Repo.preload(subscriber, :topics).topics
 
         Regex.match?( ~r/unsubscribe/ , params[:text])  ->
-          [command | topic_names] = String.split(text, ~r{\s}, parts: 2)
+          [command | topic_names] = String.split(params[:text], ~r{\s}, parts: 2)
           # add subscriptions
           for topic_name <- String.split(topic_names, ~r{\s}) do
-            topic = Repo.get_by!(Topic, name: topic)
+            topic = Repo.get_by!(Topic, name: topic_name)
             Repo.delete(from s in Subscription,
-              where: subscriber_id == ^subscriber.id and topic_id == ^topic.id)
+              where: s.subscriber_id == ^subscriber.id and s.topic_id == ^topic.id)
           end
+          "Unsubscribed #{topic_names}!"
 
         Regex.match?( ~r/subscribe/ , params[:text])  ->
-          [command | topic_names] = String.split(text, ~r{\s}, parts: 2)
+          [command | topic_names] = String.split(params[:text], ~r{\s}, parts: 2)
           # add subscriptions
-          for topic_name <- String.split(topic_names, ~r{\s}) do
-            topic = Repo.get_by!(Topic, name: topic)
-            subscription = Ecto.build_assoc(subscriber, :subscriptions, topic_id: topic_id)
-            Repo.insert_or_update(subscription)
+          for topic_name <- List.first(topic_names) |> String.split(~r{\s}) do
+            topic = Repo.get_by!(Topic, name: topic_name)
+            subscription = Ecto.build_assoc(subscriber, :subscriptions, topic_id: topic.id)
+            Repo.insert!(subscription)
           end
+          "Subscribed to #{topic_names}!"
         true ->
           "Unknown command! Supported commands: topics, subscriptions, subscribe <list of topics>, unsubscribe <list of topics>"
       end

@@ -6,7 +6,7 @@ defmodule Aprb.Topic do
     field :name, :string
 
     has_many :subscriptions, Aprb.Subscription
-    has_many :users, through: [:subscriptions, :user]
+    has_many :subscribers, through: [:subscriptions, :subscriber]
 
     timestamps
   end
