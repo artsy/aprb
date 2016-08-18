@@ -8,7 +8,7 @@ defmodule Aprb.EventReceiver do
       proccessed_message = process_message(message, channel)
       # broadcast a message to a channel
       for subscriber <- get_topic_subscribers(channel) do
-        Slack.Web.Chat.post_message("##{subscriber.channel_name}", proccessed_message)
+        Slack.Web.Chat.post_message("##{subscriber.channel_name}", proccessed_message[:text], %{attachments: proccessed_message[:attachments], unfurl_links: proccessed_message[:unfurl_links]})
       end
     end
   end
@@ -35,11 +35,34 @@ defmodule Aprb.EventReceiver do
     event = Poison.decode!(message.value)
     case channel do
       "users" ->
-        ":heart: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} #{event["properties"]["artist"]["name"]}"
+        %{text: ":heart: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} #{event["properties"]["artist"]["name"]} \n 
+                  https://www.artsy.net/artist/#{event["properties"]["artist"]["id"]}",
+          unfurl_links: true}
+
       "subscriptions" ->
-        ":moneybag: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} #{event["properties"]["partner"]["name"]}"
+        %{text: "",
+          attachments: "[{
+                          \"title\": \":moneybag: Subscription #{event["verb"]}\",
+                          \"title_link\": \"https://admin-partners.artsy.net/subscriptions/#{event["object"]["id"]}\",
+                          \"fields\": [
+                            {
+                              \"title\": \"By\",
+                              \"value\": \"#{cleanup_name(event["subject"]["display"])}\",
+                              \"short\": true
+                            },
+                            {
+                              \"title\": \"Partner\",
+                              \"value\": \"#{event["properties"]["partner"]["name"]}\",
+                              \"short\": true
+                            }
+                          ]
+                        }]",
+          unfurl_links: false }
+
       "inquiries" ->
-        ":shaka: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} #{event["properties"]["inquireable"]["name"]}"
+        %{text: ":shaka: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} #{event["properties"]["inquireable"]["name"]} \n 
+                 https://www.artsy.net/artwork/#{event["properties"]["inquireable"]["id"]}",
+          unfurl_links: true }
     end
   end
 
