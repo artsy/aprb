@@ -34,7 +34,7 @@ defmodule Aprb.EventReceiver do
     event = Poison.decode!(message.value)
     case channel do
       "users" ->
-        ":heart:  #{cleanup_name(event["subject"]["display"])} #{event["verb"]} #{event["properties"]["artist"]["name"]}"
+        ":heart: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} #{event["properties"]["artist"]["name"]}"
       "subscriptions" ->
         ":moneybag: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} #{event["properties"]["partner"]["name"]}"
       "inquiries" ->
