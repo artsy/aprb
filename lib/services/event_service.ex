@@ -12,9 +12,8 @@ defmodule Aprb.Service.EventService do
     event = Poison.decode!(event.value)
     case topic do
       "users" ->
-        %{text: ":heart: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} #{event["properties"]["artist"]["name"]} \n 
-                  https://www.artsy.net/artist/#{event["properties"]["artist"]["id"]}",
-          unfurl_links: true}
+        %{text: ":heart: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} https://www.artsy.net/artist/#{event["properties"]["artist"]["id"]}",
+          unfurl_links: true }
 
       "subscriptions" ->
         %{text: "",
