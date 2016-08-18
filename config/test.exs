@@ -4,9 +4,7 @@ config :maru, Aprb.Api.Root,
   test: true
 
 config :aprb, Aprb.Repo,
+  pool: Ecto.Adapters.SQL.Sandbox,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
-  database: "aprb_test",
-  hostname: "localhost",
-  pool_size: 10
+  database: "aprb_test"
+
