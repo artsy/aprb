@@ -40,7 +40,17 @@ defmodule Aprb.Service.EventService do
           unfurl_links: true }
 
       "purchases" ->
+        IO.inspect event
         %{text: ":shake: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} https://www.artsy.net/artwork/#{event["properties"]["artwork"]["id"]}",
+          attachments: "[{
+                          \"fields\": [
+                            {
+                              \"title\": \"Price\",
+                              \"value\": \"#{format_price(event["properties"]["sale_price"] || 0)}\",
+                              \"short\": true
+                            }
+                          ]
+                        }]",
           unfurl_links: true }
     end
   end
@@ -55,5 +65,13 @@ defmodule Aprb.Service.EventService do
     full_name
       |> String.split
       |> List.first
+  end
+
+  defp format_price(price) do
+    if price do
+      Money.to_string(Money.new(round(price * 100), :USD))
+    else
+      "N/A"
+    end
   end
 end

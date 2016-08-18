@@ -29,6 +29,7 @@ defmodule Aprb.Mixfile do
       {:websocket_client, github: "jeremyong/websocket_client"},
       {:postgrex, ">= 0.0.0"},
       {:ecto, "~> 2.0.0"},
+      {:money, "~> 1.1.0"},
       {:ex_machina, "~> 1.0", only: :test} ]
   end
 
