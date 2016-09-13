@@ -113,7 +113,40 @@ defmodule Aprb.Api.SlackTest do
       |> post("/slack")
 
     assert conn.status == 200
-    assert conn.resp_body == "{\"text\":\":+1: Unsubscribed from #{topic1.name} \",\"response_type\":\"in_channel\"}"
+    assert conn.resp_body == "{\"text\":\":+1: Unsubscribed from _#{topic1.name}_\",\"response_type\":\"in_channel\"}"
+    subscriber = Repo.get_by(Subscriber, channel_id: subscriber.channel_id)
+    subscriber = Repo.preload(subscriber, :topics)
+    assert(Enum.count(subscriber.topics)) == 0
+  end
+
+  test "returns proper message when receiving unsubscribe command for non-subscribed topic" do
+    opts = [
+      parsers: [Plug.Parsers.JSON],
+      pass: ["*/*"],
+      json_decoder: Poison
+    ]
+    topic1 = insert(:topic)
+    subscriber = insert(:subscriber)
+    subscription = insert(:subscription, subscriber: subscriber, topic: topic1)
+    conn = build_conn()
+      |> Plug.Conn.put_req_header("content-type", "application/json")
+      |> put_body_or_params(~s({
+          "token":"token",
+          "team_id":"T123456",
+          "team_domain":"example",
+          "channel_id":"#{subscriber.channel_id}",
+          "channel_name":"aprb",
+          "user_id":"U123456",
+          "user_name":"apr",
+          "command":"apr",
+          "text":"unsubscribe random",
+          "response_url":"https://slack.example.com"
+        }))
+      |> put_plug(Plug.Parsers, opts)
+      |> post("/slack")
+
+    assert conn.status == 200
+    assert conn.resp_body == "{\"text\":\"Can't unsubscribe! You were not subscribed to _random_ or topic doesn't exist.\",\"response_type\":\"in_channel\"}"
     subscriber = Repo.get_by(Subscriber, channel_id: subscriber.channel_id)
     subscriber = Repo.preload(subscriber, :topics)
     assert(Enum.count(subscriber.topics)) == 0
