@@ -41,7 +41,13 @@ defmodule Aprb.Service.SlackCommandService do
             end
           end            
         end
-        ":+1: Unsubscribed from #{Enum.join(removed_topics, " ")}"
+        # remove nil from list
+        removed_topics = Enum.reject(removed_topics, fn(x) -> x == nil end)
+        if Enum.count(removed_topics) > 0 do
+          ":+1: Unsubscribed from #{Enum.join(Enum.map(removed_topics, fn(x) -> "_#{x}_" end), " ")}"
+        else
+          "Can't find a matching subscription to unsubscribe!"
+        end
 
       Regex.match?( ~r/subscribe/ , params[:text])  ->
         [command | topic_names] = String.split(params[:text], ~r{\s}, parts: 2)
