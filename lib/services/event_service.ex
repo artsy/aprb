@@ -51,6 +51,20 @@ defmodule Aprb.Service.EventService do
                           ]
                         }]",
           unfurl_links: true }
+      "bidding" ->
+        %{
+          text: ":gavel: #{event["type"]} on #{event["lotId"]} from #{event["bidder"]["bidderId"]} with Paddle #{event["bidder"]["paddleNumber"]} ",
+          attachments: "[{
+                          \"fields\": [
+                            {
+                              \"title\": \"Amount\",
+                              \"value\": \"#{format_price(event["amountCents"] || 0)}\",
+                              \"short\": true
+                            }
+                          ]
+                        }]",
+          unfurl_links: true
+         }
     end
   end
 
