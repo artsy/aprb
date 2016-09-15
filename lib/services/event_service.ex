@@ -53,12 +53,17 @@ defmodule Aprb.Service.EventService do
           unfurl_links: true }
       "bidding" ->
         %{
-          text: ":gavel: #{event["type"]} on #{event["lotId"]} from Paddle #{event["bidder"]["paddleNumber"]} ",
+          text: ":gavel: #{event["type"]} on #{fetch_sale_artwork(event["lotId"])}",
           attachments: "[{
                           \"fields\": [
                             {
                               \"title\": \"Amount\",
                               \"value\": \"#{format_price((event["amountCents"] || 0) / 100)}\",
+                              \"short\": true
+                            },
+                            {
+                              \"title\": \"Paddle number\",
+                              \"value\": \"#{event["bidder"]["paddleNumber"]}\",
                               \"short\": true
                             }
                           ]
@@ -66,6 +71,11 @@ defmodule Aprb.Service.EventService do
           unfurl_links: true
          }
     end
+  end
+
+  defp fetch_sale_artwork(lot_id) do
+    sale_artwork_response = Gravity.get!("/sale_artworks/#{lot_id}").body
+    sale_artwork_response["_links"]["permalink"]["href"]
   end
 
   defp get_topic_subscribers(topic_name) do
