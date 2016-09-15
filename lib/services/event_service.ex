@@ -58,7 +58,7 @@ defmodule Aprb.Service.EventService do
                           \"fields\": [
                             {
                               \"title\": \"Amount\",
-                              \"value\": \"#{format_price(event["amountCents"] || 0)}\",
+                              \"value\": \"#{format_price((event["amountCents"] || 0) / 100)}\",
                               \"short\": true
                             }
                           ]
