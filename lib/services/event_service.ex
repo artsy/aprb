@@ -82,7 +82,7 @@ defmodule Aprb.Service.EventService do
 
   defp format_price(price) do
     if price do
-      Money.to_string(Money.new(round(price * 100), :USD))
+      Money.to_string(Money.new(round(price * 100), :USD), symbol: false)
     else
       "N/A"
     end
