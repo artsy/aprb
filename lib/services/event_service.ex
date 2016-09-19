@@ -52,13 +52,19 @@ defmodule Aprb.Service.EventService do
                         }]",
           unfurl_links: true }
       "bidding" ->
+        artwork_data = fetch_sale_artwork(event["lotId"])
         %{
-          text: ":gavel: #{event["type"]} on #{fetch_sale_artwork(event["lotId"])}",
+          text: ":gavel: #{event["type"]} on #{artwork_data[:permalink]}",
           attachments: "[{
                           \"fields\": [
                             {
                               \"title\": \"Amount\",
                               \"value\": \"#{format_price((event["amountCents"] || 0) / 100)}\",
+                              \"short\": true
+                            },
+                            {
+                              \"title\": \"Lot number\",
+                              \"value\": \"#{artwork_data[:lot_number]}\",
                               \"short\": true
                             },
                             {
@@ -75,7 +81,10 @@ defmodule Aprb.Service.EventService do
 
   defp fetch_sale_artwork(lot_id) do
     sale_artwork_response = Gravity.get!("/sale_artworks/#{lot_id}").body
-    sale_artwork_response["_links"]["permalink"]["href"]
+    %{
+      permalink: sale_artwork_response["_links"]["permalink"]["href"],
+      lot_number: sale_artwork_response["lot_number"]
+    }
   end
 
   defp get_topic_subscribers(topic_name) do
