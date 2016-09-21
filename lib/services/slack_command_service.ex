@@ -1,5 +1,5 @@
 defmodule Aprb.Service.SlackCommandService do
-  alias Aprb.{Repo,Subscriber,Topic,Subscription}
+  alias Aprb.{Repo,Subscriber,Topic,Subscription,Summary}
   import Ecto.Query
 
   def process_command(params) do
@@ -61,6 +61,20 @@ defmodule Aprb.Service.SlackCommandService do
           end
         end
         ":+1: Subscribed to #{Enum.join(subscribed_topics, " ")}"
+
+      Regex.match?( ~r/summary/, params[:text]) ->
+        command_parts = String.split(params[:text], ~r{\s}) |> Enum.drop(1)
+        if Enum.count(command_parts) > 0 do
+          require IEx
+          IEx.pry
+          topic = Repo.get_by(Topic, name: Enum.at(command_parts, 0))
+          date = if Enum.count(command_parts) > 1, do: Calendar.Date.Parse.iso8601(Enum.at(command_parts, 1)), else: Calendar.Date.today! "America/New_York"
+          summaries = Repo.all(from s in Summary,
+                               where: s.summary_date == ^date and s.topic_id == ^topic.id)
+          summaries
+            |> Enum.map(fn(s) -> "#{s.verb}: #{s.total_count}" end)
+            |> Enum.join(" \r\n ")
+        end
 
       true ->
         "Unknown command! Supported commands: topics, subscriptions, subscribe <list of topics>, unsubscribe <list of topics>"

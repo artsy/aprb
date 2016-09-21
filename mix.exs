@@ -14,7 +14,7 @@ defmodule Aprb.Mixfile do
 
   def application do
     [ mod: {Aprb, []},
-      applications: [:logger, :maru, :kafka_ex, :slack, :postgrex, :ecto]]
+      applications: [:logger, :maru, :kafka_ex, :slack, :postgrex, :ecto, :calendar]]
   end
 
   defp aliases do
@@ -30,6 +30,7 @@ defmodule Aprb.Mixfile do
       {:postgrex, ">= 0.0.0"},
       {:ecto, "~> 2.0.0"},
       {:money, "~> 1.1.0"},
+      {:calendar, "~> 0.16.1"},
       {:ex_machina, "~> 1.0", only: :test} ]
   end
 

@@ -1,15 +1,20 @@
 defmodule Aprb.Service.EventService do
-  alias Aprb.{Repo, Topic}
+  alias Aprb.{Repo, Topic, Service.SummaryService}
+
   def receive_event(event, topic) do
-    proccessed_message = process_event(event, topic)
+    proccessed_message = process_event(decode_event(event), topic)
     # broadcast a message to a topic
     for subscriber <- get_topic_subscribers(topic) do
       Slack.Web.Chat.post_message("##{subscriber.channel_name}", proccessed_message[:text], %{attachments: proccessed_message[:attachments], unfurl_links: proccessed_message[:unfurl_links], as_user: true})
     end
   end
 
-  defp process_event(event, topic) do
-    event = Poison.decode!(event.value)
+  def decode_event(event) do
+    Poison.decode!(event.value)
+  end
+
+  def process_event(event, topic) do
+    Task.start_link(fn -> SummaryService.update_summary(topic, event) end)
     case topic do
       "users" ->
         %{text: ":heart: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} https://www.artsy.net/artist/#{event["properties"]["artist"]["id"]}",

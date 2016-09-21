@@ -25,4 +25,14 @@ defmodule Aprb.Factory do
       topic: build(:topic)
     }
   end
+
+  def summary_factory do
+    {:ok, date} = Ecto.Date.cast(Calendar.Date.today!("America/New_York"))
+    %Aprb.Summary{
+      topic: build(:topic),
+      verb: "followed",
+      summary_date: date,
+      total_count: 0
+    }
+  end
 end
