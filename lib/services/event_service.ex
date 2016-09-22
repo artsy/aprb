@@ -2,10 +2,11 @@ defmodule Aprb.Service.EventService do
   alias Aprb.{Repo, Topic, Service.SummaryService}
 
   def receive_event(event, topic) do
-    proccessed_message = process_event(decode_event(event), topic)
+    processed_message = decode_event(event)
+                         |> process_event(topic)
     # broadcast a message to a topic
     for subscriber <- get_topic_subscribers(topic) do
-      Slack.Web.Chat.post_message("##{subscriber.channel_name}", proccessed_message[:text], %{attachments: proccessed_message[:attachments], unfurl_links: proccessed_message[:unfurl_links], as_user: true})
+      Slack.Web.Chat.post_message("##{subscriber.channel_name}", processed_message[:text], %{attachments: processed_message[:attachments], unfurl_links: processed_message[:unfurl_links], as_user: true})
     end
   end
 
