@@ -65,8 +65,6 @@ defmodule Aprb.Service.SlackCommandService do
       Regex.match?( ~r/summary/, params[:text]) ->
         command_parts = String.split(params[:text], ~r{\s}) |> Enum.drop(1)
         if Enum.count(command_parts) > 0 do
-          require IEx
-          IEx.pry
           topic = Repo.get_by(Topic, name: Enum.at(command_parts, 0))
           date = if Enum.count(command_parts) > 1, do: Calendar.Date.Parse.iso8601(Enum.at(command_parts, 1)), else: Calendar.Date.today! "America/New_York"
           summaries = Repo.all(from s in Summary,
