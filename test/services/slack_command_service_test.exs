@@ -19,6 +19,6 @@ defmodule Aprb.Service.SlackCommandServiceTest do
     response = SlackCommandService.process_command(params)
     assert response[:response_type] == "in_channel"
     today = Calendar.Date.today! "America/New_York"
-    assert response[:text] == ":chart_with_upwards_trend: Summaries for #{today}: \r\n created: 10 \r\n sold: 5"
+    assert response[:text] == ":chart_with_upwards_trend: Summaries for #{today}: \r\n *created*: 10 \r\n *sold*: 5"
   end
 end
