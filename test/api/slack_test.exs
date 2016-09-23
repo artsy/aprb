@@ -2,7 +2,7 @@ defmodule Aprb.Api.SlackTest do
   use ExUnit.Case, async: true
   use Maru.Test, for: Aprb.Api.Slack
   import Aprb.Factory
-  alias Aprb.{Repo, Subscriber, Topic, Subscription}
+  alias Aprb.{Repo, Subscriber}
 
   setup_all do
     System.put_env("SLACK_SLASH_COMMAND_TOKEN", "token")
@@ -72,7 +72,7 @@ defmodule Aprb.Api.SlackTest do
       subscriber = Repo.get_by(Subscriber, channel_id: "C123456")
       subscriber = Repo.preload(subscriber, :topics)
       assert(Enum.count(subscriber.topics)) == 1
-      assert(List.first(subscriber.topics).name) == "subscriptions"
+      assert List.first(subscriber.topics).name == topic1.name
     end
   end
 
@@ -85,14 +85,14 @@ defmodule Aprb.Api.SlackTest do
       ]
       topic1 = insert(:topic)
       subscriber = insert(:subscriber)
-      subscription = insert(:subscription, subscriber: subscriber, topic: topic1)
+      insert(:subscription, subscriber: subscriber, topic: topic1)
       conn = receive_slack_message("token", opts, "unsubscribe #{topic1.name} users", subscriber.channel_id)
 
       assert conn.status == 200
       assert conn.resp_body == "{\"text\":\":+1: Unsubscribed from _#{topic1.name}_\",\"response_type\":\"in_channel\"}"
       subscriber = Repo.get_by(Subscriber, channel_id: subscriber.channel_id)
       subscriber = Repo.preload(subscriber, :topics)
-      assert(Enum.count(subscriber.topics)) == 0
+      assert Enum.count(subscriber.topics) == 0
     end
 
     test "returns proper message when receiving unsubscribe command for non-subscribed topic" do
@@ -103,14 +103,14 @@ defmodule Aprb.Api.SlackTest do
       ]
       topic1 = insert(:topic)
       subscriber = insert(:subscriber)
-      subscription = insert(:subscription, subscriber: subscriber, topic: topic1)
+      insert(:subscription, subscriber: subscriber, topic: topic1)
       conn = receive_slack_message("token", opts, "unsubscribe random", subscriber.channel_id)
 
       assert conn.status == 200
       assert conn.resp_body == "{\"text\":\"Can't find a matching subscription to unsubscribe!\",\"response_type\":\"in_channel\"}"
       subscriber = Repo.get_by(Subscriber, channel_id: subscriber.channel_id)
       subscriber = Repo.preload(subscriber, :topics)
-      assert(Enum.count(subscriber.topics)) == 0
+      assert Enum.count(subscriber.topics) == 1
     end
   end
 end
