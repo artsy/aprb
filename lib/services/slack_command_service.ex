@@ -69,9 +69,10 @@ defmodule Aprb.Service.SlackCommandService do
           date = if Enum.count(command_parts) > 1, do: Calendar.Date.Parse.iso8601(Enum.at(command_parts, 1)), else: Calendar.Date.today! "America/New_York"
           summaries = Repo.all(from s in Summary,
                                where: s.summary_date == ^date and s.topic_id == ^topic.id)
-          summaries
-            |> Enum.map(fn(s) -> "#{s.verb}: #{s.total_count}" end)
-            |> Enum.join(" \r\n ")
+          summaries_text = summaries
+                            |> Enum.map(fn(s) -> "#{s.verb}: #{s.total_count}" end)
+                            |> Enum.join(" \r\n ")
+          ":chart_with_upwards_trend: Summaries for #{date}: \r\n #{summaries_text}"
         end
 
       true ->

@@ -20,6 +20,7 @@ defmodule Aprb.Summary do
     model
     |> cast(params, @required_fields, @optional_fields)
     |> foreign_key_constraint(:topic_id)
+    |> unique_constraint(:topic_verb_date, name: :summaries_topic_verb_date_unique_index)
   end
 
   def find_by_topic_verb_date(topic_id, verb, date) do
