@@ -70,13 +70,13 @@ defmodule Aprb.Service.SlackCommandService do
           summaries = Repo.all(from s in Summary,
                                where: s.summary_date == ^date and s.topic_id == ^topic.id)
           summaries_text = summaries
-                            |> Enum.map(fn(s) -> "#{s.verb}: #{s.total_count}" end)
+                            |> Enum.map(fn(s) -> "*#{s.verb}*: #{s.total_count}" end)
                             |> Enum.join(" \r\n ")
           ":chart_with_upwards_trend: Summaries for #{date}: \r\n #{summaries_text}"
         end
 
       true ->
-        "Unknown command! Supported commands: topics, subscriptions, subscribe <list of topics>, unsubscribe <list of topics>"
+        "Unknown command! Supported commands: topics, subscriptions, subscribe <list of topics>, unsubscribe <list of topics>, summary <name of topic> <optional: date in 2014-11-21 format>"
     end
 
     %{ response_type: "in_channel", text: response }
