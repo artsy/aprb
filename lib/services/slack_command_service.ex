@@ -39,7 +39,7 @@ defmodule Aprb.Service.SlackCommandService do
               Repo.delete(subscription)
               topic_name
             end
-          end            
+          end
         end
         # remove nil from list
         removed_topics = Enum.reject(removed_topics, fn(x) -> x == nil end)
@@ -74,6 +74,20 @@ defmodule Aprb.Service.SlackCommandService do
                             |> Enum.join(" \r\n ")
           ":chart_with_upwards_trend: Summaries for #{date}: \r\n #{summaries_text}"
         end
+
+        Regex.match?( ~r/monthly/, params[:text]) ->
+          command_parts = String.split(params[:text], ~r{\s}) |> Enum.drop(1)
+          if Enum.count(command_parts) > 0 do
+            topic = Repo.get_by(Topic, name: Enum.at(command_parts, 0))
+            month = if Enum.count(command_parts) > 1, do: Calendar.Date.Parse.iso8601(Enum.at(command_parts, 1)), else: Calendar.Date.today! "America/New_York"
+            summaries = Repo.all(from s in Summary,
+            where: s.topic_id == ^topic_ud and s.summary_date >
+                               datetime_add(^Ecto.DateTime.utc, -1, "month")
+            summaries_text = summaries
+                              |> Enum.map(fn(s) -> "*#{s.verb}*: #{s.total_count}" end)
+                              |> Enum.join(" \r\n ")
+            ":chart_with_upwards_trend: Summaries for #{month}: \r\n #{summaries_text}"
+          end
 
       true ->
         "Unknown command! Supported commands: topics, subscriptions, subscribe <list of topics>, unsubscribe <list of topics>, summary <name of topic> <optional: date in 2014-11-21 format>"
