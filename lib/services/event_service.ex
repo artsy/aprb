@@ -82,6 +82,27 @@ defmodule Aprb.Service.EventService do
                         }]",
           unfurl_links: true
          }
+      "conversations" ->
+        if event["properties"]["buyer_outcome"] == "other" do
+          %{
+            text: ":phone: #{event["object"]["display"]} responded on https://radiation.artsy.net/accounts/2/conversations/#{event["properties"]["radiation_conversation_id"]}",
+            attachments: "[{
+                            \"fields\": [
+                              {
+                                \"title\": \"Outcome\",
+                                \"value\": \"#{event["properties"]["buyer_outcome"]}\",
+                                \"short\": true
+                              },
+                              {
+                                \"title\": \"Comment\",
+                                \"value\": \"#{event["properties"]["buyer_outcome_comment"]}\",
+                                \"short\": false
+                              }
+                            ]
+                          }]",
+            unfurl_links: false
+          }
+        end
     end
   end
 
