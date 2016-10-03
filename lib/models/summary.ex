@@ -30,7 +30,7 @@ defmodule Aprb.Summary do
 
   def find_by_topic_verb_month(topic_id, verb, date) do
     from s in Summary,
-    where: s.topic_id == ^topic_ud and s.verb == ^verb and s.summary_date >
+    where: s.topic_id == ^topic_id and s.verb == ^verb and s.summary_date >
                        datetime_add(^Ecto.DateTime.utc, -1, "month")
   end
 end
