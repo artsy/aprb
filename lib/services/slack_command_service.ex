@@ -73,7 +73,6 @@ defmodule Aprb.Service.SlackCommandService do
                             |> Enum.map(fn(s) -> "*#{s.verb}*: #{s.total_count}" end)
                             |> Enum.join(" \r\n ")
           ":chart_with_upwards_trend: Summaries for #{date}: \r\n #{summaries_text}"
-        end
 
         Regex.match?( ~r/monthly/, params[:text]) ->
           command_parts = String.split(params[:text], ~r{\s}) |> Enum.drop(1)
