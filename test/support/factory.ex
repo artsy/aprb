@@ -36,3 +36,5 @@ defmodule Aprb.Factory do
     }
   end
 end
+
+# date = Ecto.Date.utc query = from trans in Transaction, preload: [:approver], where: trans.account_id == ^account_id and trans.date >= date_add(^({date.year, date.month, 1}), ^params, "month") and is_nil(trans.deleted_at)

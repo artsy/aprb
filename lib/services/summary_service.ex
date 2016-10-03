@@ -22,4 +22,16 @@ defmodule Aprb.Service.SummaryService do
     updated_summary = Summary.changeset(summary, %{total_count: summary.total_count + 1})
     Repo.update(updated_summary)
   end
+
+  defp handle_monthly(topic_name, verb, date) do
+    t = Repo.get_by!(Topic, name: topic_name)
+    monthly_query = Summary.find_by_topic_verb_month(t.id, verb, date)
+    if !Repo.one(monthly_query) do
+      changeset = Summary.changeset(%Summary{}, %{topic_id: t.id, verb: verb, summary_date: date, total_count: 0})
+      Repo.insert!(changeset)
+    end
+    monthly = Repo.one(monthly_query)
+    updated_monthly = Summary.changeset(monthly, %{total_count: monthly.total_count + 1})
+    Repo.update(updated_monthly)
+  end
 end
