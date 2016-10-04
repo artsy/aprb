@@ -24,21 +24,31 @@ defmodule Aprb.Service.EventService do
       "subscriptions" ->
         %{text: "",
           attachments: "[{
-                          \"title\": \":moneybag: Subscription #{event["verb"]}\",
-                          \"title_link\": \"https://admin-partners.artsy.net/subscriptions/#{event["object"]["id"]}\",
-                          \"fields\": [
-                            {
-                              \"title\": \"By\",
-                              \"value\": \"#{cleanup_name(event["subject"]["display"])}\",
-                              \"short\": true
-                            },
-                            {
-                              \"title\": \"Partner\",
-                              \"value\": \"#{event["properties"]["partner"]["name"]}\",
-                              \"short\": true
-                            }
-                          ]
-                        }]",
+                \"title\": \":moneybag: Subscription #{event["verb"]}\",
+                \"title_link\": \"https://admin-partners.artsy.net/subscriptions/#{event["object"]["id"]}\",
+                \"fields\": [
+                  {
+                    \"title\": \"By\",
+                    \"value\": \"#{cleanup_name(event["subject"]["display"])}\",
+                    \"short\": true
+                  },
+                  {
+                    \"title\": \"Partner\",
+                    \"value\": \"#{event["properties"]["partner"]["name"]}\",
+                    \"short\": true
+                  },
+                  {
+                    \"title\": \"Outreach Admin\",
+                    \"value\": \"#{event["properties"]["partner"]["outreach_admin"]}\",
+                    \"short\": true
+                  },
+                  {
+                    \"title\": \"Total this month\",
+                    \"value\": \"#{SummaryService.get_summary_for_month(DateTime.utc_now.year, DateTime.utc_now.month)}\",
+                    \"short\": false
+                  }
+                ]
+              }]",
           unfurl_links: false }
 
       "inquiries" ->

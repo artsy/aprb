@@ -2,7 +2,7 @@ defmodule Aprb.Service.EventServiceTest do
   use ExUnit.Case, async: true
   import Aprb.Factory
   alias Aprb.{Repo, Summary, Service.EventService}
-  
+
   setup do
     Ecto.Adapters.SQL.Sandbox.mode(Repo, { :shared, self() })
     Ecto.Adapters.SQL.Sandbox.checkout(Repo)
@@ -25,6 +25,23 @@ defmodule Aprb.Service.EventServiceTest do
     assert response[:unfurl_links]  == true
   end
 
+  test "process_event: conversations ignores non-other outcomes" do
+    topic = insert(:topic, name: "conversations")
+    event = %{
+               "object" => %{"display" => "Collector 1"},
+               "subject" => %{"display" => "Gallery 1"},
+               "verb" => "received",
+               "properties" => %{
+                  "radiation_conversation_id" => "123",
+                  "buyer_outcome" => "purchased",
+                  "buyer_outcome_comment" => nil,
+                  "inquiry_id" => "inq1"
+               }
+             }
+    response = EventService.process_event(event, "conversations")
+    assert response == nil
+  end
+
   test "process_event: conversations" do
     topic = insert(:topic, name: "conversations")
     event = %{
@@ -43,20 +60,21 @@ defmodule Aprb.Service.EventServiceTest do
     assert response[:unfurl_links]  == false
   end
 
-  test "process_event: conversations ignores non-other outcomes" do
-    topic = insert(:topic, name: "conversations")
+  test "process_event: subscriptions" do
+    topic = insert(:topic, name: "subscriptions")
     event = %{
-               "object" => %{"display" => "Collector 1"},
-               "subject" => %{"display" => "Gallery 1"},
-               "verb" => "received",
-               "properties" => %{
-                  "radiation_conversation_id" => "123",
-                  "buyer_outcome" => "purchased",
-                  "buyer_outcome_comment" => nil,
-                  "inquiry_id" => "inq1"
-               }
-             }
-    response = EventService.process_event(event, "conversations")
-    assert response == nil
+              "object" => %{"display" => "Subscription 1"},
+              "subject" => %{"display" => "User 1"},
+              "verb" => "activated",
+              "properties" => %{
+                 "partner" => "Test Gallery",
+                 "outreach_admin" => "Fake GPM",
+                 "get_summary_for_month" => "10"
+                }
+              }
+    response = EventService.process_event(event, "subscriptions")
+    assert response[:text]  == ""
+    assert response[:unfurl_links]  == false
   end
+
 end
