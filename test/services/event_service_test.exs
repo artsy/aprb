@@ -63,15 +63,15 @@ defmodule Aprb.Service.EventServiceTest do
   test "process_event: subscriptions" do
     topic = insert(:topic, name: "subscriptions")
     event = %{
-              "object" => %{"display" => "Subscription 1"},
-              "subject" => %{"display" => "User 1"},
-              "verb" => "activated",
-              "properties" => %{
-                 "partner" => "Test Gallery",
-                 "outreach_admin" => "Fake GPM",
-                 "get_summary_for_month" => "10"
-                }
-              }
+               "object" => %{"display" => "subscription 1"},
+               "subject" => %{"display" => "user 1"},
+               "verb" => "activated",
+               "properties" => %{
+                  "partner" => "test gallery",
+                  "outreach_admin" => "fake gpm",
+                  "get_summary_for_month" => "10"
+               }
+             }
     response = EventService.process_event(event, "subscriptions")
     assert response[:text]  == ""
     assert response[:unfurl_links]  == false
