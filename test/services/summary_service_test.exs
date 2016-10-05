@@ -4,8 +4,9 @@ defmodule Aprb.Service.SummaryServiceTest do
   alias Aprb.{Repo, Summary, Service.SummaryService}
   
   setup do
-    Ecto.Adapters.SQL.Sandbox.mode(Repo, { :shared, self() })
     Ecto.Adapters.SQL.Sandbox.checkout(Repo)
+    Ecto.Adapters.SQL.Sandbox.mode(Aprb.Repo, { :shared, self() })
+
     :ok
   end
 
@@ -21,7 +22,7 @@ defmodule Aprb.Service.SummaryServiceTest do
                }
              }
     assert Repo.aggregate(Summary, :count, :verb) == 0
-    response = SummaryService.update_summary("users", event)
+    SummaryService.update_summary(topic, event)
     assert Repo.aggregate(Summary, :count, :verb) == 1
     summary = Repo.one(Summary)
     assert summary.topic_id == topic.id
@@ -29,7 +30,7 @@ defmodule Aprb.Service.SummaryServiceTest do
     assert summary.total_count == 1
 
     # sending event again will add total_count in summary
-    SummaryService.update_summary("users", event)
+    SummaryService.update_summary(topic, event)
     # we don't add a new summary
     assert Repo.aggregate(Summary, :count, :verb) == 1
     summary = Repo.one(Summary)
