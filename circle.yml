@@ -1,0 +1,24 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  pre:
+    - scripts/ci_prepare.sh
+  cache_directories:
+    - ~/dependencies
+    - ~/.mix
+    - _build
+    - deps
+  override:
+    - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/aprb:$CIRCLE_SHA1 .
+
+test:
+  override:
+    - scripts/ci_test.sh
+
+deployment:
+  prod:
+    branch: master
+    commands:
+      - ./deploy.sh

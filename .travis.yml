@@ -1,7 +1,0 @@
-services:
-  - postgresql
-
-language: elixir
-
-elixir:
-  - 1.3.2
