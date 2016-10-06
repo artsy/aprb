@@ -1,0 +1,11 @@
+web:
+  build: .
+  command: mix run --no-halt
+  environment:
+    PORT: 4000
+  volumes:
+  - .:/app
+  ports:
+  - "80:80"
+  volumes:
+  - .:/app
