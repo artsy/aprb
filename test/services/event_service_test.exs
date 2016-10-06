@@ -1,16 +1,16 @@
 defmodule Aprb.Service.EventServiceTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
   import Aprb.Factory
-  alias Aprb.{Repo, Summary, Service.EventService}
+  alias Aprb.{Repo, Service.EventService}
   
   setup do
-    Ecto.Adapters.SQL.Sandbox.mode(Repo, { :shared, self() })
     Ecto.Adapters.SQL.Sandbox.checkout(Repo)
+    Ecto.Adapters.SQL.Sandbox.mode(Aprb.Repo, { :shared, self() })
     :ok
   end
 
   test "process_event: users" do
-    topic = insert(:topic, name: "users")
+    insert(:topic, name: "users")
     event = %{
                "subject" => %{"display" => "Best collector"},
                "verb" => "followed",
@@ -25,8 +25,29 @@ defmodule Aprb.Service.EventServiceTest do
     assert response[:unfurl_links]  == true
   end
 
+  test "process_event: subscriptions" do
+    topic = insert(:topic, name: "subscriptions")
+    insert(:summary, summary_date: Ecto.Date.cast!(Calendar.Date.today!("America/New_York")), topic: topic, verb: "activated", total_count: 2)
+    event = %{
+               "subject" => %{"display" => "admin 1"},
+               "object" => %{"id" => "1"},
+               "verb" => "activated",
+               "properties" => %{
+                  "partner" => %{
+                    "name" => "gallery 1",
+                    "outreach_admin" => "tester admin"
+                  }
+               }
+             }
+    response = EventService.process_event(event, "subscriptions")
+    assert response[:text]  == ""
+    assert response[:unfurl_links] == false
+    assert String.contains?(response[:attachments], "\"value\": \"3\"") == true
+    assert String.contains?(response[:attachments], ":moneybag: gallery 1's subscription activated") == true
+    assert String.contains?(response[:attachments], "tester admin") == true
+  end
+
   test "process_event: conversations" do
-    topic = insert(:topic, name: "conversations")
     event = %{
                "object" => %{"display" => "Collector 1"},
                "subject" => %{"display" => "Gallery 1"},
@@ -41,10 +62,7 @@ defmodule Aprb.Service.EventServiceTest do
     response = EventService.process_event(event, "conversations")
     assert response[:text]  == ":phone: Collector 1 responded on https://radiation.artsy.net/accounts/2/conversations/123"
     assert response[:unfurl_links]  == false
-  end
-
-  test "process_event: conversations ignores non-other outcomes" do
-    topic = insert(:topic, name: "conversations")
+    # ignores non-outcome
     event = %{
                "object" => %{"display" => "Collector 1"},
                "subject" => %{"display" => "Gallery 1"},

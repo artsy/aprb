@@ -14,27 +14,31 @@ defmodule Aprb.Service.EventService do
     Poison.decode!(event.value)
   end
 
-  def process_event(event, topic) do
-    Task.start_link(fn -> SummaryService.update_summary(topic, event) end)
-    case topic do
+  def process_event(event, topic_name) do
+    topic = Repo.get_by(Topic, name: topic_name)
+    summary_task = Task.async(fn -> SummaryService.update_summary(topic, event) end)
+    case topic.name do
       "users" ->
         %{text: ":heart: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} https://www.artsy.net/artist/#{event["properties"]["artist"]["id"]}",
           unfurl_links: true }
 
       "subscriptions" ->
+        # wait for summaryt ask to finish first
+        Task.await(summary_task)
+        current_summary = SummaryService.get_summary_for_month(topic, event["verb"], DateTime.utc_now.year, DateTime.utc_now.month)
         %{text: "",
           attachments: "[{
-                          \"title\": \":moneybag: Subscription #{event["verb"]}\",
+                          \"title\": \":moneybag: #{event["properties"]["partner"]["name"]}'s subscription #{event["verb"]}\",
                           \"title_link\": \"https://admin-partners.artsy.net/subscriptions/#{event["object"]["id"]}\",
                           \"fields\": [
                             {
-                              \"title\": \"By\",
-                              \"value\": \"#{cleanup_name(event["subject"]["display"])}\",
+                              \"title\": \"Outreach Admin\",
+                              \"value\": \"#{event["properties"]["partner"]["outreach_admin"]}\",
                               \"short\": true
                             },
                             {
-                              \"title\": \"Partner\",
-                              \"value\": \"#{event["properties"]["partner"]["name"]}\",
+                              \"title\": \"Total this month\",
+                              \"value\": \"#{current_summary}\",
                               \"short\": true
                             }
                           ]

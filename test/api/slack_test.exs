@@ -14,8 +14,9 @@ defmodule Aprb.Api.SlackTest do
   end
 
   setup do
-    Ecto.Adapters.SQL.Sandbox.mode(Repo, { :shared, self() })
     Ecto.Adapters.SQL.Sandbox.checkout(Repo)
+    Ecto.Adapters.SQL.Sandbox.mode(Repo, { :shared, self() })
+    
     :ok
   end
 
@@ -71,7 +72,7 @@ defmodule Aprb.Api.SlackTest do
       assert Repo.one(Subscriber).channel_id == "C123456"
       subscriber = Repo.get_by(Subscriber, channel_id: "C123456")
       subscriber = Repo.preload(subscriber, :topics)
-      assert(Enum.count(subscriber.topics)) == 1
+      assert Enum.count(subscriber.topics) == 1
       assert List.first(subscriber.topics).name == topic1.name
     end
   end
