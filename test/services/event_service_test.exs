@@ -48,7 +48,6 @@ defmodule Aprb.Service.EventServiceTest do
   end
 
   test "process_event: conversations" do
-    insert(:topic, name: "conversations")
     event = %{
                "object" => %{"display" => "Collector 1"},
                "subject" => %{"display" => "Gallery 1"},

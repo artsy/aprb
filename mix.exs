@@ -18,7 +18,7 @@ defmodule Aprb.Mixfile do
   end
 
   defp aliases do
-    [test: ["ecto.create --quiet", "ecto.migrate", "test --no-start"]]
+    [test: ["ecto.drop --quiet", "ecto.create --quiet", "ecto.migrate", "test --no-start"]]
   end
 
   defp deps do
