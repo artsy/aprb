@@ -32,7 +32,7 @@ defmodule Aprb.Service.EventService do
                           \"title_link\": \"https://admin-partners.artsy.net/subscriptions/#{event["object"]["id"]}\",
                           \"fields\": [
                             {
-                              \"title\": \"By\",
+                              \"title\": \"Outreach Admin\",
                               \"value\": \"#{event["properties"]["partner"]["outreach_admin"]}\",
                               \"short\": true
                             },
