@@ -11,14 +11,14 @@ dependencies:
     - _build
     - deps
   override:
-    - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/aprb:$CIRCLE_SHA1 .
+    - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/aprb:$CIRCLE_SHA1 -t $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/aprb:latest .
 
 test:
   override:
-    - scripts/ci_test.sh
+    - scripts/ci_tests.sh
 
 deployment:
   prod:
     branch: master
     commands:
-      - ./deploy.sh
+      - ./scripts/deploy.sh

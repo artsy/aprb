@@ -14,6 +14,7 @@ configure_aws_cli(){
 push_ecr_image(){
   eval $(aws ecr get-login --region us-east-1)
   docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/aprb:$CIRCLE_SHA1
+  docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/aprb:latest
 }
 
 rolling_update(){
@@ -25,7 +26,7 @@ rolling_update(){
   aws s3 cp s3://artsy-citadel/k8s/config ~/.kube/config
 
   /usr/local/bin/kubectl config use-context production
-  /usr/local/bin/kubectl rolling-update aprb --image=$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/aprb:$CIRCLE_SHA1
+  /usr/local/bin/kubectl set image deployment/aprb aprb=$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/aprb:$CIRCLE_SHA1
   rm -rf ~/.kube
 }
 
