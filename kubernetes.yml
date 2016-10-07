@@ -36,6 +36,6 @@ spec:
     nodePort: 30101
     protocol: TCP
   selector:
-    app: apr
+    app: aprb
   sessionAffinity: None
   type: NodePort
