@@ -1,0 +1,41 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: aprb
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: aprb
+      name: aprb
+      namespace: default
+    spec:
+      containers:
+      - name: aprb
+        image: 585031190124.dkr.ecr.us-east-1.amazonaws.com/aprb:latest
+        env:
+        - name: PORT
+          value: "4000"
+        - name: MIX_ENV
+          value: prod
+        ports:
+        - containerPort: 4000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: aprb
+  name: aprb
+  namespace: default
+spec:
+  ports:
+  - port: 80
+    targetPort: 4000
+    protocol: TCP
+  selector:
+    app: aprb
+  sessionAffinity: None
+  type: LoadBalancer
