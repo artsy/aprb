@@ -15,7 +15,7 @@ dependencies:
 
 test:
   override:
-    - scripts/ci_tests.sh
+    - scripts/ci_test.sh
 
 deployment:
   prod:
