@@ -33,9 +33,9 @@ metadata:
 spec:
   ports:
   - port: 80
-    nodePort: 30101
+    targetPort: 4000
     protocol: TCP
   selector:
     app: aprb
   sessionAffinity: None
-  type: NodePort
+  type: LoadBalancer
