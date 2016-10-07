@@ -16,10 +16,49 @@ spec:
       - name: aprb
         image: 585031190124.dkr.ecr.us-east-1.amazonaws.com/aprb:latest
         env:
-        - name: PORT
-          value: "4000"
         - name: MIX_ENV
           value: prod
+        - name: PORT
+          value: "4000"
+        - name: KAFKA_CONSUMER_GROUP
+          value: aprb-production
+        - name: GRAVITY_API_URL
+          value: https://api.artsy.net/api
+        - name: SLACK_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: aprb-credentials
+              key: slack_api_token
+        - name: SLACK_SLASH_COMMAND_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: aprb-credentials
+              key: slack_slash_command_token
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: aprb-credentials
+              key: db_user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: aprb-credentials
+              key: db_password
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: aprb-credentials
+              key: db_name
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: aprb-credentials
+              key: db_host
+        - name: GRAVITY_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: aprb-credentials
+              key: gravity_api_token
         ports:
         - containerPort: 4000
 ---
