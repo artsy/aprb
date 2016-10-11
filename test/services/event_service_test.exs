@@ -49,24 +49,29 @@ defmodule Aprb.Service.EventServiceTest do
 
   test "process_event: conversations" do
     event = %{
-               "object" => %{"display" => "Collector 1"},
-               "subject" => %{"display" => "Gallery 1"},
-               "verb" => "received",
+               "object" => %{"display" => "Conversation 1"},
+               "subject" => %{"display" => "Collector 1"},
+               "verb" => "buyer_outcome_set",
                "properties" => %{
-                  "radiation_conversation_id" => "123",
                   "buyer_outcome" => "other",
                   "buyer_outcome_comment" => "never received response",
-                  "inquiry_id" => "inq1"
+                  "inquiry_id" => "inq1",
+                  "conversation_items" => [
+                    %{
+                      "item_type" => "Artwork",
+                      "item_id" => "artwork-1"
+                    }
+                  ]
                }
              }
     response = EventService.process_event(event, "conversations")
-    assert response[:text]  == ":phone: Collector 1 responded on https://radiation.artsy.net/accounts/2/conversations/123"
-    assert response[:unfurl_links]  == false
-    # ignores non-outcome
+    assert response[:text]  == ":phone: Collector 1 responded on https://www.artsy.net/artwork/artwork-1"
+    assert response[:unfurl_links]  == true
+    # ignores when outcome wasn't other
     event = %{
                "object" => %{"display" => "Collector 1"},
                "subject" => %{"display" => "Gallery 1"},
-               "verb" => "received",
+               "verb" => "buyer_outcome_set",
                "properties" => %{
                   "radiation_conversation_id" => "123",
                   "buyer_outcome" => "purchased",

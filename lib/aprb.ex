@@ -13,7 +13,7 @@ defmodule Aprb do
       worker(Task, [Aprb.EventReceiver, :start_link, ["inquiries"]], id: :inquiries),
       worker(Task, [Aprb.EventReceiver, :start_link, ["purchases"]], id: :purchases),
       worker(Task, [Aprb.EventReceiver, :start_link, ["bidding"]], id: :bidding),
-      # worker(Task, [Aprb.EventReceiver, :start_link, ["conversations"]], id: :conversations)
+      worker(Task, [Aprb.EventReceiver, :start_link, ["conversations"]], id: :conversations)
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

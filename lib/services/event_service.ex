@@ -87,9 +87,9 @@ defmodule Aprb.Service.EventService do
           unfurl_links: true
          }
       "conversations" ->
-        if event["properties"]["buyer_outcome"] == "other" do
+        if event["verb"] == "buyer_outcome_set" && event["properties"]["buyer_outcome"] == "other" do
           %{
-            text: ":phone: #{event["object"]["display"]} responded on https://radiation.artsy.net/accounts/2/conversations/#{event["properties"]["radiation_conversation_id"]}",
+            text: ":phone: #{event["subject"]["display"]} responded on https://www.artsy.net/artwork/#{List.first(event["properties"]["conversation_items"])["item_id"]}",
             attachments: "[{
                             \"fields\": [
                               {
@@ -104,7 +104,7 @@ defmodule Aprb.Service.EventService do
                               }
                             ]
                           }]",
-            unfurl_links: false
+            unfurl_links: true
           }
         end
     end
