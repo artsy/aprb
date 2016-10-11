@@ -8,12 +8,12 @@ Aprb is a fairly generic consumer of Kafka events (see [Aprb.EventReceiver](lib/
 
 ## Meta
 
-[![Build Status](https://travis-ci.org/artsy/aprb.svg?branch=master)](https://travis-ci.org/artsy/aprb)
+[![CircleCI](https://circleci.com/gh/artsy/aprb.svg?style=svg)](https://circleci.com/gh/artsy/aprb)
 
 * __State:__ production
 * __Production:__ [http://aprb-production-http-1702133716.us-east-1.elb.amazonaws.com/slack](http://aprb-production-http-1702133716.us-east-1.elb.amazonaws.com/slack)
 * __Github:__ [https://github.com/artsy/aprb](https://github.com/artsy/aprb)
-* __CI:__ [Travis-CI](https://travis-ci.org/artsy/aprb); production is manually deployed from OpsWorks
+* __CI:__ [https://circleci.com/gh/artsy/aprb](https://circleci.com/gh/artsy/aprb)
 * __Point People:__ [@ashkan18](https://github.com/ashkan18), [@dblock](https://github.com/dblock)
 
 ## Work at Artsy?
