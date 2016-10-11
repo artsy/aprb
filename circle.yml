@@ -12,8 +12,6 @@ dependencies:
     - ~/.mix
     - _build
     - deps
-  override:
-    - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/aprb:$CIRCLE_SHA1 -t $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/aprb:latest .
 
 test:
   override:
@@ -23,4 +21,5 @@ deployment:
   prod:
     branch: master
     commands:
+      - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/aprb:$CIRCLE_SHA1 -t $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/aprb:latest .
       - ./scripts/deploy.sh
