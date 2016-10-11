@@ -5,8 +5,10 @@ defmodule Aprb.Service.EventService do
     processed_message = decode_event(event)
                          |> process_event(topic)
     # broadcast a message to a topic
-    for subscriber <- get_topic_subscribers(topic) do
-      Slack.Web.Chat.post_message("##{subscriber.channel_name}", processed_message[:text], %{attachments: processed_message[:attachments], unfurl_links: processed_message[:unfurl_links], as_user: true})
+    if processed_message != nil do
+      for subscriber <- get_topic_subscribers(topic) do
+        Slack.Web.Chat.post_message("##{subscriber.channel_name}", processed_message[:text], %{attachments: processed_message[:attachments], unfurl_links: processed_message[:unfurl_links], as_user: true})
+      end
     end
   end
 
