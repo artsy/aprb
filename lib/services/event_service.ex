@@ -49,6 +49,20 @@ defmodule Aprb.Service.EventService do
 
       "inquiries" ->
         %{text: ":shaka: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} on https://www.artsy.net/artwork/#{event["properties"]["inquireable"]["id"]}",
+          attachments: "[{
+                          \"fields\": [
+                            {
+                              \"title\": \"Professional Buyer?\",
+                              \"value\": \"#{event["properties"]["inquirer"]["professional_buyer"]}\",
+                              \"short\": true
+                            },
+                            {
+                              \"title\": \"Message Snippet\",
+                              \"value\": \"#{event["properties"]["initial_message_snippet"]}\",
+                              \"short\": false
+                            }
+                          ]
+                        }]",
           unfurl_links: true }
 
       "purchases" ->
