@@ -57,6 +57,11 @@ defmodule Aprb.Service.EventService do
                               \"short\": true
                             },
                             {
+                              \"title\": \"Confirmed Buyer?\",
+                              \"value\": \"#{event["properties"]["inquirer"]["confirmed_buyer"]}\",
+                              \"short\": true
+                            },
+                            {
                               \"title\": \"Message Snippet\",
                               \"value\": \"#{event["properties"]["initial_message_snippet"]}\",
                               \"short\": false
