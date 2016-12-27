@@ -2,7 +2,8 @@ defmodule Aprb.Service.EventService do
   alias Aprb.{Repo, Topic, Service.SummaryService}
 
   def receive_event(event, topic) do
-    processed_message = decode_event(event)
+    processed_message = event
+                         |> Poison.decode!
                          |> process_event(topic)
     # broadcast a message to a topic
     if processed_message != nil do
@@ -10,10 +11,6 @@ defmodule Aprb.Service.EventService do
         Slack.Web.Chat.post_message("##{subscriber.channel_name}", processed_message[:text], %{attachments: processed_message[:attachments], unfurl_links: processed_message[:unfurl_links], as_user: true})
       end
     end
-  end
-
-  def decode_event(event) do
-    Poison.decode!(event.value)
   end
 
   def process_event(event, topic_name) do
@@ -108,25 +105,52 @@ defmodule Aprb.Service.EventService do
           unfurl_links: true
          }
       "conversations" ->
-        if event["verb"] == "buyer_outcome_set" && event["properties"]["buyer_outcome"] == "other" do
-          %{
-            text: ":phone: #{event["subject"]["display"]} responded on https://www.artsy.net/artwork/#{List.first(event["properties"]["conversation_items"])["item_id"]}",
-            attachments: "[{
-                            \"fields\": [
-                              {
-                                \"title\": \"Outcome\",
-                                \"value\": \"#{event["properties"]["buyer_outcome"]}\",
-                                \"short\": true
-                              },
-                              {
-                                \"title\": \"Comment\",
-                                \"value\": \"#{event["properties"]["buyer_outcome_comment"]}\",
-                                \"short\": false
-                              }
-                            ]
-                          }]",
-            unfurl_links: true
-          }
+        case event["verb"] do
+          "buyer_outcome_set" ->
+            if event["properties"]["buyer_outcome"] == "other" do
+              %{
+                text: ":phone: #{event["subject"]["display"]} responded on https://www.artsy.net/artwork/#{List.first(event["properties"]["conversation_items"])["item_id"]}",
+                attachments: "[{
+                                \"fields\": [
+                                  {
+                                    \"title\": \"Outcome\",
+                                    \"value\": \"#{event["properties"]["buyer_outcome"]}\",
+                                    \"short\": true
+                                  },
+                                  {
+                                    \"title\": \"Comment\",
+                                    \"value\": \"#{event["properties"]["buyer_outcome_comment"]}\",
+                                    \"short\": false
+                                  }
+                                ]
+                              }]",
+                unfurl_links: true
+              }
+            end
+          "seller_outcome_set" ->
+            %{
+              text: ":-1: #{event["subject"]["display"]} dismissed #{event["properties"]["from_name"]} inquiry on https://www.artsy.net/artwork/#{List.first(event["properties"]["items"])["item_id"]}",
+              attachments: "[{
+                              \"fields\": [
+                                {
+                                  \"title\": \"Outcome\",
+                                  \"value\": \"#{event["properties"]["seller_outcome"]}\",
+                                  \"short\": true
+                                },
+                                {
+                                  \"title\": \"Comment\",
+                                  \"value\": \"#{event["properties"]["seller_outcome_comment"]}\",
+                                  \"short\": false
+                                },
+                                {
+                                  \"title\": \"Radiation\",
+                                  \"value\": \"https://radiation.artsy.net/admin/accounts/2/conversations/#{event["properties"]["radiation_conversation_id"]}\",
+                                  \"short\": false
+                                }
+                              ]
+                            }]",
+              unfurl_links: true
+            }
         end
     end
   end
