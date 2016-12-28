@@ -1,5 +1,6 @@
 defmodule Aprb.Service.EventService do
   alias Aprb.{Repo, Topic, Service.SummaryService}
+  import LinksHelper
 
   def receive_event(event, topic) do
     processed_message = event
@@ -129,7 +130,7 @@ defmodule Aprb.Service.EventService do
             end
           "seller_outcome_set" ->
             %{
-              text: ":-1: #{event["subject"]["display"]} dismissed #{event["properties"]["from_name"]} inquiry on https://www.artsy.net/artwork/#{List.first(event["properties"]["items"])["item_id"]}",
+              text: ":-1: #{event["subject"]["display"]} dismissed #{event["properties"]["from_name"]} inquiry on #{artwork_link_from_conversation_event(event)}",
               attachments: "[{
                               \"fields\": [
                                 {
