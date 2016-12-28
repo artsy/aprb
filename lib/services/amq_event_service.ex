@@ -13,17 +13,7 @@ defmodule Aprb.Service.AmqEventService do
   end
 
   defp rabbitmq_connect(topic) do
-    case Connection.open(
-      username: System.get_env("RABBITMQ_USER"),
-      password: System.get_env("RABBITMQ_PASSWORD"),
-      host: System.get_env("RABBITMQ_HOST"),
-      virtual_host: System.get_env("RABBITMQ_VHOST"),
-      heartbeat: 5,
-      ssl_options: [
-        cacertfile: System.get_env("RABBITMQ_CA_CERT_PATH"),
-        certfile: System.get_env("RABBITMQ_CLIENT_CERT_PATH"),
-        keyfile: System.get_env("RABBTIMQ_CLIENT_KEY_PATH") 
-      ]) do
+    case Connection.open(Application.get_env(:aprb, RabbitMQ)) do
       {:ok, conn} ->
         # Get notifications when the connection goes down
         Process.monitor(conn.pid)
