@@ -46,7 +46,7 @@ defmodule Aprb.Service.EventService do
           unfurl_links: false }
 
       "inquiries" ->
-        %{text: ":shaka: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} on https://www.artsy.net/artwork/#{event["properties"]["inquireable"]["id"]}",
+        %{text: ":shaka: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} on #{artwork_link(event["properties"]["inquireable"]["id"])}",
           attachments: "[{
                           \"fields\": [
                             {
@@ -69,7 +69,7 @@ defmodule Aprb.Service.EventService do
           unfurl_links: true }
 
       "purchases" ->
-        %{text: ":shake: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} https://www.artsy.net/artwork/#{event["properties"]["artwork"]["id"]}",
+        %{text: ":shake: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} #{artwork_link(event["properties"]["artwork"]["id"])}",
           attachments: "[{
                           \"fields\": [
                             {
@@ -110,7 +110,7 @@ defmodule Aprb.Service.EventService do
           "buyer_outcome_set" ->
             if event["properties"]["buyer_outcome"] == "other" do
               %{
-                text: ":phone: #{event["subject"]["display"]} responded on https://www.artsy.net/artwork/#{List.first(event["properties"]["conversation_items"])["item_id"]}",
+                text: ":phone: #{event["subject"]["display"]} responded on #{artwork_link(List.first(event["properties"]["conversation_items"])["item_id"])}",
                 attachments: "[{
                                 \"fields\": [
                                   {
@@ -130,7 +130,7 @@ defmodule Aprb.Service.EventService do
             end
           "seller_outcome_set" ->
             %{
-              text: ":-1: #{event["subject"]["display"]} dismissed #{event["properties"]["from_name"]} inquiry on #{artwork_link_from_conversation_event(event)}",
+              text: ":-1: #{event["subject"]["display"]} dismissed #{event["properties"]["from_name"]} inquiry on #{artwork_link(List.first(event["properties"]["items"])["item_id"])}",
               attachments: "[{
                               \"fields\": [
                                 {
