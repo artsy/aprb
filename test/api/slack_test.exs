@@ -40,7 +40,7 @@ defmodule Aprb.Api.SlackTest do
   end
 
   test "requires a token" do
-    assert_raise Maru.Exceptions.InvalidFormatter, "Parsing Param Error: token", fn ->
+    assert_raise Maru.Exceptions.InvalidFormat, "Parsing Param Error: token", fn ->
       post("/slack")
     end
   end

@@ -59,6 +59,26 @@ spec:
             secretKeyRef:
               name: aprb-credentials
               key: gravity_api_token
+        - name: RABBITMQ_HOST
+          valueFrom:
+              secretKeyRef:
+                name: aprb-credentials
+                key: rabbitmq_host
+        - name: RABBITMQ_USER
+          valueFrom:
+              secretKeyRef:
+                name: aprb-credentials
+                key: rabbitmq_user
+        - name: RABBITMQ_PASSWORD
+          valueFrom:
+              secretKeyRef:
+                name: aprb-credentials
+                key: rabbitmq_password
+        - name: RABBITMQ_VHOST
+          valueFrom:
+              secretKeyRef:
+                name: aprb-credentials
+                key: rabbitmq_vhost
         ports:
         - containerPort: 4000
 ---

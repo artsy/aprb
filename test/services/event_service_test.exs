@@ -82,4 +82,31 @@ defmodule Aprb.Service.EventServiceTest do
     response = EventService.process_event(event, "conversations")
     assert response == nil
   end
+
+  test "process_event: conversations - seller outcome" do
+    event = %{
+               "subject" => %{"display" => "Gallery 1"},
+               "object" => %{"id" => "1"},
+               "verb" => "seller_outcome_set",
+               "properties" => %{
+                  "from_id" => "collector1",
+                  "from_name" => "Collector One",
+                  "seller_outcome" => "dont_trust",
+                  "seller_outcome_comment" => "I really dont",
+                  "dismissed" => true,
+                  "inquiry_id" => "inq1",
+                  "radiation_conversation_id" => "rad1",
+                  "items" => [%{
+                      "item_type" => "Artwork",
+                      "item_id" => "artwork-1"
+                  }]
+               }
+             }
+    response = EventService.process_event(event, "conversations")
+    assert response[:text]  == ":-1: Gallery 1 dismissed Collector One inquiry on https://www.artsy.net/artwork/artwork-1"
+    assert response[:unfurl_links] == true
+    assert String.contains?(response[:attachments], "\"value\": \"dont_trust\"") == true
+    assert String.contains?(response[:attachments], "\"value\": \"I really dont\"") == true
+    assert String.contains?(response[:attachments], "\"value\": \"https://radiation.artsy.net/admin/accounts/2/conversations/rad1\"") == true
+  end
 end
