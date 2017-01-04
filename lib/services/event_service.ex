@@ -1,3 +1,5 @@
+require Logger
+
 defmodule Aprb.Service.EventService do
   alias Aprb.{Repo, Topic, Service.SummaryService}
   import LinksHelper
@@ -9,6 +11,7 @@ defmodule Aprb.Service.EventService do
     # broadcast a message to a topic
     if processed_message != nil do
       for subscriber <- get_topic_subscribers(topic) do
+        Logger.debug "Sending #{processed_message} to #{subscriber.channel_name}"
         Slack.Web.Chat.post_message("##{subscriber.channel_name}", processed_message[:text], %{attachments: processed_message[:attachments], unfurl_links: processed_message[:unfurl_links], as_user: true})
       end
     end
