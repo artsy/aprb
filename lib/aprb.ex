@@ -14,7 +14,8 @@ defmodule Aprb do
       worker(Task, [Aprb.EventReceiver, :start_link, ["purchases"]], id: :purchases),
       worker(Task, [Aprb.EventReceiver, :start_link, ["bidding"]], id: :bidding),
       worker(Task, [Aprb.EventReceiver, :start_link, ["conversations"]], id: :conversations),
-      worker(Aprb.Service.AmqEventService, ["conversations"])
+      worker(Aprb.Service.AmqEventService, ["conversations"], id: :conversations),
+      worker(Aprb.Service.AmqEventService, ["radiation.messages"], id: :radiation_messages)
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
