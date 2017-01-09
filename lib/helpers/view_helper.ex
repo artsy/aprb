@@ -11,8 +11,17 @@ defmodule ViewHelper do
     "https://radiation.artsy.net/#{path}"
   end
 
+  def radaition_conversation_link(conversation_id) do
+    conversation_path = "admin/accounts/2/conversations/#{conversation_id}"
+    radiation_link(conversation_path)
+  end
+
   def admin_partners_link(path) do
     "https://admin-partners.artsy.net/#{path}"
+  end
+
+  def admin_subscription_link(subscription_id) do
+    admin_partners_link("subscriptions/#{subscription_id}")
   end
 
   def cleanup_name(full_name) do
@@ -21,9 +30,9 @@ defmodule ViewHelper do
       |> List.first
   end
 
-  def format_price(price) do
+  def format_price(price, currency \\ :USD) do
     if price do
-      Money.to_string(Money.new(round(price * 100), :USD), symbol: false)
+      Money.to_string(Money.new(round(price * 100), currency), symbol: false)
     else
       "N/A"
     end

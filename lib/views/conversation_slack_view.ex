@@ -41,7 +41,7 @@ defmodule Aprb.Views.ConversationSlackView do
                             },
                             {
                               \"title\": \"Radiation\",
-                              \"value\": \"https://radiation.artsy.net/admin/accounts/2/conversations/#{event["properties"]["radiation_conversation_id"]}\",
+                              \"value\": \"#{radaition_conversation_link(event["properties"]["radiation_conversation_id"])}\",
                               \"short\": false
                             }
                           ]
