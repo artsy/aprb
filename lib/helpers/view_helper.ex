@@ -11,7 +11,7 @@ defmodule ViewHelper do
     "https://radiation.artsy.net/#{path}"
   end
 
-  def radaition_conversation_link(conversation_id) do
+  def radiation_conversation_link(conversation_id) do
     conversation_path = "admin/accounts/2/conversations/#{conversation_id}"
     radiation_link(conversation_path)
   end

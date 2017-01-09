@@ -41,7 +41,7 @@ defmodule Aprb.Views.ConversationSlackView do
                             },
                             {
                               \"title\": \"Radiation\",
-                              \"value\": \"#{radaition_conversation_link(event["properties"]["radiation_conversation_id"])}\",
+                              \"value\": \"#{radiation_conversation_link(event["properties"]["radiation_conversation_id"])}\",
                               \"short\": false
                             }
                           ]
