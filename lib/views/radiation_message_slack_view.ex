@@ -12,7 +12,7 @@ defmodule Aprb.Views.RadiationMessageSlackView do
                         },
                         {
                           \"title\": \"Recipient Email\",
-                          \"value\": \"#{event["properties"]["to_email"]}\",
+                          \"value\": \"#{event["properties"]["to_email_address"]}\",
                           \"short\": true
                         }
                       ]

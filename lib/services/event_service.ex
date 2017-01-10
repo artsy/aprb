@@ -31,7 +31,7 @@ defmodule Aprb.Service.EventService do
         Aprb.Views.PurchaseSlackView.render(event)
       "bidding" ->
         Aprb.Views.BiddingSlackView.render(event)
-      "radiation.messages" -> 
+      "radiation.messages" ->
         Aprb.Views.RadiationMessageSlackView.render(event)
       "conversations" ->
         Aprb.Views.ConversationSlackView.render(event)
