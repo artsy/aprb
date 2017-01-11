@@ -9,7 +9,7 @@ defmodule Aprb.Views.BiddingSlackView do
                       \"fields\": [
                         {
                           \"title\": \"Amount\",
-                          \"value\": \"#{format_price(event["amountCents"])}\",
+                          \"value\": \"#{format_price(event["amountCents"] / 100)}\",
                           \"short\": true
                         },
                         {
