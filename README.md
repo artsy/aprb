@@ -24,6 +24,6 @@ Don't know what Artsy is? Check out [this overview](https://github.com/artsy/met
 
 ## LICENSE
 
-Copyright (c) 2016 Artsy Inc.
+Copyright (c) 2017 Artsy Inc.
 
 MIT License, see [LICENSE](LICENSE).
