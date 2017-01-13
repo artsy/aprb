@@ -56,7 +56,7 @@ defmodule Aprb.Service.EventServiceTest do
                   "buyer_outcome" => "other",
                   "buyer_outcome_comment" => "never received response",
                   "inquiry_id" => "inq1",
-                  "conversation_items" => [
+                  "items" => [
                     %{
                       "item_type" => "Artwork",
                       "item_id" => "artwork-1"
