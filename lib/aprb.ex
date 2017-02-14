@@ -15,7 +15,7 @@ defmodule Aprb do
       worker(Aprb.Service.AmqEventService, ["inquiries"], id: :amq_inquiries),
       worker(Aprb.Service.AmqEventService, ["radiation.messages"], id: :radiation_messages),
       worker(Aprb.Service.AmqEventService, ["subscriptions"], id: :subscriptions).
-      worker(Aprb.Service.AmqEventService, ["bidding"], id: :bidding)
+      worker(Aprb.Service.AmqEventService, ["auctions"], id: :auctions)
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
