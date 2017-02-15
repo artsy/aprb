@@ -7,7 +7,7 @@ defmodule Aprb.Service.SummaryService do
     cond do
       Enum.member?(~w(subscriptions users inquiries purchases conversations radiation.messages), topic.name) ->
         handle_summary(topic, event["verb"], current_date)
-      topic.name == "bidding" ->
+      Enum.member?(~w(auctions bidding), topic.name) ->
         handle_summary(topic, event["type"], current_date)
     end
   end
