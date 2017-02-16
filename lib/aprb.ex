@@ -8,14 +8,12 @@ defmodule Aprb do
 
     children = [
       supervisor(Aprb.Repo, []),
-      worker(Task, [Aprb.EventReceiver, :start_link, ["users"]], id: :kafka_users),
-      worker(Task, [Aprb.EventReceiver, :start_link, ["purchases"]], id: :kafka_purchases),
-      worker(Task, [Aprb.EventReceiver, :start_link, ["bidding"]], id: :kafka_bidding),
       worker(Aprb.Service.AmqEventService, ["conversations"], id: :conversations),
       worker(Aprb.Service.AmqEventService, ["inquiries"], id: :amq_inquiries),
       worker(Aprb.Service.AmqEventService, ["radiation.messages"], id: :radiation_messages),
       worker(Aprb.Service.AmqEventService, ["subscriptions"], id: :subscriptions),
-      worker(Aprb.Service.AmqEventService, ["auctions"], id: :auctions)
+      worker(Aprb.Service.AmqEventService, ["auctions"], id: :auctions),
+      worker(Aprb.Service.AmqEventService, ["purchases"], id: :purchases),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

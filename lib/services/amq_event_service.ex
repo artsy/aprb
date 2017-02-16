@@ -47,7 +47,7 @@ defmodule Aprb.Service.AmqEventService do
   end
 
   # Sent by the broker when the consumer is unexpectedly cancelled (such as after a queue deletion)
-  def handle_info({:basic_cancel, %{consumer_tag: consumer_tag}}, {chan, topic}) do
+  def handle_info({:basic_cancel, %{consumer_tag: consumer_tag}}, {chan, _topic}) do
     {:stop, :normal, chan}
   end
 
