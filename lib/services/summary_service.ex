@@ -1,5 +1,5 @@
 defmodule Aprb.Service.SummaryService do
-  alias Aprb.{Repo, Topic, Summary}
+  alias Aprb.{Repo, Summary}
   import Ecto.Query
 
   def update_summary(topic, event) do

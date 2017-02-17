@@ -50,7 +50,7 @@ defmodule Aprb.Service.SlackCommandService do
         end
 
       Regex.match?( ~r/subscribe/ , params[:text])  ->
-        [command | topic_names] = String.split(params[:text], ~r{\s}, parts: 2)
+        [_ | topic_names] = String.split(params[:text], ~r{\s}, parts: 2)
         # add subscriptions
         subscribed_topics = for topic_name <- List.first(topic_names) |> String.split(~r{\s}) do
           topic = Repo.get_by(Topic, name: topic_name)

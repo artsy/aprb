@@ -14,7 +14,7 @@ defmodule Aprb.Mixfile do
 
   def application do
     [ mod: {Aprb, []},
-      applications: [:logger, :maru, :amqp, :kafka_ex, :slack, :postgrex, :ecto, :calendar]]
+      applications: [:logger, :maru, :amqp, :slack, :postgrex, :ecto, :calendar]]
   end
 
   defp aliases do
@@ -23,7 +23,6 @@ defmodule Aprb.Mixfile do
 
   defp deps do
     [ {:maru, "~> 0.11"},
-      {:kafka_ex, "~> 0.5.0"},
       {:amqp_client, git: "https://github.com/jbrisbin/amqp_client.git", override: true},
       {:amqp, "0.1.4"},
       {:poison, "~> 2.0"},
