@@ -1,0 +1,103 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: aprb
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: aprb
+      name: aprb
+      namespace: default
+    spec:
+      containers:
+      - env:
+        - name: MIX_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: aprb-config
+              key: MIX_ENV
+        - name: RABBITMQ_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: aprb-config
+              key: RABBITMQ_HOST
+        - name: RABBITMQ_USER
+          valueFrom:
+            configMapKeyRef:
+              name: aprb-config
+              key: RABBITMQ_USER
+        - name: RABBITMQ_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: aprb-config
+              key: RABBITMQ_PORT
+        - name: RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: aprb-secrets
+              key: RABBITMQ_PASSWORD
+        - name: GRAVITY_API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: aprb-config
+              key: GRAVITY_API_URL
+        - name: GRAVITY_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: aprb-secrets
+              key: GRAVITY_API_TOKEN
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: aprb-config
+              key: DB_USER
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: aprb-config
+              key: DB_NAME
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: aprb-config
+              key: DB_HOST
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: aprb-secrets
+              key: DB_PASSWORD
+        - name: SLACK_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: aprb-secrets
+              key: SLACK_API_TOKEN
+        - name: SLACK_SLASH_COMMAND_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: aprb-secrets
+              key: SLACK_SLASH_COMMAND_TOKEN
+        image: 585031190124.dkr.ecr.us-east-1.amazonaws.com/aprb:production
+        imagePullPolicy: Always
+        name: aprb
+        ports:
+        - containerPort: 4000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: aprb
+  name: aprb
+  namespace: default
+spec:
+  ports:
+  - port: 80
+    targetPort: 4000
+    protocol: TCP
+  selector:
+    app: aprb
+  sessionAffinity: None
+  type: LoadBalancer

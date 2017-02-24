@@ -1,0 +1,33 @@
+---
+version: '2'
+services:
+  aprb:
+    command: mix run
+    environment:
+    - MIX_ENV=dev
+    - DB_USER=postgres
+    - DB_NAME=postgres
+    - DB_HOST=postgres
+    - DB_PASSWORD=postgres
+    - RABBITMQ_HOST=rabbitmq
+    - RABBITMQ_USER=guest
+    - RABBITMQ_PASSWORD=guest
+    - RABBITMQ_PORT=5672
+    - GRAVITY_API_URL=https://api.artsy.net/api
+    - GRAVITY_API_TOKEN=foo
+    - SLACK_API_TOKEN=bar
+    - SLACK_SLASH_COMMAND_TOKEN=baz
+    extends:
+      file: common.yml
+      service: aprb
+    ports:
+    - 8080:4000
+  postgres:
+    image: postgres:9.4
+    ports:
+    - 5432:5432
+  rabbitmq:
+    image: rabbitmq:3.6-management
+    ports:
+      - 5672:5672
+      - 15672:15672

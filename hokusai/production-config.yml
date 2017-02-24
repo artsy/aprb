@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: aprb
+  name: aprb-config
+data:
+  MIX_ENV: prod
+  RABBITMQ_HOST: rmq-amqp
+  RABBITMQ_USER: aprb
+  RABBITMQ_PORT: "5672"
+  GRAVITY_API_URL: https://api.artsy.net/api
+  DB_USER: aprb_prod
+  DB_NAME: aprb_production
+  DB_HOST: aprb-production.c0knrkahdfsj.us-east-1.rds.amazonaws.com
