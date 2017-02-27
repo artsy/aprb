@@ -6,4 +6,7 @@ config :maru, Aprb.Api.Root,
 config :aprb, Aprb.Repo,
   pool: Ecto.Adapters.SQL.Sandbox,
   adapter: Ecto.Adapters.Postgres,
-  database: "aprb_test"
+  username: System.get_env("DB_USER"),
+  password: System.get_env("DB_PASSWORD"),
+  database: System.get_env("DB_NAME"),
+  hostname: System.get_env("DB_HOST")

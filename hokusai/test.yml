@@ -22,5 +22,9 @@ services:
       service: aprb
   postgres:
     image: postgres:9.4
+    environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres
+    - POSTGRES_DB=postgres
   rabbitmq:
     image: rabbitmq:3.6-management
