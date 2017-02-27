@@ -10,6 +10,6 @@ data:
   RABBITMQ_USER: aprb
   RABBITMQ_PORT: "5672"
   GRAVITY_API_URL: https://api.artsy.net/api
-  # DB_USER: CHANGEME
-  # DB_NAME: CHANGEME
-  # DB_HOST: CHANGEME
+  DB_USER: aprb_staging
+  DB_NAME: aprb_staging
+  DB_HOST: staging-shared.c0knrkahdfsj.us-east-1.rds.amazonaws.com
