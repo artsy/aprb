@@ -1,9 +1,0 @@
-require 'rake'
-
-require 'momentum'
-
-Momentum.configure do |conf|
-  conf[:app_base_name] = 'aprb'
-end
-
-require 'momentum/rake'
