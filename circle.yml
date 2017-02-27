@@ -10,12 +10,12 @@ dependencies:
 
 test:
   override:
-    - hokusai build
+    - hokusai test
 
 deployment:
   staging:
     branch: master
     commands:
       - ./ci/install-kubectl.sh
-      - hokusai push $CIRCLE_SHA1
+      - hokusai push --test-build $CIRCLE_SHA1
       - hokusai deploy staging $CIRCLE_SHA1
