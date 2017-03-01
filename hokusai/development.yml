@@ -2,6 +2,7 @@
 version: '2'
 services:
   aprb:
+    command: bash -c 'mix ecto.migrate && mix run --no-halt'
     environment:
     - MIX_ENV=dev
     - DB_USER=postgres

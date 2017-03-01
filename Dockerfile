@@ -12,4 +12,4 @@ ENV PORT 4000
 ENV MIX_ENV prod
 RUN mix deps.get
 RUN mix compile
-CMD mix ecto.migrate && mix run --no-halt
+CMD mix run --no-halt

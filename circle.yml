@@ -18,4 +18,5 @@ deployment:
     commands:
       - ./ci/install-kubectl.sh
       - hokusai push --test-build $CIRCLE_SHA1
+      - hokusai run staging --tag $CIRCLE_SHA1 "mix ecto.migrate"
       - hokusai deploy staging $CIRCLE_SHA1
