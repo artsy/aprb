@@ -5,21 +5,18 @@ machine:
     - docker
 
 dependencies:
-  pre:
-    - scripts/ci_prepare.sh
-  cache_directories:
-    - ~/dependencies
-    - ~/.mix
-    - _build
-    - deps
+  override:
+    - ./ci/install-hokusai.sh
 
 test:
   override:
-    - scripts/ci_test.sh
+    - hokusai test
 
 deployment:
-  prod:
+  staging:
     branch: master
     commands:
-      - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/aprb:$CIRCLE_SHA1 -t $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/aprb:latest .
-      - ./scripts/deploy.sh
+      - ./ci/install-kubectl.sh
+      - hokusai push --test-build $CIRCLE_SHA1
+      - hokusai run staging --tag $CIRCLE_SHA1 "mix ecto.migrate"
+      - hokusai deploy staging $CIRCLE_SHA1

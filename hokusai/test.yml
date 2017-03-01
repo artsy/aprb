@@ -1,0 +1,30 @@
+---
+version: '2'
+services:
+  aprb:
+    command: mix test
+    environment:
+    - MIX_ENV=test
+    - DB_USER=postgres
+    - DB_NAME=postgres
+    - DB_HOST=postgres
+    - DB_PASSWORD=postgres
+    - RABBITMQ_HOST=rabbitmq
+    - RABBITMQ_USER=guest
+    - RABBITMQ_PASSWORD=guest
+    - RABBITMQ_PORT=5672
+    - GRAVITY_API_URL=https://api.artsy.net/api
+    - GRAVITY_API_TOKEN=foo
+    - SLACK_API_TOKEN=bar
+    - SLACK_SLASH_COMMAND_TOKEN=baz
+    extends:
+      file: common.yml
+      service: aprb
+  postgres:
+    image: postgres:9.4
+    environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres
+    - POSTGRES_DB=postgres
+  rabbitmq:
+    image: rabbitmq:3.6-management

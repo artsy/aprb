@@ -9,7 +9,6 @@ config :aprb, RabbitMQ,
   username: System.get_env("RABBITMQ_USER"),
   password: System.get_env("RABBITMQ_PASSWORD"),
   host: System.get_env("RABBITMQ_HOST"),
-  virtual_host: System.get_env("RABBITMQ_VHOST"),
   heartbeat: 5
 
 
