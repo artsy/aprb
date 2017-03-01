@@ -1,6 +1,5 @@
 defmodule Aprb.Service.EventService do
   alias Aprb.{Repo, Topic, Service.SummaryService}
-  import ViewHelper
 
   def receive_event(event, topic) do
     processed_message = event
