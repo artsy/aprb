@@ -1,7 +1,7 @@
 defmodule Aprb.Subscriber do
   use Ecto.Schema
   import Ecto.Changeset
-  
+
   schema "subscribers" do
     field :team_id,      :string
     field :team_domain,  :string
