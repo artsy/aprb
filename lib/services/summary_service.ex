@@ -1,4 +1,5 @@
 defmodule Aprb.Service.SummaryService do
+  require Logger
   alias Aprb.{Repo, Summary}
   import Ecto.Query
 
@@ -24,14 +25,24 @@ defmodule Aprb.Service.SummaryService do
              select: sum(s.total_count))
   end
 
-  defp handle_summary(t, verb, date) do
-    summary_query = Summary.find_by_topic_verb_date(t.id, verb, date)
-    if !Repo.one(summary_query) do
-      changeset = Summary.changeset(%Summary{}, %{topic_id: t.id, verb: verb, summary_date: date, total_count: 0})
-      Repo.insert!(changeset)
+  defp handle_summary(topic, verb, date) do
+    results = case Repo.one(from s in Summary, where: s.topic_id == ^topic.id, where: s.verb == ^verb, where: s.summary_date == ^date) do
+      nil -> %Summary{topic_id: topic.id, verb: verb, summary_date: Ecto.Date.cast!(date)}
+      summary -> summary
     end
-    summary = Repo.one(summary_query)
-    updated_summary = Summary.changeset(summary, %{total_count: summary.total_count + 1})
-    Repo.update(updated_summary)
+    |> Summary.changeset(%{})
+    |> Repo.insert_or_update
+
+    case results do
+      {:ok, summary} ->
+        update_total(summary)
+      {:error, changeset} ->
+        Logger.warn "There was an error in insert or update summary, #{changeset.errors}"
+    end
+  end
+
+  defp update_total(summary) do
+    from(s in Summary, where: s.id == ^summary.id)
+      |> Repo.update_all(inc: [total_count: 1])
   end
 end
