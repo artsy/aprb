@@ -9,7 +9,7 @@ defmodule Aprb.Service.SlackCommandService do
           sub_changeset = Subscriber.changeset(%Subscriber{}, Map.take(params, [:team_id, :team_domain, :channel_id, :channel_name, :user_id, :user_name]))
           case Repo.insert(sub_changeset) do
             {:ok, new_subscriber} ->
-              subscriber = new_subscriber
+              new_subscriber
             {:error, _changeset} ->
               raise("Can't create subscriber")
           end
@@ -29,7 +29,7 @@ defmodule Aprb.Service.SlackCommandService do
         "Subscribed topics: #{current_topics}"
 
       Regex.match?( ~r/unsubscribe/ , params[:text])  ->
-        [command | topic_names] = String.split(params[:text], ~r{\s}, parts: 2)
+        [_command | topic_names] = String.split(params[:text], ~r{\s}, parts: 2)
         # add subscriptions
         removed_topics = for topic_name <- List.first(topic_names) |> String.split(~r{\s}) do
           topic = Repo.get_by(Topic, name: topic_name)
@@ -39,7 +39,7 @@ defmodule Aprb.Service.SlackCommandService do
               Repo.delete(subscription)
               topic_name
             end
-          end            
+          end
         end
         # remove nil from list
         removed_topics = Enum.reject(removed_topics, fn(x) -> x == nil end)

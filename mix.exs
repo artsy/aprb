@@ -23,8 +23,7 @@ defmodule Aprb.Mixfile do
 
   defp deps do
     [ {:maru, "~> 0.11"},
-      {:amqp_client, git: "https://github.com/jbrisbin/amqp_client.git", override: true},
-      {:amqp, "0.1.4"},
+      {:amqp, "0.2.0-pre.2"},
       {:poison, "~> 2.0"},
       {:slack, "~> 0.7.0"},
       {:websocket_client, github: "jeremyong/websocket_client"},

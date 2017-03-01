@@ -64,7 +64,7 @@ defmodule Aprb.Service.AmqEventService do
   defp consume(channel, topic, tag, redelivered, payload) do
     try do
       Basic.ack channel, tag
-      if acceptable_message?(payload), do: EventService.receive_event(payload, topic)
+      if acceptable_message?(payload), do: Task.async(fn -> EventService.receive_event(payload, topic) end)
     rescue
       exception ->
         # Requeue unless it's a redelivered message.
