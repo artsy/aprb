@@ -8,11 +8,12 @@ defmodule Aprb.Service.AmqEventService do
     GenServer.start_link(__MODULE__, opts, [])
   end
 
-  def init(topic) do
-    rabbitmq_connect(topic)
+  def init(opts) do
+    rabbitmq_connect(opts)
   end
 
-  defp rabbitmq_connect(topic) do
+  defp rabbitmq_connect(opts) do
+    %{topic: topic, routing_key: routing_key } = Map.merge(%{ routing_key: "*"}, opts)
     case Connection.open(Application.get_env(:aprb, RabbitMQ)) do
       {:ok, conn} ->
         # Get notifications when the connection goes down
@@ -22,49 +23,49 @@ defmodule Aprb.Service.AmqEventService do
         Exchange.topic(chan, topic, durable: true)
         queue_name = "aprb_#{topic}_queue"
         Queue.declare(chan, queue_name, durable: true)
-        Queue.bind(chan, queue_name, topic, routing_key: "*")
+        Queue.bind(chan, queue_name, topic, routing_key: routing_key)
         {:ok, _consumer_tag} = Basic.consume(chan, queue_name)
-        {:ok, {chan, topic}}
+        {:ok, {chan, opts}}
       {:error, message} ->
         IO.inspect message
         # Reconnection loop
         :timer.sleep(10000)
-        rabbitmq_connect(topic)
+        rabbitmq_connect(opts)
     end
   end
 
   # 2. Implement a callback to handle DOWN notifications from the system
   #    This callback should try to reconnect to the server
 
-  def handle_info({:DOWN, _, :process, _pid, _reason}, {_chan, topic}) do
-    {:ok, {chan, topic}} = rabbitmq_connect(topic)
-    {:noreply, {chan, topic}}
+  def handle_info({:DOWN, _, :process, _pid, _reason}, {_chan, opts}) do
+    {:ok, {chan, opts}} = rabbitmq_connect(opts)
+    {:noreply, {chan, opts}}
   end
 
   # Confirmation sent by the broker after registering this process as a consumer
-  def handle_info({:basic_consume_ok, %{consumer_tag: consumer_tag}}, {chan, topic}) do
-    {:noreply, {chan, topic}}
+  def handle_info({:basic_consume_ok, %{consumer_tag: consumer_tag}}, {chan, opts}) do
+    {:noreply, {chan, opts}}
   end
 
   # Sent by the broker when the consumer is unexpectedly cancelled (such as after a queue deletion)
-  def handle_info({:basic_cancel, %{consumer_tag: consumer_tag}}, {chan, _topic}) do
+  def handle_info({:basic_cancel, %{consumer_tag: consumer_tag}}, {chan, _opts}) do
     {:stop, :normal, chan}
   end
 
   # Confirmation sent by the broker to the consumer process after a Basic.cancel
-  def handle_info({:basic_cancel_ok, %{consumer_tag: consumer_tag}}, {chan, topic}) do
-    {:noreply, {chan, topic}}
+  def handle_info({:basic_cancel_ok, %{consumer_tag: consumer_tag}}, {chan, opts}) do
+    {:noreply, {chan, opts}}
   end
 
-  def handle_info({:basic_deliver, payload, %{delivery_tag: tag, redelivered: redelivered}}, {chan, topic}) do
-    spawn fn -> consume(chan, topic, tag, redelivered, payload) end
-    {:noreply, {chan, topic}}
+  def handle_info({:basic_deliver, payload, %{delivery_tag: tag, redelivered: redelivered}}, {chan, opts}) do
+    spawn fn -> consume(chan, opts, tag, redelivered, payload) end
+    {:noreply, {chan, opts}}
   end
 
-  defp consume(channel, topic, tag, redelivered, payload) do
+  defp consume(channel, opts, tag, redelivered, payload) do
     try do
       Basic.ack channel, tag
-      if acceptable_message?(payload), do: Task.async(fn -> EventService.receive_event(payload, topic) end)
+      if acceptable_message?(payload), do: Task.async(fn -> EventService.receive_event(payload, opts) end)
     rescue
       exception ->
         # Requeue unless it's a redelivered message.
