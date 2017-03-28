@@ -13,7 +13,7 @@ defmodule Aprb.Service.AmqEventService do
   end
 
   defp rabbitmq_connect(opts) do
-    %{:topic => topic, :routing_key => routing_key } = Map.merge(%{ routing_key: "*"}, opts)
+    %{topic: topic, routing_key: routing_key } = Map.merge(%{ routing_key: "*"}, opts)
     case Connection.open(Application.get_env(:aprb, RabbitMQ)) do
       {:ok, conn} ->
         # Get notifications when the connection goes down
@@ -25,12 +25,12 @@ defmodule Aprb.Service.AmqEventService do
         Queue.declare(chan, queue_name, durable: true)
         Queue.bind(chan, queue_name, topic, routing_key: routing_key)
         {:ok, _consumer_tag} = Basic.consume(chan, queue_name)
-        {:ok, {chan, topic}}
+        {:ok, {chan, opts}}
       {:error, message} ->
         IO.inspect message
         # Reconnection loop
         :timer.sleep(10000)
-        rabbitmq_connect(topic)
+        rabbitmq_connect(opts)
     end
   end
 
