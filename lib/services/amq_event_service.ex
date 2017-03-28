@@ -58,14 +58,14 @@ defmodule Aprb.Service.AmqEventService do
   end
 
   def handle_info({:basic_deliver, payload, %{delivery_tag: tag, redelivered: redelivered}}, {chan, opts}) do
-    spawn fn -> consume(chan, opts, tag, redelivered, payload) end
+    spawn fn -> consume(chan, opts.topic, tag, redelivered, payload) end
     {:noreply, {chan, opts}}
   end
 
-  defp consume(channel, opts, tag, redelivered, payload) do
+  defp consume(channel, topic, tag, redelivered, payload) do
     try do
       Basic.ack channel, tag
-      if acceptable_message?(payload), do: Task.async(fn -> EventService.receive_event(payload, opts) end)
+      if acceptable_message?(payload), do: Task.async(fn -> EventService.receive_event(payload, topic) end)
     rescue
       exception ->
         # Requeue unless it's a redelivered message.
