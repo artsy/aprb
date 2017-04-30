@@ -1,5 +1,5 @@
 defmodule Aprb.Views.UserSlackView do
-  import ViewHelper
+  import Aprb.ViewHelper
 
   def render(event) do
     %{

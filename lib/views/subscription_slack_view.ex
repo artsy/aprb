@@ -1,5 +1,5 @@
 defmodule Aprb.Views.SubscriptionSlackView do
-  import ViewHelper
+  import Aprb.ViewHelper
   def render(event, current_summary) do
     %{
       text: "",
@@ -10,6 +10,11 @@ defmodule Aprb.Views.SubscriptionSlackView do
                         {
                           \"title\": \"Outreach Admin\",
                           \"value\": \"#{event["properties"]["partner"]["outreach_admin"]}\",
+                          \"short\": true
+                        },
+                        {
+                          \"title\": \"First Subscription?\",
+                          \"value\": \"#{event["properties"]["partner"]["initial_subscription"]}\",
                           \"short\": true
                         },
                         {

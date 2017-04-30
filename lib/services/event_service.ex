@@ -1,5 +1,5 @@
 defmodule Aprb.Service.EventService do
-  alias Aprb.{Repo, Topic, Service.SummaryService}
+  alias Aprb.{Repo, Topic, Service.SummaryService, SubscriptionHelper}
 
   def receive_event(event, topic) do
     processed_message = event
@@ -20,9 +20,9 @@ defmodule Aprb.Service.EventService do
       "users" ->
         Aprb.Views.UserSlackView.render(event)
       "subscriptions" ->
-        # wait for summaryt ask to finish first
+        # wait for summary task to finish first
         Task.await(summary_task)
-        current_summary = SummaryService.get_summary_for_month(topic, event["verb"], DateTime.utc_now.year, DateTime.utc_now.month)
+        current_summary = SummaryService.get_summary_for_month(topic, SubscriptionHelper.parsed_verb(event), DateTime.utc_now.year, DateTime.utc_now.month)
         Aprb.Views.SubscriptionSlackView.render(event, current_summary)
       "inquiries" ->
         Aprb.Views.InquirySlackView.render(event)
