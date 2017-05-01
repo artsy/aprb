@@ -43,17 +43,17 @@ defmodule Aprb.Service.AmqEventService do
   end
 
   # Confirmation sent by the broker after registering this process as a consumer
-  def handle_info({:basic_consume_ok, %{consumer_tag: consumer_tag}}, {chan, opts}) do
+  def handle_info({:basic_consume_ok, %{consumer_tag: _consumer_tag}}, {chan, opts}) do
     {:noreply, {chan, opts}}
   end
 
   # Sent by the broker when the consumer is unexpectedly cancelled (such as after a queue deletion)
-  def handle_info({:basic_cancel, %{consumer_tag: consumer_tag}}, {chan, _opts}) do
+  def handle_info({:basic_cancel, %{consumer_tag: _consumer_tag}}, {chan, _opts}) do
     {:stop, :normal, chan}
   end
 
   # Confirmation sent by the broker to the consumer process after a Basic.cancel
-  def handle_info({:basic_cancel_ok, %{consumer_tag: consumer_tag}}, {chan, opts}) do
+  def handle_info({:basic_cancel_ok, %{consumer_tag: _consumer_tag}}, {chan, opts}) do
     {:noreply, {chan, opts}}
   end
 
@@ -72,7 +72,7 @@ defmodule Aprb.Service.AmqEventService do
         # This means we will retry consuming a message once in case of exception
         # before we give up and have it moved to the error queue
         Basic.reject channel, tag, requeue: not redelivered
-        IO.puts "Error parsing #{payload}"
+        IO.puts "Error parsing #{payload} #{exception}"
     end
   end
 

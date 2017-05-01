@@ -1,5 +1,5 @@
 defmodule Aprb.Views.BiddingSlackView do
-  import ViewHelper
+  import Aprb.ViewHelper
 
   def render(event) do
     artwork_data = fetch_sale_artwork(event["lotId"])

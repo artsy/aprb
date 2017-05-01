@@ -1,6 +1,6 @@
 defmodule Aprb.Service.SummaryService do
   require Logger
-  alias Aprb.{Repo, Summary}
+  alias Aprb.{Repo, Summary, SubscriptionHelper}
   import Ecto.Query
 
   def update_summary(topic, event) do
@@ -8,6 +8,8 @@ defmodule Aprb.Service.SummaryService do
     cond do
       Enum.member?(~w(subscriptions users inquiries purchases conversations radiation.messages), topic.name) ->
         handle_summary(topic, event["verb"], current_date)
+      topic.name == 'subscriptions' ->
+        handle_summary(topic, SubscriptionHelper.parsed_verb(event), current_date)
       Enum.member?(~w(auctions bidding), topic.name) ->
         handle_summary(topic, event["type"], current_date)
     end

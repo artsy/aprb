@@ -1,5 +1,5 @@
 defmodule Aprb.Views.RadiationMessageSlackView do
-  import ViewHelper
+  import Aprb.ViewHelper
   def render(event) do
     %{
       text: ":sadbot: #{event["verb"]} event for #{radiation_link(event["object"]["link"])}",
