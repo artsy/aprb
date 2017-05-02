@@ -2,7 +2,7 @@ defmodule Aprb.Service.EventServiceTest do
   use ExUnit.Case, async: false
   import Aprb.Factory
   alias Aprb.{Repo, Service.EventService}
-  
+
   setup do
     Ecto.Adapters.SQL.Sandbox.checkout(Repo)
     Ecto.Adapters.SQL.Sandbox.mode(Aprb.Repo, { :shared, self() })
@@ -35,7 +35,8 @@ defmodule Aprb.Service.EventServiceTest do
                "properties" => %{
                   "partner" => %{
                     "name" => "gallery 1",
-                    "outreach_admin" => "tester admin"
+                    "outreach_admin" => "tester admin",
+                    "initial_subscription" => false
                   }
                }
              }
