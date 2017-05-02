@@ -6,7 +6,7 @@ defmodule Aprb.Service.SummaryService do
   def update_summary(topic, event) do
     current_date = Calendar.Date.today! "America/New_York"
     cond do
-      Enum.member?(~w(subscriptions users inquiries purchases conversations radiation.messages), topic.name) ->
+      Enum.member?(~w(users inquiries purchases conversations radiation.messages), topic.name) ->
         handle_summary(topic, event["verb"], current_date)
       topic.name == 'subscriptions' ->
         handle_summary(topic, SubscriptionHelper.parsed_verb(event), current_date)
