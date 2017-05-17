@@ -10,6 +10,21 @@ defmodule Aprb.Views.PurchaseSlackView do
                           \"title\": \"Price\",
                           \"value\": \"#{format_price(event["properties"]["sale_price"] || 0)}\",
                           \"short\": true
+                        },
+                        {
+                          \"title\": \"Partner name\",
+                          \"value\": \"#{event["properties"]["partner"]["name"]}\",
+                          \"short\": true
+                        },
+                        {
+                          \"title\": \"Contract Type\",
+                          \"value\": \"#{event["properties"]["partner"]["contract_type"]}\",
+                          \"short\": true
+                        },
+                        {
+                          \"title\": \"Admin\",
+                          \"value\": \"#{event["properties"]["partner"]["outreach_admin"]}\",
+                          \"short\": true
                         }
                       ]
                     }]",
