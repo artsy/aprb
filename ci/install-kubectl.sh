@@ -2,7 +2,7 @@
 
 set -e
 
-curl -O https://storage.googleapis.com/kubernetes-release/release/v1.4.7/bin/linux/amd64/kubectl
+curl -O https://storage.googleapis.com/kubernetes-release/release/v1.6.3/bin/linux/amd64/kubectl
 chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 mkdir ~/.kube
