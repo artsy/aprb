@@ -9,7 +9,7 @@ defmodule Aprb.Views.InvoiceSlackView do
                       \"fields\": [
                         {
                           \"title\": \"Total\",
-                          \"value\": \"#{format_price(event["properties"]["total_cents"]) / 100}\",
+                          \"value\": \"#{format_price(event["properties"]["total_cents"] / 100)}\",
                           \"short\": true
                         },
                         {
