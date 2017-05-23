@@ -14,6 +14,7 @@ defmodule Aprb do
       worker(Aprb.Service.AmqEventService, [%{topic: "subscriptions"}], id: :subscriptions),
       worker(Aprb.Service.AmqEventService, [%{topic: "auctions", routing_key: "SecondPriceBidPlaced"}], id: :auctions),
       worker(Aprb.Service.AmqEventService, [%{topic: "purchases"}], id: :purchases),
+      worker(Aprb.Service.AmqEventService, [%{topic: "invoices"}], id: :invoices)
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
