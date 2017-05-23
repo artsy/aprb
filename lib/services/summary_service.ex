@@ -10,7 +10,7 @@ defmodule Aprb.Service.SummaryService do
         handle_summary(topic, event["verb"], current_date)
       Enum.member?(~w(subscriptions), topic.name) ->
         handle_summary(topic, SubscriptionHelper.parsed_verb(event), current_date)
-      Enum.member?(~w(auctions bidding), topic.name) ->
+      Enum.member?(~w(auctions), topic.name) ->
         handle_summary(topic, event["type"], current_date)
     end
   end
