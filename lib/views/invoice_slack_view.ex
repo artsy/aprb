@@ -2,8 +2,6 @@ defmodule Aprb.Views.InvoiceSlackView do
   import Aprb.ViewHelper
 
   def render(event) do
-    require IEx
-    IEx.pry
     partner_data = fetch_partner_data(event["properties"]["partner_id"])
     %{
       text: ":money_with_wings: Invoice #{event["object"]["display"]} #{event["verb"]}",
