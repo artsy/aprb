@@ -4,9 +4,14 @@ defmodule Aprb.Views.InvoiceSlackView do
   def render(event) do
     partner_data = fetch_partner_data(event["properties"]["partner_id"])
     %{
-      text: ":money_with_wings: Invoice #{event["object"]["display"]} #{event["verb"]}",
+      text: ":money_with_wings: Invoice #{event["object"]["display"]}",
       attachments: "[{
                       \"fields\": [
+                        {
+                          \"title\": \"Artworks\",
+                          \"value\": \"#{artworks_display_from_artworkgroups(event["properties"]["artwork_groups"])}\",
+                          \"short\": false
+                        },
                         {
                           \"title\": \"Total\",
                           \"value\": \"#{format_price(event["properties"]["total_cents"] / 100)}\",
