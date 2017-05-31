@@ -25,6 +25,8 @@ resource "aws_db_instance" "aprb-production" {
     username = "aprb_prod"
     # password = ""
 
+    skip_final_snapshot = true
+
     tags = {
         "workload-type" = "production"
     }

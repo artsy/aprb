@@ -26,4 +26,7 @@ vagrant-*.json
 
 # Terraform
 .terraform
+*.tfstate
+*.tfstate.backup
 *.tfplan
+terraform/crash.log
