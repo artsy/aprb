@@ -8,7 +8,15 @@ defmodule Aprb.Service.EventService do
     # broadcast a message to a topic
     if processed_message != nil do
       for subscriber <- get_topic_subscribers(topic) do
-        Slack.Web.Chat.post_message("##{subscriber.channel_name}", processed_message[:text], %{attachments: processed_message[:attachments], unfurl_links: processed_message[:unfurl_links], as_user: true})
+        Slack.Web.Chat.post_message(
+          "##{subscriber.channel_name}",
+          processed_message[:text],
+          %{
+            attachments: Poison.encode!(processed_message[:attachments]),
+            unfurl_links: processed_message[:unfurl_links],
+            as_user: true
+          }
+        )
       end
     end
   end
@@ -17,8 +25,6 @@ defmodule Aprb.Service.EventService do
     topic = Repo.get_by(Topic, name: topic_name)
     summary_task = Task.async(fn -> SummaryService.update_summary(topic, event) end)
     case topic.name do
-      "users" ->
-        Aprb.Views.UserSlackView.render(event)
       "subscriptions" ->
         # wait for summary task to finish first
         Task.await(summary_task)
