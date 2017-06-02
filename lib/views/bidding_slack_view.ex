@@ -5,25 +5,25 @@ defmodule Aprb.Views.BiddingSlackView do
     artwork_data = fetch_sale_artwork(event["lotId"])
     %{
       text: ":gavel: #{event["type"]} on #{artwork_data[:permalink]}",
-      attachments: "[{
-                      \"fields\": [
-                        {
-                          \"title\": \"Amount\",
-                          \"value\": \"#{format_price(event["amountCents"] / 100)}\",
-                          \"short\": true
+      attachments: [%{
+                      fields: [
+                        %{
+                          title: "Amount",
+                          value: "#{format_price(event["amountCents"] / 100)}",
+                          short: true
                         },
-                        {
-                          \"title\": \"Lot number\",
-                          \"value\": \"#{artwork_data[:lot_number]}\",
-                          \"short\": true
+                        %{
+                          title: "Lot number",
+                          value: "#{artwork_data[:lot_number]}",
+                          short: true
                         },
-                        {
-                          \"title\": \"Paddle number\",
-                          \"value\": \"#{event["bidder"]["paddleNumber"]}\",
-                          \"short\": true
+                        %{
+                          title: "Paddle number",
+                          value: "#{event["bidder"]["paddleNumber"]}",
+                          short: true
                         }
                       ]
-                    }]",
+                    }],
       unfurl_links: true
     }
   end

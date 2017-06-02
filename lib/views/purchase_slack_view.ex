@@ -4,30 +4,30 @@ defmodule Aprb.Views.PurchaseSlackView do
   def render(event) do
     %{
       text: ":shake: #{cleanup_name(event["subject"]["display"])} #{event["verb"]} #{artwork_link(event["properties"]["artwork"]["id"])}",
-      attachments: "[{
-                      \"fields\": [
-                        {
-                          \"title\": \"Price\",
-                          \"value\": \"#{format_price(event["properties"]["sale_price"] || 0)}\",
-                          \"short\": true
+      attachments: [%{
+                      fields: [
+                        %{
+                          title: "Price",
+                          value: "#{format_price(event["properties"]["sale_price"] || 0)}",
+                          short: true
                         },
-                        {
-                          \"title\": \"Partner name\",
-                          \"value\": \"#{event["properties"]["partner"]["name"]}\",
-                          \"short\": true
+                        %{
+                          title: "Partner name",
+                          value: "#{event["properties"]["partner"]["name"]}",
+                          short: true
                         },
-                        {
-                          \"title\": \"Contract Type\",
-                          \"value\": \"#{event["properties"]["partner"]["contract_type"]}\",
-                          \"short\": true
+                        %{
+                          title: "Contract Type",
+                          value: "#{event["properties"]["partner"]["contract_type"]}",
+                          short: true
                         },
-                        {
-                          \"title\": \"Admin\",
-                          \"value\": \"#{event["properties"]["partner"]["outreach_admin"]}\",
-                          \"short\": true
+                        %{
+                          title: "Admin",
+                          value: "#{event["properties"]["partner"]["outreach_admin"]}",
+                          short: true
                         }
                       ]
-                    }]",
+                    }],
       unfurl_links: true
     }
   end

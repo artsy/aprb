@@ -9,19 +9,24 @@ defmodule Aprb.Service.EventServiceTest do
     :ok
   end
 
-  test "process_event: users" do
-    insert(:topic, name: "users")
+  test "process_event: inquiries" do
+    insert(:topic, name: "inquiries")
     event = %{
                "subject" => %{"display" => "Best collector"},
-               "verb" => "followed",
+               "verb" => "inquired",
                "properties" => %{
-                  "artist" => %{
-                    "id" => "test-artist"
-                  }
+                  "inquireable" => %{
+                    "id" => "artwork_1"
+                  },
+                  "inquirer" => %{
+                    "professional_buyer" => true,
+                    "confirmed_buyer" => false
+                  },
+                  "initial_message_snippet" => "this is a test"
                }
              }
-    response = EventService.process_event(event, "users")
-    assert response[:text]  == ":heart: Best followed https://www.artsy.net/artist/test-artist"
+    response = EventService.process_event(event, "inquiries")
+    assert response[:text]  == ":shaka: Best inquired on https://www.artsy.net/artwork/artwork_1"
     assert response[:unfurl_links]  == true
   end
 
@@ -43,9 +48,9 @@ defmodule Aprb.Service.EventServiceTest do
     response = EventService.process_event(event, "subscriptions")
     assert response[:text]  == ""
     assert response[:unfurl_links] == false
-    assert String.contains?(response[:attachments], "\"value\": \"3\"") == true
-    assert String.contains?(response[:attachments], ":moneybag: gallery 1's subscription activated") == true
-    assert String.contains?(response[:attachments], "tester admin") == true
+    attachment = List.first(response[:attachments])
+    assert attachment[:title] === ":moneybag: gallery 1's subscription activated"
+    assert Enum.map(List.first(response[:attachments])[:fields], fn field -> %{field[:title] => field[:value]} end) === [%{"Outreach Admin" => "tester admin"}, %{"First Subscription?" => "false"}, %{"Total this month" => "3"}]
   end
 
   test "process_event: conversations" do
@@ -86,28 +91,26 @@ defmodule Aprb.Service.EventServiceTest do
 
   test "process_event: conversations - seller outcome" do
     event = %{
-               "subject" => %{"display" => "Gallery 1"},
-               "object" => %{"id" => "1"},
-               "verb" => "seller_outcome_set",
-               "properties" => %{
-                  "from_id" => "collector1",
-                  "from_name" => "Collector One",
-                  "seller_outcome" => "dont_trust",
-                  "seller_outcome_comment" => "I really dont",
-                  "dismissed" => true,
-                  "inquiry_id" => "inq1",
-                  "radiation_conversation_id" => "rad1",
-                  "items" => [%{
-                      "item_type" => "Artwork",
-                      "item_id" => "artwork-1"
-                  }]
-               }
-             }
+              "subject" => %{"display" => "Gallery 1"},
+              "object" => %{"id" => "1"},
+              "verb" => "seller_outcome_set",
+              "properties" => %{
+                "from_id" => "collector1",
+                "from_name" => "Collector One",
+                "seller_outcome" => "dont_trust",
+                "seller_outcome_comment" => "I really dont",
+                "dismissed" => true,
+                "inquiry_id" => "inq1",
+                "radiation_conversation_id" => "rad1",
+                "items" => [%{
+                    "item_type" => "Artwork",
+                    "item_id" => "artwork-1"
+                }]
+              }
+            }
     response = EventService.process_event(event, "conversations")
     assert response[:text]  == ":-1: Gallery 1 dismissed Collector One inquiry on https://www.artsy.net/artwork/artwork-1"
     assert response[:unfurl_links] == true
-    assert String.contains?(response[:attachments], "\"value\": \"dont_trust\"") == true
-    assert String.contains?(response[:attachments], "\"value\": \"I really dont\"") == true
-    assert String.contains?(response[:attachments], "\"value\": \"https://radiation.artsy.net/admin/accounts/2/conversations/rad1\"") == true
+    assert Enum.map(List.first(response[:attachments])[:fields], fn field -> %{String.to_atom(field[:title]) => field[:value]} end) === [%{Outcome: "dont_trust"}, %{Comment: "I really dont"}, %{Radiation: "https://radiation.artsy.net/admin/accounts/2/conversations/rad1"}]
   end
 end

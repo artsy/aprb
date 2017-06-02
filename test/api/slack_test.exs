@@ -66,7 +66,7 @@ defmodule Aprb.Api.SlackTest do
         json_decoder: Poison
       ]
       topic1 = insert(:topic)
-      conn = receive_slack_message("token", opts, "subscribe #{topic1.name} users", "C123456")
+      conn = receive_slack_message("token", opts, "subscribe #{topic1.name} inquiries", "C123456")
       assert conn.status == 200
       assert conn.resp_body == "{\"text\":\":+1: Subscribed to #{topic1.name} \",\"response_type\":\"in_channel\"}"
       assert Repo.one(Subscriber).channel_id == "C123456"
@@ -87,7 +87,7 @@ defmodule Aprb.Api.SlackTest do
       topic1 = insert(:topic)
       subscriber = insert(:subscriber)
       insert(:subscription, subscriber: subscriber, topic: topic1)
-      conn = receive_slack_message("token", opts, "unsubscribe #{topic1.name} users", subscriber.channel_id)
+      conn = receive_slack_message("token", opts, "unsubscribe #{topic1.name} inquiries", subscriber.channel_id)
 
       assert conn.status == 200
       assert conn.resp_body == "{\"text\":\":+1: Unsubscribed from _#{topic1.name}_\",\"response_type\":\"in_channel\"}"
