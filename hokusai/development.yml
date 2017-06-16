@@ -22,6 +22,8 @@ services:
       service: aprb
     ports:
     - 4000:4000
+    volumes:
+    - ../:/app
   postgres:
     image: postgres:9.4
     environment:
