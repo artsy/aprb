@@ -1,3 +1,24 @@
+terraform {
+  backend "s3" {
+    bucket     = "artsy-terraform"
+    key        = "aprb/production/terraform.tfstate"
+    region     = "us-east-1"
+    encrypt    = true
+    lock_table = "terraform_locks"
+  }
+}
+
+provider "aws" {}
+
+data "terraform_remote_state" "infrastructure" {
+    backend = "s3"
+    config {
+        bucket = "artsy-terraform"
+        key = "infrastructure/production/terraform.tfstate"
+        region = "us-east-1"
+    }
+}
+
 resource "aws_db_instance" "aprb-production" {
     identifier = "aprb-production"
     name = "aprb_production"
