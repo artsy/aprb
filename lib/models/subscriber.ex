@@ -13,7 +13,7 @@ defmodule Aprb.Subscriber do
     has_many :subscriptions, Aprb.Subscription
     has_many :topics, through: [:subscriptions, :topic]
 
-    timestamps
+    timestamps()
   end
 
 

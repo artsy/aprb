@@ -10,7 +10,7 @@ defmodule Aprb.Summary do
     field :summary_date, Ecto.Date
     field :total_count, :integer
     belongs_to :topic, Aprb.Topic
-    timestamps
+    timestamps()
   end
 
   @required_fields ~w(topic_id verb summary_date)

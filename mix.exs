@@ -25,11 +25,11 @@ defmodule Aprb.Mixfile do
     [ {:maru, "~> 0.11"},
       {:amqp, "0.2.0-pre.2"},
       {:poison, "~> 2.0"},
-      {:slack, "~> 0.10.0"},
+      {:slack, "~> 0.11.0"},
       {:postgrex, ">= 0.0.0"},
       {:ecto, "~> 2.0.0"},
       {:money, "~> 1.1.0"},
-      {:calendar, "~> 0.16.1"},
+      {:calendar, "~> 0.17.2"},
       {:ex_machina, "~> 1.0", only: :test} ]
   end
 

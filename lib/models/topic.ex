@@ -8,7 +8,7 @@ defmodule Aprb.Topic do
     has_many :subscriptions, Aprb.Subscription
     has_many :subscribers, through: [:subscriptions, :subscriber]
 
-    timestamps
+    timestamps()
   end
 
   @required_fields ~w(name)
