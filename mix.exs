@@ -23,7 +23,7 @@ defmodule Aprb.Mixfile do
 
   defp deps do
     [ {:maru, "~> 0.11"},
-      {:amqp, "0.2.0-pre.2"},
+      {:amqp, "0.2.2"},
       {:poison, "~> 2.0"},
       {:slack, "~> 0.11.0"},
       {:postgrex, ">= 0.0.0"},

@@ -24,6 +24,10 @@ defmodule Aprb.ViewHelper do
     admin_partners_link("subscriptions/#{subscription_id}")
   end
 
+  def consignments_admin_link(consignment_id) do
+    "https://convection.artsy.net/admin/submissions/#{consignment_id}"
+  end
+
   def cleanup_name(full_name) do
     full_name
       |> String.split
