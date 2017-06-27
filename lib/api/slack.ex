@@ -18,14 +18,14 @@ defmodule Aprb.Api.Slack do
     end
     post do
       # check that token matches, that the POST comes from our slack integration
-      if System.get_env("SLACK_SLASH_COMMAND_TOKEN") != params()[:token] do
+      if System.get_env("SLACK_SLASH_COMMAND_TOKEN") != params[:token] do
         conn
           |> put_status(403)
           |> text("Unauthorized")
 
         raise("Unauthorized")
       end
-      json(conn, SlackCommandService.process_command(params()))
+      json(conn, SlackCommandService.process_command(params))
     end
   end
 end

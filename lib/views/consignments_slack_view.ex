@@ -1,10 +1,17 @@
 defmodule Aprb.Views.ConsignmentsSlackView do
+  import Aprb.ViewHelper
+
   def render(event) do
     artist_data = fetch_artist(event["properties"]["artist_id"])
     %{
-      text: ":sparkles: #{event["subject"]["display"]} #{event["verb"]} #{event["properties"]["title"]} by #{artist_data[:permalink]}",
+      text: ":sparkles: #{event["subject"]["display"]} #{event["verb"]} #{event["properties"]["title"]}",
       attachments: [%{
                       fields: [
+                        %{
+                          title: "Artist",
+                          value: "#{artist_data[:name]}",
+                          short: true
+                        },
                         %{
                           title: "Year",
                           value: "#{event["properties"]["year"]}",
@@ -19,6 +26,11 @@ defmodule Aprb.Views.ConsignmentsSlackView do
                           title: "Medium",
                           value: "#{event["properties"]["medium"]}",
                           short: true
+                        },
+                        %{
+                          title: "Admin Link",
+                          value: "#{consignments_admin_link(event["object"]["id"])}",
+                          short: false
                         }
                       ]
                     }],
