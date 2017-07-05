@@ -10,4 +10,9 @@ defmodule Aprb.Api.Root do
   end
   mount Aprb.Api.Ping
   mount Aprb.Api.Slack
+
+  desc "Root endpoint get"
+  get do
+    text(conn, "Tune into APR!")
+  end
 end
