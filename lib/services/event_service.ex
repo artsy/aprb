@@ -1,10 +1,10 @@
 defmodule Aprb.Service.EventService do
   alias Aprb.{Repo, Topic, Service.SummaryService, SubscriptionHelper}
 
-  def receive_event(event, topic) do
+  def receive_event(event, topic, routing_key) do
     processed_message = event
                          |> Poison.decode!
-                         |> process_event(topic)
+                         |> process_event(topic, routing_key)
     # broadcast a message to a topic
     if processed_message != nil do
       for subscriber <- get_topic_subscribers(topic) do
@@ -21,7 +21,7 @@ defmodule Aprb.Service.EventService do
     end
   end
 
-  def process_event(event, topic_name) do
+  def process_event(event, topic_name, routing_key) do
     topic = Repo.get_by(Topic, name: topic_name)
     summary_task = Task.async(fn -> SummaryService.update_summary(topic, event) end)
     case topic.name do
@@ -41,7 +41,7 @@ defmodule Aprb.Service.EventService do
       "conversations" ->
         Aprb.Views.ConversationSlackView.render(event)
       "invoices" ->
-        Aprb.Views.InvoiceSlackView.render(event)
+        Aprb.Views.InvoiceSlackView.render(event, routing_key)
       "consignments" ->
         Aprb.Views.ConsignmentsSlackView.render(event)
     end

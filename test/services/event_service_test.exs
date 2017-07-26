@@ -25,7 +25,7 @@ defmodule Aprb.Service.EventServiceTest do
                   "initial_message_snippet" => "this is a test"
                }
              }
-    response = EventService.process_event(event, "inquiries")
+    response = EventService.process_event(event, "inquiries", "test_routing_key")
     assert response[:text]  == ":shaka: Best inquired on https://www.artsy.net/artwork/artwork_1"
     assert response[:unfurl_links]  == true
   end
@@ -45,7 +45,7 @@ defmodule Aprb.Service.EventServiceTest do
                   }
                }
              }
-    response = EventService.process_event(event, "subscriptions")
+    response = EventService.process_event(event, "subscriptions", "test_routing_key")
     assert response[:text]  == ""
     assert response[:unfurl_links] == false
     attachment = List.first(response[:attachments])
@@ -70,7 +70,7 @@ defmodule Aprb.Service.EventServiceTest do
                   ]
                }
              }
-    response = EventService.process_event(event, "conversations")
+    response = EventService.process_event(event, "conversations", "test_routing_key")
     assert response[:text]  == ":phone: Collector 1 responded on https://www.artsy.net/artwork/artwork-1"
     assert response[:unfurl_links]  == true
     # ignores when outcome wasn't other
@@ -85,7 +85,7 @@ defmodule Aprb.Service.EventServiceTest do
                   "inquiry_id" => "inq1"
                }
              }
-    response = EventService.process_event(event, "conversations")
+    response = EventService.process_event(event, "conversations", "test_routing_key")
     assert response == nil
   end
 
@@ -108,7 +108,7 @@ defmodule Aprb.Service.EventServiceTest do
                 }]
               }
             }
-    response = EventService.process_event(event, "conversations")
+    response = EventService.process_event(event, "conversations", "test_routing_key")
     assert response[:text]  == ":-1: Gallery 1 dismissed Collector One inquiry on https://www.artsy.net/artwork/artwork-1"
     assert response[:unfurl_links] == true
     assert Enum.map(List.first(response[:attachments])[:fields], fn field -> %{String.to_atom(field[:title]) => field[:value]} end) === [%{Outcome: "dont_trust"}, %{Comment: "I really dont"}, %{Radiation: "https://radiation.artsy.net/admin/accounts/2/conversations/rad1"}]
