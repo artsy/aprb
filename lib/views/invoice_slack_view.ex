@@ -4,7 +4,7 @@ defmodule Aprb.Views.InvoiceSlackView do
   def render(event, routing_key) do
     partner_data = fetch_partner_data(event["properties"]["partner_id"])
     cond do
-      routing_key =~ "merchant_account" ->
+      routing_key =~ "merchantaccount" ->
         merchant_account_message(event, partner_data)
       true ->
         invoice_message(event, partner_data)
