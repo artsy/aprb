@@ -15,9 +15,9 @@ defmodule Aprb.Views.InvoiceSlackView do
     Gravity.get!("/partners/#{partner_id}").body
   end
 
-  defp merchant_account_message(_event, partner_data) do
+  defp merchant_account_message(event, partner_data) do
     %{
-      text: ":party-parrot: #{partner_data["name"]} setup merchant account",
+      text: ":party-parrot: #{partner_data["name"]} merchant account #{event["verb"]}",
       attachments: [],
       unfurl_links: true
     }
