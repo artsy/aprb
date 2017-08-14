@@ -12,9 +12,13 @@ Aprb is a fairly generic consumer of RabbitMQ events (see [Service.AmqEventServi
 
 * __State:__ production
 * __Production:__ [http://aprb-production-http-1702133716.us-east-1.elb.amazonaws.com/slack](http://aprb-production-http-1702133716.us-east-1.elb.amazonaws.com/slack)
-* __Github:__ [https://github.com/artsy/aprb](https://github.com/artsy/aprb)
+* __GitHub:__ [https://github.com/artsy/aprb](https://github.com/artsy/aprb)
 * __CI:__ [https://circleci.com/gh/artsy/aprb](https://circleci.com/gh/artsy/aprb)
 * __Point People:__ [@ashkan18](https://github.com/ashkan18), [@dblock](https://github.com/dblock)
+
+## Development
+
+See [CONTRIBUTING](CONTRIBUTING.md) for instructions on bootstrapping and running the project.
 
 ## Work at Artsy?
 
