@@ -24,19 +24,30 @@ Install Elixir, see [installation](http://elixir-lang.org/install.html).
 brew install elixir
 ```
 
-Install dependencies.
+Note: if you are using a `.env` file, you will probably want to prepend `dotenv` to each of the `mix` commands below.
 
-```
+Install dependencies:
+
+``` 
 mix deps.get
 ```
 
-Currently you need a VPN connection to the Artsy production environment to get a feed of notifications.
-
-Run server.
+Create and migrate your database:
 
 ```
-iex -S mix
+mix ecto.create
+mix ecto.migrate
 ```
+
+Start the app:
+
+```sh
+mix run --no-halt
+# or, if you want to enable pry debugging
+iex -S mix run --no-halt
+```
+
+Currently you need to VPN to an Artsy environment to get a feed of notifications.
 
 You can `curl -v localhost:4000/slack -X POST` and get back something.
 
