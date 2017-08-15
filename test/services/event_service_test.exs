@@ -127,7 +127,7 @@ defmodule Aprb.Service.EventServiceTest do
               }
             }
     response = EventService.process_event(event, "feedbacks", "test_routing_key")
-    assert response[:text]  == ":artsy-email: User 1 <user@example.com> submitted from /user/delete\n\nThanks"
+    assert response[:text]  == ":artsy-email: (:simple_smile:) User 1 <user@example.com> submitted from /user/delete\n\nThanks"
 
     # for logged out users, subject is nil
     event = %{
@@ -142,6 +142,6 @@ defmodule Aprb.Service.EventServiceTest do
       }
     }
     response = EventService.process_event(event, "feedbacks", "test_routing_key")
-    assert response[:text]  == ":artsy-email: User 1 <user@example.com> submitted from /user/delete\n\nThanks"
+    assert response[:text]  == ":artsy-email: (:simple_smile:) User 1 <user@example.com> submitted from /user/delete\n\nThanks"
   end
 end
