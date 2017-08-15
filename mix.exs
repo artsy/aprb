@@ -30,7 +30,8 @@ defmodule Aprb.Mixfile do
       {:ecto, "~> 2.0.0"},
       {:money, "~> 1.1.0"},
       {:calendar, "~> 0.17.2"},
-      {:ex_machina, "~> 1.0", only: :test} ]
+      {:ex_machina, "~> 1.0", only: :test},
+      {:sentient, git: "https://github.com/rdalin82/sentient.git"} ]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]

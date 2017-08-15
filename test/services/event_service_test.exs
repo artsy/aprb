@@ -114,34 +114,37 @@ defmodule Aprb.Service.EventServiceTest do
     assert Enum.map(List.first(response[:attachments])[:fields], fn field -> %{String.to_atom(field[:title]) => field[:value]} end) === [%{Outcome: "dont_trust"}, %{Comment: "I really dont"}, %{Radiation: "https://radiation.artsy.net/admin/accounts/2/conversations/rad1"}]
   end
 
-  test "process_event: feedbacks" do
-    event = %{
-              "subject" => %{"display" => "User 1 <user@example.com>"},
-              "object" => %{"id" => "1"},
-              "verb" => "submitted",
-              "properties" => %{
-                "user_email" => "user@example.com",
-                "user_name" => "User 1",
-                "url" => "/user/delete",
-                "message" => "Thanks"
-              }
-            }
-    response = EventService.process_event(event, "feedbacks", "test_routing_key")
-    assert response[:text]  == ":artsy-email: User 1 <user@example.com> submitted from /user/delete\n\nThanks"
-
-    # for logged out users, subject is nil
-    event = %{
-      "subject" => nil,
-      "object" => %{"id" => "1"},
-      "verb" => "submitted",
-      "properties" => %{
-        "user_email" => "user@example.com",
-        "user_name" => "User 1",
-        "url" => "/user/delete",
-        "message" => "Thanks"
+  describe "process_event: feedbacks" do
+    test "with a logged in user" do
+      event = %{
+        "subject" => %{"display" => "User 1 <user@example.com>"},
+        "object" => %{"id" => "1"},
+        "verb" => "submitted",
+        "properties" => %{
+          "user_email" => "user@example.com",
+          "user_name" => "User 1",
+          "url" => "/user/delete",
+          "message" => "Thanks"
+        }
       }
-    }
-    response = EventService.process_event(event, "feedbacks", "test_routing_key")
-    assert response[:text]  == ":artsy-email: User 1 <user@example.com> submitted from /user/delete\n\nThanks"
+      response = EventService.process_event(event, "feedbacks", "test_routing_key")
+      assert response[:text]  == ":artsy-email: :simple_smile: User 1 <user@example.com> submitted from /user/delete\n\nThanks"
+    end
+
+    test "without a logged in user" do
+      event = %{
+        "subject" => nil,
+        "object" => %{"id" => "1"},
+        "verb" => "submitted",
+        "properties" => %{
+          "user_email" => "user@example.com",
+          "user_name" => "User 1",
+          "url" => "/user/delete",
+          "message" => "Thanks"
+        }
+      }
+      response = EventService.process_event(event, "feedbacks", "test_routing_key")
+      assert response[:text]  == ":artsy-email: :simple_smile: User 1 <user@example.com> submitted from /user/delete\n\nThanks"
+    end
   end
 end
