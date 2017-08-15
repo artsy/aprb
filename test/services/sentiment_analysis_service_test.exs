@@ -1,7 +1,7 @@
 defmodule Aprb.Service.SentimentAnalysisServiceTest do
   use ExUnit.Case, async: true
   alias Aprb.{Repo, Service.SentimentAnalysisService}
-  
+
   setup do
     Ecto.Adapters.SQL.Sandbox.checkout(Repo)
     Ecto.Adapters.SQL.Sandbox.mode(Aprb.Repo, { :shared, self() })
@@ -24,5 +24,4 @@ defmodule Aprb.Service.SentimentAnalysisServiceTest do
       assert response == ":simple_smile:"
     end
   end
-
 end

@@ -1,12 +1,15 @@
 defmodule Aprb.Views.FeedbacksSlackView do
   alias Aprb.Service.SentimentAnalysisService
-  
-  def prefix(event) do
-    emoji = event["properties"]["message"]
-      |>SentimentAnalysisService.sentiment_score
-      |>SentimentAnalysisService.sentiment_face_emoji
 
-      ":artsy-email: (#{emoji})"
+  def emoji(message) do
+    message
+      |> SentimentAnalysisService.sentiment_score
+      |> SentimentAnalysisService.sentiment_face_emoji
+  end
+
+  def prefix(event) do
+    message = event["properties"]["message"]
+    ":artsy-email: #{emoji(message)}"
   end
 
   def render(event) do
