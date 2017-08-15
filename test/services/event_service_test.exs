@@ -120,13 +120,28 @@ defmodule Aprb.Service.EventServiceTest do
               "object" => %{"id" => "1"},
               "verb" => "submitted",
               "properties" => %{
-                "user_email" => "User 1",
-                "user_name" => "user@example.com",
+                "user_email" => "user@example.com",
+                "user_name" => "User 1",
                 "url" => "/user/delete",
                 "message" => "Thanks"
               }
             }
     response = EventService.process_event(event, "feedbacks", "test_routing_key")
-    assert response[:text]  == "User 1 <user@example.com> submitted Thanks from /user/delete"
+    assert response[:text]  == ":artsy-email: User 1 <user@example.com> submitted from /user/delete\n\nThanks"
+
+    # for logged out users, subject is nil
+    event = %{
+      "subject" => nil,
+      "object" => %{"id" => "1"},
+      "verb" => "submitted",
+      "properties" => %{
+        "user_email" => "user@example.com",
+        "user_name" => "User 1",
+        "url" => "/user/delete",
+        "message" => "Thanks"
+      }
+    }
+    response = EventService.process_event(event, "feedbacks", "test_routing_key")
+    assert response[:text]  == ":artsy-email: User 1 <user@example.com> submitted from /user/delete\n\nThanks"
   end
 end
