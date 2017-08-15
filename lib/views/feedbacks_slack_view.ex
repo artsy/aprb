@@ -1,20 +1,12 @@
 defmodule Aprb.Views.FeedbacksSlackView do
-  import Sentient
-
-  def sentiment_score(message) do
-    Sentient.analyze(message)
-  end
-
-  def sentiment_emoji(score) do
-    case score do
-      score when score >= 2 -> ":simple_smile:"
-      score when score <= -2 -> ":frowning:"
-      _ -> ":neutral_face:"
-    end
-  end
-
+  alias Aprb.Service.SentimentAnalysisService
+  
   def prefix(event) do
-    ":artsy-email: (#{sentiment_emoji(sentiment_score(event["properties"]["message"]))})"
+    emoji = event["properties"]["message"]
+      |>SentimentAnalysisService.sentiment_score
+      |>SentimentAnalysisService.sentiment_face_emoji
+
+      ":artsy-email: (#{emoji})"
   end
 
   def render(event) do
