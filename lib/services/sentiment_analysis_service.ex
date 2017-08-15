@@ -1,5 +1,4 @@
 defmodule Aprb.Service.SentimentAnalysisService do
-  import Sentient
 
   def sentiment_score(text) do
     Sentient.analyze(text)
