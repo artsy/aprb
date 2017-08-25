@@ -128,7 +128,7 @@ defmodule Aprb.Service.EventServiceTest do
         }
       }
       response = EventService.process_event(event, "feedbacks", "test_routing_key")
-      assert response[:text]  == ":artsy-email: :simple_smile: User 1 <user@example.com> submitted from /user/delete\n\nThanks"
+      assert response[:text]  == ":artsy-email: :simple_smile: User 1 submitted from /user/delete\n\nThanks"
     end
 
     test "without a logged in user" do
@@ -144,7 +144,23 @@ defmodule Aprb.Service.EventServiceTest do
         }
       }
       response = EventService.process_event(event, "feedbacks", "test_routing_key")
-      assert response[:text]  == ":artsy-email: :simple_smile: User 1 <user@example.com> submitted from /user/delete\n\nThanks"
+      assert response[:text]  == ":artsy-email: :simple_smile: User 1 submitted from /user/delete\n\nThanks"
+    end
+
+    test "with a message containing email addresses" do
+      event = %{
+        "subject" => nil,
+        "object" => %{"id" => "1"},
+        "verb" => "submitted",
+        "properties" => %{
+          "user_email" => "user@example.com",
+          "user_name" => "User 1",
+          "url" => "/user/delete",
+          "message" => "I wrote to help@artsy.biz and someone.else@somewhere.com and no luck"
+        }
+      }
+      response = EventService.process_event(event, "feedbacks", "test_routing_key")
+      assert response[:text]  == ":artsy-email: :simple_smile: User 1 submitted from /user/delete\n\nI wrote to help[@domain] and someone.else[@domain] and no luck"
     end
   end
 end
