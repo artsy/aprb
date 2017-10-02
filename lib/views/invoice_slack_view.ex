@@ -6,7 +6,7 @@ defmodule Aprb.Views.InvoiceSlackView do
     cond do
       routing_key =~ "merchantaccount" ->
         merchant_account_message(event, partner_data)
-      true ->
+      event["sent_at"] != nil ->
         invoice_message(event, partner_data)
     end
   end
