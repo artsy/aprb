@@ -6,8 +6,8 @@ defmodule Aprb.Views.InvoiceSlackView do
     cond do
       routing_key =~ "merchantaccount" ->
         merchant_account_message(event, partner_data)
-        routing_key =~ "invoicetransaction" ->
-          invoice_transaction(event, partner_data)
+      routing_key =~ "invoicetransaction" ->
+        invoice_transaction_message(event, partner_data)
       true ->
         invoice_message(event, partner_data)
     end
@@ -31,6 +31,11 @@ defmodule Aprb.Views.InvoiceSlackView do
       attachments: [%{
         fields: [
           %{
+            title: "Partner",
+            value: partner_data["name"],
+            short: true
+          },
+          %{
             title: "Artworks",
             value: artworks_display_from_artworkgroups(event["properties"]["invoice"]["artwork_groups"]),
             short: false
@@ -42,11 +47,11 @@ defmodule Aprb.Views.InvoiceSlackView do
           },
           %{
             title: "Impulse Link",
-            value: impulse_link(event["properties"]["invoice"]["impulse_conversation_id"])
+            value: impulse_conversation_link(event["properties"]["invoice"]["impulse_conversation_id"])
           },
           %{
             title: "Charge Id",
-            value: event["object"]["id"]
+            value: event["properties"]["source_id"]
           }
         ]
       }],
@@ -76,7 +81,7 @@ defmodule Aprb.Views.InvoiceSlackView do
                         },
                         %{
                           title: "Impulse Link",
-                          value: impulse_link(event["properties"]["impulse_conversation_id"])
+                          value: impulse_conversation_link(event["properties"]["impulse_conversation_id"])
                         }
                       ]
                     }],
