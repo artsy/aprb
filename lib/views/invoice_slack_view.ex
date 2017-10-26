@@ -6,6 +6,8 @@ defmodule Aprb.Views.InvoiceSlackView do
     cond do
       routing_key =~ "merchantaccount" ->
         merchant_account_message(event, partner_data)
+        routing_key =~ "invoicetransaction" ->
+          invoice_transaction(event, partner_data)
       true ->
         invoice_message(event, partner_data)
     end
@@ -23,6 +25,35 @@ defmodule Aprb.Views.InvoiceSlackView do
     }
   end
 
+  defp invoice_transaction_message(event, partner_data) do
+    %{
+      text: ":oncoming_police_car: #{event["properties"]["seller_message"]}",
+      attachments: [%{
+        fields: [
+          %{
+            title: "Artworks",
+            value: artworks_display_from_artworkgroups(event["properties"]["invoice"]["artwork_groups"]),
+            short: false
+          },
+          %{
+            title: "Total",
+            value: format_price(event["properties"]["invoice"]["total_cents"] / 100),
+            short: true
+          },
+          %{
+            title: "Impulse Link",
+            value: impulse_link(event["properties"]["invoice"]["impulse_conversation_id"])
+          },
+          %{
+            title: "Charge Id",
+            value: event["object"]["id"]
+          }
+        ]
+      }],
+      unfurl_links: true
+    }
+  end
+
   defp invoice_message(event, partner_data) do
     %{
       text: ":money_with_wings: Invoice #{event["object"]["display"]}",
@@ -30,18 +61,22 @@ defmodule Aprb.Views.InvoiceSlackView do
                       fields: [
                         %{
                           title: "Artworks",
-                          value: "#{artworks_display_from_artworkgroups(event["properties"]["artwork_groups"])}",
+                          value: artworks_display_from_artworkgroups(event["properties"]["artwork_groups"]),
                           short: false
                         },
                         %{
                           title: "Total",
-                          value: "#{format_price(event["properties"]["total_cents"] / 100)}",
+                          value: format_price(event["properties"]["total_cents"] / 100),
                           short: true
                         },
                         %{
                           title: "Partner",
-                          value: "#{partner_data["name"]}",
+                          value: partner_data["name"],
                           short: true
+                        },
+                        %{
+                          title: "Impulse Link",
+                          value: impulse_link(event["properties"]["impulse_conversation_id"])
                         }
                       ]
                     }],

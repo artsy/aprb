@@ -11,9 +11,18 @@ defmodule Aprb.ViewHelper do
     "https://radiation.artsy.net/#{path}"
   end
 
+  def impulse_link(path) do
+    "https://impulse.artsy.net/#{path}"
+  end
+
   def radiation_conversation_link(conversation_id) do
     conversation_path = "admin/accounts/2/conversations/#{conversation_id}"
     radiation_link(conversation_path)
+  end
+
+  def impulse_conversation_link(conversation_id) do
+    conversation_path = "admin/conversations/#{conversation_id}"
+    impulse_link(conversation_path)
   end
 
   def admin_partners_link(path) do
