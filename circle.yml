@@ -8,7 +8,7 @@ dependencies:
   override:
     - sudo pip install docker-compose==1.9.0
     - sudo apt-get install python-dev
-    - sudo pip install hokusai==1.0b4
+    - sudo pip install hokusai==0.4.0
 
 test:
   override:
@@ -19,6 +19,5 @@ deployment:
     branch: master
     commands:
       - hokusai configure --kubectl-version 1.6.3 --s3-bucket artsy-citadel --s3-key k8s/config --platform linux --install-to /home/ubuntu/bin
-      - hokusai push --tag $CIRCLE_SHA1
-      - hokusai run "mix ecto.migrate" --tag $CIRCLE_SHA1 --staging
-      - hokusai deploy $CIRCLE_SHA1 --staging
+      - hokusai registry push --tag $CIRCLE_SHA1
+      - hokusai staging deploy $CIRCLE_SHA1
