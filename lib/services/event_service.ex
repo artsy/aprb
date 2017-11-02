@@ -1,27 +1,15 @@
 defmodule Aprb.Service.EventService do
-  alias Aprb.{Repo, Topic, Service.SummaryService, SubscriptionHelper}
+  import Ecto.Query
+  alias Aprb.{Repo, Topic, Subscriber, Subscription, Service.SummaryService, SubscriptionHelper}
 
   def receive_event(event, topic, routing_key) do
-    processed_message = event
-                         |> Poison.decode!
-                         |> process_event(topic, routing_key)
-    # broadcast a message to a topic
-    if processed_message != nil do
-      for subscriber <- get_topic_subscribers(topic) do
-        Slack.Web.Chat.post_message(
-          "##{subscriber.channel_name}",
-          processed_message[:text],
-          %{
-            attachments: Poison.encode!(processed_message[:attachments]),
-            unfurl_links: processed_message[:unfurl_links],
-            as_user: true
-          }
-        )
-      end
-    end
+    event
+      |> Poison.decode!
+      |> slack_message(topic, routing_key)
+      |> post_message(topic, routing_key)
   end
 
-  def process_event(event, topic_name, routing_key) do
+  def slack_message(event, topic_name, routing_key) do
     topic = Repo.get_by(Topic, name: topic_name)
     summary_task = Task.async(fn -> SummaryService.update_summary(topic, event) end)
     case topic.name do
@@ -49,9 +37,29 @@ defmodule Aprb.Service.EventService do
     end
   end
 
-  defp get_topic_subscribers(topic_name) do
-    topic = Repo.get_by(Topic, name: topic_name)
-              |> Repo.preload(:subscribers)
-    topic.subscribers
+  defp post_message(slack_message, topic, routing_key) do
+    if slack_message != nil do
+      get_topic_subscribers(topic, routing_key)
+        |> Enum.each(fn(subscriber) ->
+            Slack.Web.Chat.post_message(
+              "##{subscriber.channel_name}",
+              slack_message[:text],
+              %{
+                attachments: Poison.encode!(slack_message[:attachments]),
+                unfurl_links: slack_message[:unfurl_links],
+                as_user: true
+              }
+            ) end
+          )
+    end
+  end
+
+  defp get_topic_subscribers(topic_name, routing_key) do
+    query = from s in Subscriber,
+      join: sc in Subscription, on: s.id == sc.subscriber_id,
+      join: t in Topic, on: t.id == sc.topic_id,
+      where: t.name == ^topic_name,
+      where: (sc.routing_key == ^routing_key) or (sc.routing_key == "#")
+    Repo.all(query)
   end
 end

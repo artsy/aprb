@@ -21,7 +21,7 @@ defmodule Aprb.Service.AmqEventService do
         {:ok, chan} = Channel.open(conn)
         Basic.qos(chan, prefetch_count: 10)
         Exchange.topic(chan, topic, durable: true)
-        queue_name = "aprb_#{topic}_queue"
+        queue_name = "ashkan_aprb_#{topic}_queue"
         Queue.declare(chan, queue_name, durable: true)
         Queue.bind(chan, queue_name, topic, routing_key: routing_key)
         {:ok, _consumer_tag} = Basic.consume(chan, queue_name)
