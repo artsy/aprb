@@ -59,7 +59,7 @@ defmodule Aprb.Service.EventService do
       join: sc in Subscription, on: s.id == sc.subscriber_id,
       join: t in Topic, on: t.id == sc.topic_id,
       where: t.name == ^topic_name,
-      where: (sc.routing_key == ^routing_key) or (sc.routing_key == "#")
+      where: (sc.routing_key == ^routing_key) or is_nil(sc.routing_key)
     Repo.all(query)
   end
 end

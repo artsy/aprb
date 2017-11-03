@@ -3,7 +3,7 @@ defmodule Aprb.Repo.Migrations.AddRoutingKeyToSubscription do
 
   def change do
     alter table(:subscriptions) do
-      add :routing_key, :string, default: "#"
+      add :routing_key, :string
     end
   end
 end
