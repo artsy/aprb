@@ -26,8 +26,8 @@ defmodule Aprb.Service.SlackCommandService do
         current_subscriptions =
           Repo.preload(subscriber, :subscriptions).subscriptions
           |> Enum.map(fn(s) ->
-              Repo.preload(s, :topic)
-              "#{s.topic.name}:#{s.routing_key || "*"}" 
+              s = Repo.preload(s, :topic)
+              "#{s.topic.name}:#{s.routing_key || "*"}"
              end)
           |> Enum.join(" ")
         "Subscribed topics: #{current_subscriptions}"
