@@ -23,10 +23,13 @@ defmodule Aprb.Service.SlackCommandService do
           |> Enum.join(" ")
 
       params[:text] == "subscriptions" ->
-        current_topics = Repo.preload(subscriber, :topics).topics
-          |> Enum.map(fn(topic) -> topic.name end)
+        current_subscriptions =
+          subscriber
+          |> Repo.preload(:subscriptions).subscriptions
+          |> Repo.preload(:topic)
+          |> Enum.map(fn(s) -> "#{s.topic.name}:#{s.routing_key || "*"}" end)
           |> Enum.join(" ")
-        "Subscribed topics: #{current_topics}"
+        "Subscribed topics: #{current_subscriptions}"
 
       params[:text] =~ ~r/unsubscribe/ ->
         [_command | topic_names] = String.split(params[:text], ~r{\s}, parts: 2)
@@ -66,7 +69,7 @@ defmodule Aprb.Service.SlackCommandService do
     if topic do
       subscription = Ecto.build_assoc(subscriber, :subscriptions, topic_id: topic.id, routing_key: routing_key)
       Repo.insert!(subscription)
-      topic_name
+      topic_str
     end
   end
 
