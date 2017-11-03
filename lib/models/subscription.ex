@@ -3,13 +3,14 @@ defmodule Aprb.Subscription do
   import Ecto.Changeset
 
   schema "subscriptions" do
+    field :routing_key, :string
     belongs_to :topic, Aprb.Topic
     belongs_to :subscriber, Aprb.Subscriber
 
   end
 
   @required_fields ~w(topic_id subscriber_id)
-  @optional_fields ~w()
+  @optional_fields ~w(routing_key)
 
   def changeset(model, params \\ :empty) do
     model

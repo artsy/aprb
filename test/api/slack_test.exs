@@ -16,7 +16,7 @@ defmodule Aprb.Api.SlackTest do
   setup do
     Ecto.Adapters.SQL.Sandbox.checkout(Repo)
     Ecto.Adapters.SQL.Sandbox.mode(Repo, { :shared, self() })
-    
+
     :ok
   end
 
@@ -35,7 +35,6 @@ defmodule Aprb.Api.SlackTest do
           "text": "#{text}",
           "response_url":"https://slack.example.com"
         }))
-      |> put_plug(Plug.Parsers, opts)
       |> post("/slack")
   end
 
