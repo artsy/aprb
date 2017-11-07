@@ -3,33 +3,26 @@ defmodule Aprb.Service.SlackCommandService do
   import Ecto.Query
 
   def process_command(params) do
-    subscriber = case Repo.get_by(Subscriber, channel_id: params[:channel_id]) do
-        nil ->
-          # create new subscriber
-          sub_changeset = Subscriber.changeset(%Subscriber{}, Map.take(params, [:team_id, :team_domain, :channel_id, :channel_name, :user_id, :user_name]))
-          case Repo.insert(sub_changeset) do
-            {:ok, new_subscriber} ->
-              new_subscriber
-            {:error, _changeset} ->
-              raise("Can't create subscriber")
-          end
-        existing_subscriber ->
-          existing_subscriber
-      end
+    response = find_or_create_subscriber(params)
+      |> parse_command(params)
 
-    response = cond do
+    %{ response_type: "in_channel", text: response }
+  end
+
+  defp parse_command(subscriber, params) do
+    cond do
       params[:text] == "topics" ->
         Repo.all( from topics in Topic, select: topics.name)
-          |> Enum.join(" ")
+          |> Enum.join("\n")
 
       params[:text] == "subscriptions" ->
         current_subscriptions =
           Repo.preload(subscriber, :subscriptions).subscriptions
           |> Enum.map(fn(s) ->
               s = Repo.preload(s, :topic)
-              "#{s.topic.name}:#{s.routing_key || "*"}"
+              "*#{s.topic.name}*:#{s.routing_key || "#"}"
              end)
-          |> Enum.join(" ")
+          |> Enum.join("\n")
         "Subscribed topics: #{current_subscriptions}"
 
       params[:text] =~ ~r/unsubscribe/ ->
@@ -39,8 +32,8 @@ defmodule Aprb.Service.SlackCommandService do
           List.first(topic_names)
             |> String.split(~r{\s})
             |> Enum.map(fn(topic_name) -> unsubscribe(subscriber, topic_name) end)
-        # remove nil from list
-        removed_topics = Enum.reject(removed_topics, fn(x) -> x == nil end)
+            |> Enum.reject(fn(x) -> x == nil end)
+
         if Enum.count(removed_topics) > 0 do
           ":+1: Unsubscribed from #{Enum.join(Enum.map(removed_topics, fn(x) -> "_#{x}_" end), " ")}"
         else
@@ -58,9 +51,20 @@ defmodule Aprb.Service.SlackCommandService do
         summary(params[:text])
 
       true ->
-        "Unknown command! Supported commands: topics, subscriptions, subscribe <list of topics>, unsubscribe <list of topics>, summary <name of topic> <optional: date in 2014-11-21 format>"
+        "Unknown command! Supported commands: `topics`, `subscriptions`, `subscribe <list of topics>`, `unsubscribe <list of topics>`, `summary <name of topic> <optional: date in 2014-11-21 format>`"
     end
-    %{ response_type: "in_channel", text: response }
+  end
+
+  defp find_or_create_subscriber(params) do
+    with nil <- Repo.get_by(Subscriber, channel_id: params[:channel_id]) do
+      # create new subscriber
+      sub_changeset = Subscriber.changeset(%Subscriber{}, Map.take(params, [:team_id, :team_domain, :channel_id, :channel_name, :user_id, :user_name]))
+      with {:ok, new_subscriber} <- Repo.insert(sub_changeset) do
+        new_subscriber
+      end
+    else
+      existing_subscriber -> existing_subscriber
+    end
   end
 
   defp subscribe_to(subscriber, topic_str) do
