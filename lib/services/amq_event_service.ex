@@ -1,4 +1,5 @@
 defmodule Aprb.Service.AmqEventService do
+  @behaviour GenServer
   use GenServer
   use AMQP
 
@@ -8,6 +9,7 @@ defmodule Aprb.Service.AmqEventService do
     GenServer.start_link(__MODULE__, opts, [])
   end
 
+  @impl GenServer
   def init(opts) do
     rabbitmq_connect(opts)
   end
@@ -57,6 +59,7 @@ defmodule Aprb.Service.AmqEventService do
     {:noreply, {chan, opts}}
   end
 
+  @impl GenServer
   def handle_info({:basic_deliver, payload, %{delivery_tag: tag, redelivered: redelivered, routing_key: routing_key}}, {chan, opts}) do
     spawn fn -> consume(chan, opts.topic, tag, redelivered, payload, routing_key) end
     {:noreply, {chan, opts}}
