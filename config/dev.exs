@@ -7,6 +7,6 @@ config :aprb, Aprb.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: System.get_env("DB_USER"),
   password: System.get_env("DB_PASSWORD"),
-  database: System.get_env("DB_NAME"),
-  hostname: System.get_env("DB_HOST"),
+  database: "aprb_dev",
+  hostname: "localhost",
   pool_size: 10
