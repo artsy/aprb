@@ -28,6 +28,16 @@ spec:
           imagePullPolicy: Always
           ports:
           - containerPort: 4000
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: tier
+                operator: In
+                values:
+                - foreground
 ---
 apiVersion: v1
 kind: Service
