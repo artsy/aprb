@@ -7,9 +7,9 @@ services:
     - MIX_ENV=test
     - DB_USER=postgres
     - DB_NAME=postgres
-    - DB_HOST=postgres
+    - DB_HOST=aprb-postgres
     - DB_PASSWORD=postgres
-    - RABBITMQ_HOST=rabbitmq
+    - RABBITMQ_HOST=aprb-rabbitmq
     - RABBITMQ_USER=guest
     - RABBITMQ_PASSWORD=guest
     - RABBITMQ_PORT=5672
@@ -20,11 +20,14 @@ services:
     extends:
       file: common.yml
       service: aprb
-  postgres:
+    depends_on:
+      - aprb-postgres
+      - aprb-rabbitmq
+  aprb-postgres:
     image: postgres:9.4
     environment:
     - POSTGRES_USER=postgres
     - POSTGRES_PASSWORD=postgres
     - POSTGRES_DB=postgres
-  rabbitmq:
+  aprb-rabbitmq:
     image: rabbitmq:3.6-management
