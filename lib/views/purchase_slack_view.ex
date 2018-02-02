@@ -22,8 +22,13 @@ defmodule Aprb.Views.PurchaseSlackView do
                           short: true
                         },
                         %{
-                          title: "Admin",
+                          title: "Outreach Admin",
                           value: "#{event["properties"]["partner"]["outreach_admin"]}",
+                          short: true
+                        },
+                        %{
+                          title: "Admin",
+                          value: "#{event["properties"]["partner"]["admin"]["name"]}",
                           short: true
                         }
                       ]
