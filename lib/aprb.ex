@@ -10,7 +10,7 @@ defmodule Aprb do
       supervisor(Aprb.Repo, []),
       worker(Aprb.Service.AmqEventService, [%{topic: "conversations", routing_keys: ["conversation.*"]}], id: :conversations),
       worker(Aprb.Service.AmqEventService, [%{topic: "inquiries"}], id: :amq_inquiries),
-      worker(Aprb.Service.AmqEventService, [%{topic: "radiation.messages", routing_keys: ["deliveryevent.spamreport", "deliveryevent.bounce"]}], id: :radiation_messages),
+      worker(Aprb.Service.AmqEventService, [%{topic: "radiation.messages", routing_keys: ["delivery.spamreport", "delivery.bounce"]}], id: :radiation_messages),
       worker(Aprb.Service.AmqEventService, [%{topic: "subscriptions"}], id: :subscriptions),
       worker(Aprb.Service.AmqEventService, [%{topic: "auctions", routing_keys: ["SecondPriceBidPlaced"]}], id: :auctions),
       worker(Aprb.Service.AmqEventService, [%{topic: "purchases"}], id: :purchases),
