@@ -1,13 +1,7 @@
 defmodule Aprb.Service.EventServiceTest do
-  use ExUnit.Case, async: false
+  use Aprb.ServiceCase
   import Aprb.Factory
   alias Aprb.{Repo, Service.EventService}
-
-  setup do
-    Ecto.Adapters.SQL.Sandbox.checkout(Repo)
-    Ecto.Adapters.SQL.Sandbox.mode(Aprb.Repo, { :shared, self() })
-    :ok
-  end
 
   test "slack_message: inquiries" do
     insert(:topic, name: "inquiries")
@@ -165,7 +159,6 @@ defmodule Aprb.Service.EventServiceTest do
   end
 
   test "slack_message: sale.started" do
-    insert(:topic, name: "sales")
     event = %{
                "verb" => "started",
                "properties" => %{
@@ -176,21 +169,6 @@ defmodule Aprb.Service.EventServiceTest do
              }
     response = EventService.slack_message(event, "sales", "sale.started")
     assert response[:text]  == ":gavel: :star: ted: <https://sales.artsy.net/sales/sale1|pretty cool sale>"
-    assert response[:unfurl_links]  == false
-  end
-
-  test "slack_message: sale.ended" do
-    insert(:topic, name: "sales")
-    event = %{
-               "verb" => "ended",
-               "properties" => %{
-                  "id" => "sale1",
-                  "name" => "pretty cool sale",
-                  "description" => "name is descriptive enough!"
-               }
-             }
-    response = EventService.slack_message(event, "sales", "sale.ended")
-    assert response[:text] == ":gavel: :shaka: : ended: <https://sales.artsy.net/sales/sale1|pretty cool sale>"
     assert response[:unfurl_links]  == false
   end
 end

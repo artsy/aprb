@@ -1,10 +1,10 @@
-FROM elixir:1.5.0
+FROM elixir:1.5.0-slim
 
 # Set up deploy user and working directory
 RUN adduser --disabled-password --gecos '' deploy
 
 RUN apt-get update && \
-      apt-get -y install sudo
+      apt-get -y install sudo git
 
 # Set up working directory
 RUN mkdir /app
