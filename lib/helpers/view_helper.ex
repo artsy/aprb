@@ -15,14 +15,18 @@ defmodule Aprb.ViewHelper do
     "https://impulse.artsy.net/#{path}"
   end
 
+  def sale_link(path) do
+    "https://sales.artsy.net/sales/#{path}"
+  end
+
   def radiation_conversation_link(conversation_id) do
     conversation_path = "admin/accounts/2/conversations/#{conversation_id}"
-    radiation_link(conversation_path)
+    "<#{radiation_link(conversation_path)}|Conversation(#{conversation_id})>"
   end
 
   def impulse_conversation_link(conversation_id) do
     conversation_path = "admin/conversations/#{conversation_id}"
-    impulse_link(conversation_path)
+    "<#{impulse_link(conversation_path)}|Conversation(#{conversation_id})>"
   end
 
   def admin_partners_link(path) do
@@ -53,7 +57,7 @@ defmodule Aprb.ViewHelper do
 
   def artworks_display_from_artworkgroups(artworkgroups) do
     artworkgroups
-      |> Enum.map(fn(ag) -> "#{ag["title"]} (#{ag["artists"]})" end)
+      |> Enum.map(fn(ag) -> "<#{artwork_link(ag["id"])}|#{ag["title"]} (#{ag["artists"]})>" end)
       |> Enum.join(", ")
   end
 end
