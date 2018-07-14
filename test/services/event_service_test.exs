@@ -1,13 +1,7 @@
 defmodule Aprb.Service.EventServiceTest do
-  use ExUnit.Case, async: false
+  use Aprb.ServiceCase
   import Aprb.Factory
   alias Aprb.{Repo, Service.EventService}
-
-  setup do
-    Ecto.Adapters.SQL.Sandbox.checkout(Repo)
-    Ecto.Adapters.SQL.Sandbox.mode(Aprb.Repo, { :shared, self() })
-    :ok
-  end
 
   test "slack_message: inquiries" do
     insert(:topic, name: "inquiries")
@@ -111,7 +105,7 @@ defmodule Aprb.Service.EventServiceTest do
     response = EventService.slack_message(event, "conversations", "test_routing_key")
     assert response[:text]  == ":-1: Gallery 1 dismissed Collector One inquiry on https://www.artsy.net/artwork/artwork-1"
     assert response[:unfurl_links] == true
-    assert Enum.map(List.first(response[:attachments])[:fields], fn field -> %{String.to_atom(field[:title]) => field[:value]} end) === [%{Outcome: "dont_trust"}, %{Comment: "I really dont"}, %{Radiation: "https://radiation.artsy.net/admin/accounts/2/conversations/rad1"}]
+    assert Enum.map(List.first(response[:attachments])[:fields], fn field -> %{String.to_atom(field[:title]) => field[:value]} end) === [%{Outcome: "dont_trust"}, %{Comment: "I really dont"}, %{Radiation: "<https://radiation.artsy.net/admin/accounts/2/conversations/rad1|Conversation(rad1)>"}]
   end
 
   describe "slack_message: feedbacks" do
@@ -162,5 +156,19 @@ defmodule Aprb.Service.EventServiceTest do
       response = EventService.slack_message(event, "feedbacks", "test_routing_key")
       assert response[:text]  == ":artsy-email: :simple_smile: User 1 submitted from /user/delete\n\nI wrote to help[@domain] and someone.else[@domain] and no luck"
     end
+  end
+
+  test "slack_message: sale.started" do
+    event = %{
+               "verb" => "started",
+               "properties" => %{
+                  "id" => "sale1",
+                  "name" => "pretty cool sale",
+                  "description" => "name is descriptive enough!"
+               }
+             }
+    response = EventService.slack_message(event, "sales", "sale.started")
+    assert response[:text]  == ":gavel: :star: ted: <https://sales.artsy.net/sales/sale1|pretty cool sale>"
+    assert response[:unfurl_links]  == false
   end
 end

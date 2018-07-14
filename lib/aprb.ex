@@ -14,6 +14,7 @@ defmodule Aprb do
       worker(Aprb.Service.AmqEventService, [%{topic: "subscriptions"}], id: :subscriptions),
       worker(Aprb.Service.AmqEventService, [%{topic: "auctions", routing_keys: ["SecondPriceBidPlaced"]}], id: :auctions),
       worker(Aprb.Service.AmqEventService, [%{topic: "purchases"}], id: :purchases),
+      worker(Aprb.Service.AmqEventService, [%{topic: "sales"}], id: :sales),
       worker(Aprb.Service.AmqEventService, [%{topic: "invoices"}], id: :invoices),
       worker(Aprb.Service.AmqEventService, [%{topic: "consignments"}], id: :consignments),
       worker(Aprb.Service.AmqEventService, [%{topic: "feedbacks"}], id: :feedbacks),

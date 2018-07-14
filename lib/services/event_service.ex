@@ -34,6 +34,8 @@ defmodule Aprb.Service.EventService do
         Aprb.Views.ConsignmentsSlackView.render(event)
       "feedbacks" ->
         Aprb.Views.FeedbacksSlackView.render(event)
+      "sales" ->
+        Aprb.Views.SalesSlackView.render(event, routing_key)
     end
   end
 
