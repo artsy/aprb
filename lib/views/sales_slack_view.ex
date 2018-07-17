@@ -4,15 +4,15 @@ defmodule Aprb.Views.SalesSlackView do
     case routing_key do
       "sale.started" ->
         %{
-          text: ":gavel: :star: ted: <#{sale_link(event["properties"]["id"])}|#{event["properties"]["name"]}>",
+          text: ":gavel: :star: ted: <#{artsy_sale_link(event["properties"]["id"])}|#{event["properties"]["name"]}>",
           attachments: sale_attachments(event),
-          unfurl_links: false
+          unfurl_links: true
         }
       "sale.ended" ->
         %{
-          text: ":gavel: :shaka: : ended: <#{sale_link(event["properties"]["id"])}|#{event["properties"]["name"]}>",
+          text: ":gavel: :shaka: : ended: <#{artsy_sale_link(event["properties"]["id"])}|#{event["properties"]["name"]}>",
           attachments: sale_attachments(event),
-          unfurl_links: false
+          unfurl_links: true
         }
     end
   end
@@ -22,13 +22,13 @@ defmodule Aprb.Views.SalesSlackView do
       fields: [
         %{
           title: "Sale Code",
-          value: "#{event["properties"]["sale_code"]}",
+          value: event["properties"]["sale_code"],
           short: true
         },
         %{
-          title: "Description",
-          value: "#{event["properties"]["description"]}",
-          short: false
+          title: "Admin Link",
+          value: ohm_sale_link(event["properties"]["id"]),
+          short: true
         }
       ]
     }]
