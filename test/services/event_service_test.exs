@@ -168,7 +168,7 @@ defmodule Aprb.Service.EventServiceTest do
                }
              }
     response = EventService.slack_message(event, "sales", "sale.started")
-    assert response[:text]  == ":gavel: :star: ted: <https://artsy.net/auction/sale1|pretty cool sale>"
+    assert response[:text]  == ":gavel: :star: ted: <https://www.artsy.net/auction/sale1|pretty cool sale>"
     assert response[:unfurl_links]  == true
   end
 end

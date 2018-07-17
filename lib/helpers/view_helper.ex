@@ -20,7 +20,7 @@ defmodule Aprb.ViewHelper do
   end
 
   def artsy_sale_link(path) do
-    "https://artsy.net/auction/#{path}"
+    "https://www.artsy.net/auction/#{path}"
   end
 
   def radiation_conversation_link(conversation_id) do
