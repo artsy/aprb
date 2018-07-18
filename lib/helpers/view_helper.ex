@@ -15,8 +15,12 @@ defmodule Aprb.ViewHelper do
     "https://impulse.artsy.net/#{path}"
   end
 
-  def sale_link(path) do
+  def ohm_sale_link(path) do
     "https://sales.artsy.net/sales/#{path}"
+  end
+
+  def artsy_sale_link(path) do
+    "https://www.artsy.net/auction/#{path}"
   end
 
   def radiation_conversation_link(conversation_id) do
