@@ -58,10 +58,4 @@ defmodule Aprb.ViewHelper do
       "N/A"
     end
   end
-
-  def artworks_display_from_artworkgroups(artworkgroups) do
-    artworkgroups
-      |> Enum.map(fn(ag) -> "<#{artwork_link(ag["id"])}|#{ag["title"]} (#{ag["artists"]})>" end)
-      |> Enum.join(", ")
-  end
 end
