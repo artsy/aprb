@@ -1,7 +1,9 @@
+# https://github.com/artsy/exchange/blob/master/app/events/order_event.rb#L1
+
 defmodule Aprb.Views.CommerceSlackView do
   import Aprb.ViewHelper
 
-  def render(event, routing_key) do
+  def render(event, _routing_key) do
     text = case event["properties"]["state"] do
       "submitted" -> "🤞 Order Submitted"
       "approved" -> ":yes: Order Approved"
@@ -19,8 +21,13 @@ defmodule Aprb.Views.CommerceSlackView do
                           short: true
                         },
                         %{
-                          title: "Partner",
-                          value: partner_data["name"],
+                          title: "Buyer",
+                          value: fetch_info(event["properties"]["buyer_id"], event["properties"]["buyer_type"])["name"],
+                          short: true
+                        },
+                        %{
+                          title: "Seller",
+                          value: fetch_info(event["properties"]["seller_id"], event["properties"]["seller_type"])["name"],
                           short: true
                         },
                         %{
@@ -34,8 +41,11 @@ defmodule Aprb.Views.CommerceSlackView do
     }
   end
 
-  defp fetch_partner(partner_id) do
-    Gravity.get!("/partners/#{partner_id}").body
+  defp fetch_info(id, type) do
+    case type do
+      "partner" -> Gravity.get!("/partners/#{id}").body
+      "user" -> Gravity.get!("/users/#{id}").body
+    end
   end
 
   defp artworks_links_from_line_items(line_items) do
