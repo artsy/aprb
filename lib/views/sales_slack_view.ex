@@ -46,7 +46,7 @@ defmodule Aprb.Views.SalesSlackView do
   end
 
   defp fetch_sale(sale_id) do
-    sale_response = Gravity.get!("/v1/sale/shared-online-only-mocktion-k8s").body
+    sale_response = Gravity.get!("/v1/sale/#{sale_id}").body
     %{
       sale_type: sale_response["sale_type"],
       eligible_sale_artworks_count: sale_response["eligible_sale_artworks_count"],
