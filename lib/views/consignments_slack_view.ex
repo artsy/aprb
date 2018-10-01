@@ -4,7 +4,7 @@ defmodule Aprb.Views.ConsignmentsSlackView do
   def render(event) do
     artist_data = fetch_artist(event["properties"]["artist_id"])
     %{
-      text: ":sparkles: #{event["subject"]["display"]} #{event["verb"]} #{event["properties"]["title"]}",
+      text: ":sparkles: #{event["properties"]["title"]} #{event["verb"]} <#{fetch_images(event)}|image>",
       attachments: [%{
                       fields: [
                         %{
@@ -26,11 +26,13 @@ defmodule Aprb.Views.ConsignmentsSlackView do
                           title: "Medium",
                           value: "#{event["properties"]["medium"]}",
                           short: true
-                        },
+                        }
+                      ],
+                      "actions": [
                         %{
-                          title: "Admin Link",
-                          value: "#{consignments_admin_link(event["object"]["id"])}",
-                          short: false
+                          "type": "button",
+                          "text": "Admin Link",
+                          "url": consignments_admin_link(event["object"]["id"])
                         }
                       ]
                     }],
@@ -44,5 +46,11 @@ defmodule Aprb.Views.ConsignmentsSlackView do
       permalink: artist_response["_links"]["permalink"]["href"],
       name: artist_response["name"]
     }
+  end
+
+  defp fetch_images(event) do
+    event["properties"]["image_urls"]
+    |> List.first
+    |> Map.get("thumbnail")
   end
 end
