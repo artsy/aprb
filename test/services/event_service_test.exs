@@ -1,7 +1,7 @@
 defmodule Aprb.Service.EventServiceTest do
   use Aprb.ServiceCase
   import Aprb.Factory
-  alias Aprb.{Service.EventService}
+  alias Aprb.{Repo, Service.EventService}
 
   test "slack_message: inquiries" do
     insert(:topic, name: "inquiries")

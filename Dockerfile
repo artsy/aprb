@@ -1,4 +1,4 @@
-FROM elixir:1.6.0-slim
+FROM elixir:1.5.0-slim
 
 # Set up deploy user and working directory
 RUN adduser --disabled-password --gecos '' deploy
