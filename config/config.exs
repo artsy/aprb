@@ -14,7 +14,5 @@ config :aprb, RabbitMQ,
   host: System.get_env("RABBITMQ_HOST"),
   heartbeat: 5
 
-config :maru, :json_library, Elixir.Jason
-
 
 import_config "#{Mix.env}.exs"
