@@ -5,7 +5,7 @@ defmodule Aprb.Api.Root do
     plug Plug.Logger
     plug Plug.Parsers,
       pass: ["*/*"],
-      json_decoder: Poison,
+      json_decoder: Elixir.Jason,
       parsers: [:urlencoded, :json, :multipart]
   end
   mount Aprb.Api.Ping
