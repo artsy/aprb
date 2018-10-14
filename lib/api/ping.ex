@@ -1,5 +1,5 @@
 defmodule Aprb.Api.Ping do
-  use Maru.Router
+  use Aprb.Api.Server
 
   namespace :ping do
     desc "Ping which returns pong."
