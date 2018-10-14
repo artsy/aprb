@@ -4,7 +4,7 @@ defmodule Aprb.Mixfile do
   def project do
     [app: :aprb,
      version: "0.1.0",
-     elixir: "~> 1.5",
+     elixir: "~> 1.6",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      aliases: aliases(),
@@ -23,6 +23,7 @@ defmodule Aprb.Mixfile do
 
   defp deps do
       [{:amqp, "~> 1.0"},
+      {:cowboy, "~> 2.1"},
       {:calendar, "~> 0.17.2"},
       {:ecto, "~> 2.0.0"},
       {:ex_machina, "~> 1.0", only: :test},

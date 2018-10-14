@@ -1,5 +1,5 @@
 defmodule Aprb.Api.Slack do
-  use Maru.Router
+  use Aprb.Api.Server
   alias Aprb.Service.SlackCommandService
 
   namespace :slack do
