@@ -32,4 +32,3 @@ vagrant-*.json
 *.tfplan
 terraform/crash.log
 .env
-log
