@@ -22,17 +22,18 @@ defmodule Aprb.Mixfile do
   end
 
   defp deps do
-    [ {:maru, "~> 0.12"},
-      {:amqp, "0.2.2"},
-      {:poison, "~> 3.0", override: true},
-      {:jason, "~> 1.1"},
-      {:slack, "~> 0.11.0"},
-      {:postgrex, ">= 0.0.0"},
-      {:ecto, "~> 2.0.0"},
-      {:money, "~> 1.1.0"},
+      [{:amqp, "~> 1.0"},
       {:calendar, "~> 0.17.2"},
+      {:ecto, "~> 2.0.0"},
       {:ex_machina, "~> 1.0", only: :test},
-      {:sentient, git: "https://github.com/rdalin82/sentient.git"} ]
+      {:jason, "~> 1.1"},
+      {:money, "~> 1.1.0"},
+      {:poison, "~> 3.1", override: true},
+      {:postgrex, ">= 0.0.0"},
+      {:ranch_proxy_protocol, "~> 2.0", override: true},
+      {:sentient, git: "https://github.com/rdalin82/sentient.git"},
+      {:slack, "~> 0.14.0"},
+      {:maru, "~> 0.13"}]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]

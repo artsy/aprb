@@ -67,7 +67,9 @@ defmodule Aprb.Api.SlackTest do
       topic1 = insert(:topic)
       conn = receive_slack_message("token", opts, "subscribe #{topic1.name} inquiries", "C123456")
       assert conn.status == 200
-      assert conn.resp_body == "{\"text\":\":+1: Subscribed to #{topic1.name} \",\"response_type\":\"in_channel\"}"
+      resp = Jason.decode!(conn.resp_body)
+      assert Map.get(resp, "text") == ":+1: Subscribed to #{topic1.name} "
+      assert Map.get(resp, "response_type") == "in_channel"
       assert Repo.one(Subscriber).channel_id == "C123456"
       subscriber = Repo.get_by(Subscriber, channel_id: "C123456")
       subscriber = Repo.preload(subscriber, :topics)
@@ -89,7 +91,9 @@ defmodule Aprb.Api.SlackTest do
       conn = receive_slack_message("token", opts, "unsubscribe #{topic1.name} inquiries", subscriber.channel_id)
 
       assert conn.status == 200
-      assert conn.resp_body == "{\"text\":\":+1: Unsubscribed from _#{topic1.name}_\",\"response_type\":\"in_channel\"}"
+      resp = Jason.decode!(conn.resp_body)
+      assert Map.get(resp, "text") == ":+1: Unsubscribed from _#{topic1.name}_"
+      assert Map.get(resp, "response_type") == "in_channel"
       subscriber = Repo.get_by(Subscriber, channel_id: subscriber.channel_id)
       subscriber = Repo.preload(subscriber, :topics)
       assert Enum.count(subscriber.topics) == 0
@@ -107,7 +111,9 @@ defmodule Aprb.Api.SlackTest do
       conn = receive_slack_message("token", opts, "unsubscribe random", subscriber.channel_id)
 
       assert conn.status == 200
-      assert conn.resp_body == "{\"text\":\"Can't find a matching subscription to unsubscribe!\",\"response_type\":\"in_channel\"}"
+      resp = Jason.decode!(conn.resp_body)
+      assert Map.get(resp, "text") == "Can't find a matching subscription to unsubscribe!"
+      assert Map.get(resp, "response_type") == "in_channel"
       subscriber = Repo.get_by(Subscriber, channel_id: subscriber.channel_id)
       subscriber = Repo.preload(subscriber, :topics)
       assert Enum.count(subscriber.topics) == 1

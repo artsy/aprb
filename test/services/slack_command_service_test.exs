@@ -2,7 +2,7 @@ defmodule Aprb.Service.SlackCommandServiceTest do
   use ExUnit.Case, async: true
   import Aprb.Factory
   alias Aprb.{Repo, Service.SlackCommandService}
-  
+
   setup do
     Ecto.Adapters.SQL.Sandbox.checkout(Repo)
     Ecto.Adapters.SQL.Sandbox.mode(Aprb.Repo, { :shared, self() })
