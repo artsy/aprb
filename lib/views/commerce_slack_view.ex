@@ -48,8 +48,8 @@ defmodule Aprb.Views.CommerceSlackView do
 
   defp fetch_info(id, type) do
     case type do
-      "partner" -> Gravity.get!("/partners/#{id}").body
       "user" -> Gravity.get!("/users/#{id}").body
+      _ -> Gravity.get!("/partners/#{id}").body
     end
   end
 
