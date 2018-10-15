@@ -4,7 +4,7 @@ defmodule Aprb.Views.ConsignmentsSlackView do
   def render(event) do
     artist_data = fetch_artist(event["properties"]["artist_id"])
     %{
-      text: ":sparkles: #{event["properties"]["title"]} #{event["verb"]} <#{fetch_images(event)}|image>",
+      text: ":sparkles: #{event["properties"]["title"]} #{event["verb"]} #{images_links(event)}",
       attachments: [%{
                       fields: [
                         %{
@@ -48,9 +48,14 @@ defmodule Aprb.Views.ConsignmentsSlackView do
     }
   end
 
-  defp fetch_images(event) do
-    event["properties"]["image_urls"]
-    |> List.first
-    |> Map.get("thumbnail")
+  defp images_links(event) do
+    case event["properties"]["image_urls"] do
+    nil -> ""
+    images ->
+      images
+        |> List.first
+        |> Map.get("thumbnail")
+        |> Enum.map( fn(im) -> "<#{im}|image>" end)
+    end
   end
 end
