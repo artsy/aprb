@@ -20,6 +20,11 @@ defmodule Aprb.Views.CommerceSlackView do
           attachments: [%{
                           fields: [
                             %{
+                              title: "Code",
+                              value: event["properties"]["code"],
+                              short: true
+                            },
+                            %{
                               title: "Total Amount",
                               value: format_price(event["properties"]["items_total_cents"] / 100),
                               short: true
@@ -39,6 +44,13 @@ defmodule Aprb.Views.CommerceSlackView do
                               value: artworks_links_from_line_items(event["properties"]["line_items"]),
                               short: false
                             },
+                          ],
+                          "actions": [
+                            %{
+                              "type": "button",
+                              "text": "Admin Link",
+                              "url": exchange_admin_link(event["object"]["id"])
+                            }
                           ]
                         }],
           unfurl_links: true
