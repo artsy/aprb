@@ -1,4 +1,5 @@
 defmodule Aprb.Views.FeedbacksSlackView do
+  import Aprb.ViewHelper
   alias Aprb.Service.SentimentAnalysisService
 
   def emoji(message) do
@@ -18,7 +19,7 @@ defmodule Aprb.Views.FeedbacksSlackView do
 
   def render(event) do
     %{
-      text: "#{prefix(event)} #{event["properties"]["user_name"]} #{event["verb"]} from #{event["properties"]["url"]}\n\n#{obfuscate_emails event["properties"]["message"]}",
+      text: "#{prefix(event)} #{cleanup_name(event["properties"]["user_name"])} #{event["verb"]} from #{event["properties"]["url"]}\n\n#{obfuscate_emails event["properties"]["message"]}",
       attachments: [],
       unfurl_links: false
     }
