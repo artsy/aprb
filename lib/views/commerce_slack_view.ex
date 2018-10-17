@@ -4,58 +4,77 @@ defmodule Aprb.Views.CommerceSlackView do
   import Aprb.ViewHelper
 
   def render(event, _routing_key) do
-    text = case event["properties"]["state"] do
-      "submitted" -> "🤞 Order Submitted"
-      "approved" -> ":yes: Order Approved"
-      "rejected" -> ":soshocked: Order Rejected"
+    title = case event["properties"]["state"] do
+      "submitted" -> "🤞 Submitted"
+      "approved" -> ":yes: Approved"
+      "rejected" -> ":soshocked: Rejected"
       "seller_lapsed" -> ":hourglass: Seller Lapsed"
-      "fulfilled" -> " :shipitmoveit: Order Fulfilled"
+      "refunded" -> ":sad-parrot: Refunded"
+      "fulfilled" -> " :shipitmoveit: Fulfilled"
       _ -> nil
     end
-    case text do
+
+    case title do
       nil -> nil
-      text ->
+      title ->
         %{
-          text: text,
-          attachments: [%{
-                          fields: [
-                            %{
-                              title: "Code",
-                              value: event["properties"]["code"],
-                              short: true
-                            },
-                            %{
-                              title: "Total Amount",
-                              value: format_price(event["properties"]["items_total_cents"] / 100),
-                              short: true
-                            },
-                            %{
-                              title: "Buyer",
-                              value: fetch_info(event["properties"]["buyer_id"], event["properties"]["buyer_type"])["name"],
-                              short: true
-                            },
-                            %{
-                              title: "Seller",
-                              value: fetch_info(event["properties"]["seller_id"], event["properties"]["seller_type"])["name"],
-                              short: true
-                            },
-                            %{
-                              title: "Artworks",
-                              value: artworks_links_from_line_items(event["properties"]["line_items"]),
-                              short: false
-                            },
-                          ],
-                          "actions": [
-                            %{
-                              "type": "button",
-                              "text": "Admin Link",
-                              "url": exchange_admin_link(event["object"]["id"])
-                            }
-                          ]
-                        }],
+          text: title,
+          attachments: attachments(event),
           unfurl_links: true
         }
       end
+  end
+
+  defp attachments(event) do
+    seller = fetch_info(event["properties"]["seller_id"], event["properties"]["seller_type"])
+    buyer = fetch_info(event["properties"]["buyer_id"], event["properties"]["buyer_type"])
+    fields =
+      case buyer["admin"] do
+        nil -> attachment_fields(event, buyer, seller)
+        admin ->
+          attachment_fields(event, buyer, seller)
+            |> Enum.concat(%{ title: "Admin", value: admin["name"], short: true} )
+      end
+    [%{
+      fields: fields,
+      "actions": [
+        %{
+          "type": "button",
+          "text": "Admin Link",
+          "url": exchange_admin_link(event["object"]["id"])
+        }
+      ]
+    }]
+  end
+
+  defp attachment_fields(event, buyer, seller) do
+    [
+      %{
+        title: "Code",
+        value: event["properties"]["code"],
+        short: true
+      },
+      %{
+        title: "Total Amount",
+        value: format_price(event["properties"]["items_total_cents"] / 100),
+        short: true
+      },
+      %{
+        title: "Buyer",
+        value: cleanup_name(buyer["name"]),
+        short: true
+      },
+      %{
+        title: "Seller",
+        value: seller["name"],
+        short: true
+      },
+      %{
+        title: "Artworks",
+        value: artworks_links_from_line_items(event["properties"]["line_items"]),
+        short: false
+      },
+    ]
   end
 
   defp fetch_info(id, type) do
