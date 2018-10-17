@@ -122,7 +122,7 @@ defmodule Aprb.Service.EventServiceTest do
         }
       }
       response = EventService.slack_message(event, "feedbacks", "test_routing_key")
-      assert response[:text]  == ":artsy-email: :simple_smile: User 1 submitted from /user/delete\n\nThanks"
+      assert response[:text]  == ":artsy-email: :simple_smile: User submitted from /user/delete\n\nThanks"
     end
 
     test "without a logged in user" do
@@ -138,7 +138,7 @@ defmodule Aprb.Service.EventServiceTest do
         }
       }
       response = EventService.slack_message(event, "feedbacks", "test_routing_key")
-      assert response[:text]  == ":artsy-email: :simple_smile: User 1 submitted from /user/delete\n\nThanks"
+      assert response[:text]  == ":artsy-email: :simple_smile: User submitted from /user/delete\n\nThanks"
     end
 
     test "with a message containing email addresses" do
@@ -154,7 +154,7 @@ defmodule Aprb.Service.EventServiceTest do
         }
       }
       response = EventService.slack_message(event, "feedbacks", "test_routing_key")
-      assert response[:text]  == ":artsy-email: :simple_smile: User 1 submitted from /user/delete\n\nI wrote to help[@domain] and someone.else[@domain] and no luck"
+      assert response[:text]  == ":artsy-email: :simple_smile: User submitted from /user/delete\n\nI wrote to help[@domain] and someone.else[@domain] and no luck"
     end
   end
 
