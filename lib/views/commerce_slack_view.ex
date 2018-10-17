@@ -31,7 +31,7 @@ defmodule Aprb.Views.CommerceSlackView do
     fields =
       case seller["admin"] do
         nil -> attachment_fields(event, buyer, seller)
-        admin -> attachment_fields(event, buyer, seller) ++ %{ title: "Admin", value: admin["name"], short: true}
+        admin -> attachment_fields(event, buyer, seller) ++ [%{ title: "Admin", value: admin["name"], short: true}]
       end
     [%{
       fields: fields,
