@@ -29,7 +29,7 @@ defmodule Aprb.Views.CommerceSlackView do
     seller = fetch_info(event["properties"]["seller_id"], event["properties"]["seller_type"])
     buyer = fetch_info(event["properties"]["buyer_id"], event["properties"]["buyer_type"])
     fields =
-      case buyer["admin"] do
+      case seller["admin"] do
         nil -> attachment_fields(event, buyer, seller)
         admin ->
           attachment_fields(event, buyer, seller)
