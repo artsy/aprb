@@ -5,7 +5,7 @@ defmodule Aprb.Views.CommerceSlackView do
 
   def render(event, routing_key) do
     case routing_key do
-      "transaction.failed" -> failed_transaction_event(event)
+      "transaction.created" -> failed_transaction_event(event)
       _ -> order_event(event)
     end
   end
