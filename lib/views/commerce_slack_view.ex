@@ -59,19 +59,19 @@ defmodule Aprb.Views.CommerceSlackView do
       title ->
         %{
           text: title,
-          attachments: attachments(event),
+          attachments: order_attachments(event),
           unfurl_links: true
         }
     end
   end
 
-  defp attachments(event) do
+  defp order_attachments(event) do
     seller = fetch_info(event["properties"]["seller_id"], event["properties"]["seller_type"])
     buyer = fetch_info(event["properties"]["buyer_id"], event["properties"]["buyer_type"])
     fields =
       case seller["admin"] do
-        nil -> attachment_fields(event, buyer, seller)
-        admin -> attachment_fields(event, buyer, seller) ++ [%{ title: "Admin", value: admin["name"], short: true}]
+        nil -> order_attachment_fields(event, buyer, seller)
+        admin -> order_attachment_fields(event, buyer, seller) ++ [%{ title: "Admin", value: admin["name"], short: true}]
       end
     [%{
       fields: fields,
@@ -85,7 +85,7 @@ defmodule Aprb.Views.CommerceSlackView do
     }]
   end
 
-  defp attachment_fields(event, buyer, seller) do
+  defp order_attachment_fields(event, buyer, seller) do
     [
       %{
         title: "Code",
