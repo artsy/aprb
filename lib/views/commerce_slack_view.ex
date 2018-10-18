@@ -3,7 +3,47 @@
 defmodule Aprb.Views.CommerceSlackView do
   import Aprb.ViewHelper
 
-  def render(event, _routing_key) do
+  def render(event, routing_key) do
+    case routing_key do
+      "transaction.failed" -> failed_transaction_event(event)
+      _ -> order_event(event)
+    end
+  end
+
+  defp failed_transaction_event(event) do
+    %{
+      text: ":alert: Failed Transaction",
+      attachments: [%{
+        fields: [
+          %{
+            title: "Failure Code",
+            value: event["properties"]["failure_code"],
+            short: true
+          },
+          %{
+            title: "Failure Message",
+            value: event["properties"]["failure_message"],
+            short: true
+          },
+          %{
+            title: "Transaction Type",
+            value: event["properties"]["transaction_type"],
+            short: true
+          },
+        ] ,
+        "actions": [
+          %{
+            "type": "button",
+            "text": "Admin Link",
+            "url": exchange_admin_link(event["properties"]["order"]["id"])
+          }
+        ]
+      }],
+      unfurl_links: true
+    }
+  end
+
+  defp order_event(event) do
     title = case event["properties"]["state"] do
       "submitted" -> "🤞 Submitted"
       "approved" -> ":yes: Approved"
@@ -19,19 +59,19 @@ defmodule Aprb.Views.CommerceSlackView do
       title ->
         %{
           text: title,
-          attachments: attachments(event),
+          attachments: order_attachments(event),
           unfurl_links: true
         }
-      end
+    end
   end
 
-  defp attachments(event) do
+  defp order_attachments(event) do
     seller = fetch_info(event["properties"]["seller_id"], event["properties"]["seller_type"])
     buyer = fetch_info(event["properties"]["buyer_id"], event["properties"]["buyer_type"])
     fields =
       case seller["admin"] do
-        nil -> attachment_fields(event, buyer, seller)
-        admin -> attachment_fields(event, buyer, seller) ++ [%{ title: "Admin", value: admin["name"], short: true}]
+        nil -> order_attachment_fields(event, buyer, seller)
+        admin -> order_attachment_fields(event, buyer, seller) ++ [%{ title: "Admin", value: admin["name"], short: true}]
       end
     [%{
       fields: fields,
@@ -45,7 +85,7 @@ defmodule Aprb.Views.CommerceSlackView do
     }]
   end
 
-  defp attachment_fields(event, buyer, seller) do
+  defp order_attachment_fields(event, buyer, seller) do
     [
       %{
         title: "Code",
