@@ -111,12 +111,7 @@ defmodule Aprb.Views.CommerceSlackView do
         title: "Seller",
         value: seller["name"],
         short: true
-      },
-      %{
-        title: "Artworks",
-        value: artworks_links_from_line_items(event["properties"]["line_items"]),
-        short: false
-      },
+      }
     ]
   end
 
@@ -130,6 +125,6 @@ defmodule Aprb.Views.CommerceSlackView do
   defp artworks_links_from_line_items(line_items) do
     line_items
       |> Enum.map(fn(li) -> artwork_link(li["artwork_id"]) end)
-      |> Enum.map(fn(artwork_link) -> "<#{artwork_link} | >" end)
+      |> Enum.map(fn(artwork_link) -> "<#{artwork_link}| >" end)
   end
 end

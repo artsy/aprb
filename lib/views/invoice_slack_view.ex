@@ -91,7 +91,7 @@ defmodule Aprb.Views.InvoiceSlackView do
 
   defp artworks_display_from_artworkgroups(artworkgroups) do
     artworkgroups
-      |> Enum.map(fn(ag) -> "<#{artwork_link(ag["id"])}|#{ag["title"]} (#{ag["artists"]})>" end)
+      |> Enum.map(fn(ag) -> "<#{artwork_link(ag["artwork_id"])}|#{ag["title"]} (#{ag["artists"]})>" end)
       |> Enum.join(", ")
   end
 end
