@@ -44,13 +44,18 @@ defmodule Aprb.Views.CommerceSlackView do
   end
 
   defp order_event(event) do
-    title = case event["properties"]["state"] do
+    title = case event["verb"] do
       "submitted" -> "🤞 Submitted"
       "approved" -> ":yes: Approved"
-      "rejected" -> ":soshocked: Rejected"
-      "seller_lapsed" -> ":hourglass: Seller Lapsed"
+      "canceled" ->
+        case event["properties"]["state_reason"] do
+          "seller_lapsed" -> ":hourglass: Seller Lapsed"
+          "seller_rejected" -> ":soshocked: Rejected"
+        end
       "refunded" -> ":sad-parrot: Refunded"
       "fulfilled" -> " :shipitmoveit: Fulfilled"
+      "pending_approval" -> ":hourglass: Approval"
+      "pending_fulfillment" -> ":hourglass: :ship:"
       _ -> nil
     end
 
@@ -58,7 +63,7 @@ defmodule Aprb.Views.CommerceSlackView do
       nil -> nil
       title ->
         %{
-          text: title,
+          text: "#{title} #{artworks_links_from_line_items(event["properties"]["line_items"])}",
           attachments: order_attachments(event),
           unfurl_links: true
         }
@@ -125,6 +130,6 @@ defmodule Aprb.Views.CommerceSlackView do
   defp artworks_links_from_line_items(line_items) do
     line_items
       |> Enum.map(fn(li) -> artwork_link(li["artwork_id"]) end)
-      |> Enum.join(", ")
+      |> Enum.map(fn(artwork_link) -> "<#{artwork_link} | >" end)
   end
 end
