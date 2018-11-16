@@ -4,7 +4,7 @@ defmodule Aprb.Views.ConsignmentsSlackView do
   def render(event) do
     artist_data = fetch_artist(event["properties"]["artist_id"])
     %{
-      text: ":sparkles: #{event["properties"]["title"]} #{event["verb"]} #{images_links(event)}",
+      text: ":sparkles: #{event["properties"]["title"]} #{event["verb"]}#{thumbnail(event)}",
       attachments: [%{
                       fields: [
                         %{
@@ -18,15 +18,45 @@ defmodule Aprb.Views.ConsignmentsSlackView do
                           short: true
                         },
                         %{
-                          title: "Category",
-                          value: "#{event["properties"]["category"]}",
-                          short: true
-                        },
-                        %{
                           title: "Medium",
                           value: "#{event["properties"]["medium"]}",
                           short: true
-                        }
+                        },
+                        %{
+                          title: "Dimensions",
+                          value: dimensions(event),
+                          short: true
+                        },
+                        %{
+                          title: "Provenance",
+                          value: "#{event["properties"]["provenance"]}",
+                          short: true
+                        },
+                        %{
+                          title: "Signed",
+                          value: "#{event["properties"]["signature"]}",
+                          short: true
+                        },
+                        %{
+                          title: "COA",
+                          value: "#{event["properties"]["authenticity_certificate"]}",
+                          short: true
+                        },
+                        %{
+                          title: "Location",
+                          value: location(event),
+                          short: true
+                        },
+                        %{
+                          title: "Price In Mind",
+                          value: "#{event["properties"]["minimum_price"]}",
+                          short: true
+                        },
+                        # %{
+                        #   title: "Images",
+                        #   value: image_urls(event),
+                        #   short: false
+                        # }
                       ],
                       "actions": [
                         %{
@@ -48,14 +78,29 @@ defmodule Aprb.Views.ConsignmentsSlackView do
     }
   end
 
-  defp images_links(event) do
-    case event["properties"]["image_urls"] do
-    nil -> ""
-    images ->
-      images
-        |> List.first
-        |> Map.get("thumbnail")
-        |> Enum.map( fn(im) -> "<#{im}|image>" end)
+  defp location(event) do
+    "#{event["properties"]["location_city"]}, #{event["properties"]["location_state"]}, #{event["properties"]["location_country"]}"
+  end
+
+  defp dimensions(event) do
+    "#{event["properties"]["width"]}x#{event["properties"]["height"]}x#{event["properties"]["depth"]}#{event["properties"]["dimensions_metric"]}"
+  end
+
+  defp thumbnail(event) do
+    case event["properties"]["thumbnail"] do
+      nil -> ""
+      image -> "<#{image}| >"
     end
   end
+
+  # defp image_urls(event) do
+  #   case event["properties"]["image_urls"] do
+  #     nil -> ""
+  #     images ->
+  #       images
+  #         |> Enum.with_index
+  #         |> Enum.map( fn(index, im) -> "<#{im}|Image #{index}>" end)
+  #         |> Enum.join(" ")
+  #     end
+  # end
 end
