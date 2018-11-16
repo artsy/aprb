@@ -50,9 +50,21 @@ defmodule Aprb.Service.SlackCommandService do
       params[:text] =~ ~r/summary/ ->
         summary(params[:text])
 
-      true ->
-        "Unknown command! Supported commands: `topics`, `subscriptions`, `subscribe <list of topics>`, `unsubscribe <list of topics>`, `summary <name of topic> <optional: date in 2014-11-21 format>`"
+      true -> help_message()
     end
+  end
+
+  defp help_message do
+    """
+    Unknown command!
+    Supported commands:
+    - `topics`
+    - `subscriptions`
+    - `subscribe <comma separated list of topics>`:
+        you can also subscribe to specific routing key/verb, by using <topic>:<routing_key> format. For example: subsribe users:user.created
+    - `unsubscribe <list of topics>`
+    - `summary <name of topic> <optional: date in 2014-11-21 format>`
+    """
   end
 
   defp find_or_create_subscriber(params) do
