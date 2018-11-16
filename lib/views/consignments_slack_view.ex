@@ -52,22 +52,42 @@ defmodule Aprb.Views.ConsignmentsSlackView do
                           value: "#{event["properties"]["minimum_price"]}",
                           short: true
                         },
-                        # %{
-                        #   title: "Images",
-                        #   value: image_urls(event),
-                        #   short: false
-                        # }
-                      ],
-                      "actions": [
                         %{
-                          "type": "button",
-                          "text": "Admin Link",
-                          "url": consignments_admin_link(event["object"]["id"])
+                          title: "Images",
+                          value: image_urls(event),
+                          short: false
                         }
-                      ]
+                      ],
+                      "actions": actions(event)
                     }],
       unfurl_links: true
     }
+  end
+
+  defp actions(event) do
+    case event["verb"] do
+      "submitted" ->
+        [
+          %{
+            "type": "button",
+            "text": "Admin Link",
+            "url": consignments_admin_link(event["object"]["id"])
+          }
+        ]
+      "approved" ->
+        [
+          %{
+            "type": "button",
+            "text": "Make Offer",
+            "url": offer_link(event["properties"]["offer_link"], event["object"]["id"])
+          }
+        ]
+      _ -> []
+    end
+  end
+
+  defp offer_link(link, submission_id) do
+    String.replace(link, "SUBMISSION_NUMBER", "#{submission_id}")
   end
 
   defp fetch_artist(artist_id) do
@@ -93,14 +113,14 @@ defmodule Aprb.Views.ConsignmentsSlackView do
     end
   end
 
-  # defp image_urls(event) do
-  #   case event["properties"]["image_urls"] do
-  #     nil -> ""
-  #     images ->
-  #       images
-  #         |> Enum.with_index
-  #         |> Enum.map( fn(index, im) -> "<#{im}|Image #{index}>" end)
-  #         |> Enum.join(" ")
-  #     end
-  # end
+  defp image_urls(event) do
+    case event["properties"]["image_urls"] do
+      nil -> ""
+      images ->
+        images
+          |> Enum.with_index(1)
+          |> Enum.map( fn({im,index}) -> "<#{im}|Image #{index}>" end)
+          |> Enum.join(" ")
+      end
+  end
 end
