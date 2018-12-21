@@ -8,6 +8,11 @@ defmodule Aprb.Views.ConsignmentsSlackView do
       attachments: [%{
                       fields: [
                         %{
+                          title: "Title",
+                          value: event["properties"]["title"],
+                          short: true
+                        },
+                        %{
                           title: "Artist",
                           value: artist_data[:name],
                           short: true
@@ -55,11 +60,6 @@ defmodule Aprb.Views.ConsignmentsSlackView do
                         %{
                           title: "Submission ID",
                           value: event["object"]["id"],
-                          short: true
-                        },
-                        %{
-                          title: "Submission Title",
-                          value: event["properties"]["title"],
                           short: true
                         },
                         %{
