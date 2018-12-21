@@ -8,18 +8,23 @@ defmodule Aprb.Views.ConsignmentsSlackView do
       attachments: [%{
                       fields: [
                         %{
+                          title: "Title",
+                          value: event["properties"]["title"],
+                          short: true
+                        },
+                        %{
                           title: "Artist",
-                          value: "#{artist_data[:name]}",
+                          value: artist_data[:name],
                           short: true
                         },
                         %{
                           title: "Year",
-                          value: "#{event["properties"]["year"]}",
+                          value: event["properties"]["year"],
                           short: true
                         },
                         %{
                           title: "Medium",
-                          value: "#{event["properties"]["medium"]}",
+                          value: event["properties"]["medium"],
                           short: true
                         },
                         %{
@@ -29,17 +34,17 @@ defmodule Aprb.Views.ConsignmentsSlackView do
                         },
                         %{
                           title: "Provenance",
-                          value: "#{event["properties"]["provenance"]}",
+                          value: event["properties"]["provenance"],
                           short: true
                         },
                         %{
                           title: "Signed",
-                          value: "#{event["properties"]["signature"]}",
+                          value: event["properties"]["signature"],
                           short: true
                         },
                         %{
                           title: "COA",
-                          value: "#{event["properties"]["authenticity_certificate"]}",
+                          value: event["properties"]["authenticity_certificate"],
                           short: true
                         },
                         %{
@@ -49,7 +54,12 @@ defmodule Aprb.Views.ConsignmentsSlackView do
                         },
                         %{
                           title: "Price In Mind",
-                          value: "#{event["properties"]["minimum_price"]}",
+                          value: event["properties"]["minimum_price"],
+                          short: true
+                        },
+                        %{
+                          title: "Submission ID",
+                          value: event["object"]["id"],
                           short: true
                         },
                         %{

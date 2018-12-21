@@ -44,40 +44,44 @@ defmodule Aprb.Views.CommerceSlackView do
   end
 
   defp order_event(event) do
-    title = case event["verb"] do
-      "submitted" -> "🤞 Submitted"
-      "approved" -> ":yes: Approved"
-      "canceled" ->
+    event
+      |> get_title
+      |> build_message(event)
+  end
+
+  defp get_title(event) do
+    case {event["verb"], event["properties"]["mode"]} do
+      {"submitted", "buy"} -> "🤞 Submitted"
+      {"submitted", "offer"} -> "🤞 Offer Submitted"
+      {"approved", _} -> ":yes: Approved"
+      {"canceled", _} ->
         case event["properties"]["state_reason"] do
           "seller_lapsed" -> ":hourglass: Seller Lapsed"
           "seller_rejected" -> ":soshocked: Rejected"
         end
-      "refunded" -> ":sad-parrot: Refunded"
-      "fulfilled" -> " :shipitmoveit: Fulfilled"
-      "pending_approval" -> ":hourglass: Approval"
-      "pending_fulfillment" -> ":hourglass: :ship:"
+      {"refunded", _} -> ":sad-parrot: Refunded"
+      {"fulfilled", _} -> " :shipitmoveit: Fulfilled"
+      {"pending_approval", _} -> ":hourglass: Waiting Approval"
+      {"pending_fulfillment", _} -> ":hourglass: Waiting Shipping"
       _ -> nil
     end
+  end
 
-    case title do
-      nil -> nil
-      title ->
-        %{
-          text: "#{title} #{artworks_links_from_line_items(event["properties"]["line_items"])}",
-          attachments: order_attachments(event),
-          unfurl_links: true
-        }
-    end
+  defp build_message(nil, event), do: nil
+  defp build_message(title, event) do
+    %{
+      text: "#{title} #{artworks_links_from_line_items(event["properties"]["line_items"])}",
+      attachments: order_attachments(event),
+      unfurl_links: true
+    }
   end
 
   defp order_attachments(event) do
     seller = fetch_info(event["properties"]["seller_id"], event["properties"]["seller_type"])
     buyer = fetch_info(event["properties"]["buyer_id"], event["properties"]["buyer_type"])
-    fields =
-      case seller["admin"] do
-        nil -> order_attachment_fields(event, buyer, seller)
-        admin -> order_attachment_fields(event, buyer, seller) ++ [%{ title: "Admin", value: admin["name"], short: true}]
-      end
+    fields = order_attachment_fields(event, buyer, seller)
+      |> append_admin(seller["admin"])
+      |> append_offer_fields(event["properties"]["mode"])
     [%{
       fields: fields,
       "actions": [
@@ -90,11 +94,22 @@ defmodule Aprb.Views.CommerceSlackView do
     }]
   end
 
+  defp append_admin(attachments, nil), do: attachments
+  defp append_admin(attachments, admin), do: attachments ++ [%{ title: "Admin", value: admin["name"], short: true}]
+
+  defp append_offer_fields(attachments, "offer", properties), do: attachments ++ [%{title: "List Price", value: properties["total_list_proce"], short: true}]
+  defp append_offer_fields(attachments, _), do: attachments
+
   defp order_attachment_fields(event, buyer, seller) do
     [
       %{
         title: "Code",
         value: event["properties"]["code"],
+        short: true
+      },
+      %{
+        title: "Mode",
+        value: event["proplists"]["mode"],
         short: true
       },
       %{
