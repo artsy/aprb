@@ -109,7 +109,7 @@ defmodule Aprb.Views.CommerceSlackView do
       },
       %{
         title: "Mode",
-        value: event["proplists"]["mode"],
+        value: event["properties"]["mode"],
         short: true
       },
       %{
