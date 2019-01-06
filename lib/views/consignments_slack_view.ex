@@ -39,12 +39,12 @@ defmodule Aprb.Views.ConsignmentsSlackView do
                         },
                         %{
                           title: "Signed",
-                          value: event["properties"]["signature"],
+                          value: "#{event["properties"]["signature"]}",
                           short: true
                         },
                         %{
                           title: "COA",
-                          value: event["properties"]["authenticity_certificate"],
+                          value: "#{event["properties"]["authenticity_certificate"]}",
                           short: true
                         },
                         %{
