@@ -172,11 +172,6 @@ defmodule Aprb.Views.CommerceSlackView do
         short: true
       },
       %{
-        title: "Total Amount",
-        value: format_price(order_properties["items_total_cents"] / 100),
-        short: true
-      },
-      %{
         title: "Buyer",
         value: cleanup_name(buyer["name"]),
         short: true
@@ -184,6 +179,11 @@ defmodule Aprb.Views.CommerceSlackView do
       %{
         title: "Seller",
         value: seller["name"],
+        short: true
+      },
+      %{
+        title: "Total Amount",
+        value: format_price(order_properties["items_total_cents"] / 100),
         short: true
       }
     ]
