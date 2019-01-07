@@ -6,6 +6,7 @@ defmodule Aprb.Views.CommerceSlackView do
   def render(event, routing_key) do
     case routing_key do
       "transaction.created" -> failed_transaction_event(event)
+      "offer.submitted" -> offer_submitted(event)
       _ -> order_event(event)
     end
   end
@@ -43,6 +44,64 @@ defmodule Aprb.Views.CommerceSlackView do
     }
   end
 
+  defp offer_submitted(event) do
+    case Map.get(event["properties"], "in_response_to", nil) do
+      nil -> nil
+      _ -> counter_offer_view(event)
+    end
+  end
+
+  defp counter_offer_view(event) do
+    seller = fetch_info(event["properties"]["order"]["seller_id"], event["properties"]["order"]["seller_type"])
+    buyer = fetch_info(event["properties"]["order"]["buyer_id"], event["properties"]["order"]["buyer_type"])
+    %{
+      text: ":parrotsunnies: Counteroffer submitted",
+      attachments: [
+        %{
+          fields: [
+            %{
+              title: "Offer Amount",
+              value: format_price(event["properties"]["amount_cents"] / 100),
+              short: true
+            },
+            %{
+              title: "By",
+              value: event["properties"]["from_participant"],
+              short: true
+            },
+            %{
+              title: "Counter to",
+              value: format_price(event["properties"]["in_response_to"]["amount_cents"] / 100),
+              short: true
+            },
+            %{
+              title: "List Price",
+              value: format_price(event["properties"]["order"]["total_list_price_cents"] / 100),
+              short: true
+            },
+            %{
+              title: "Seller",
+              value: seller["name"],
+              short: true
+            },
+            %{
+              title: "Buyer",
+              value: cleanup_name(buyer["name"]),
+              short: true
+            }
+          ],
+          "actions": [
+            %{
+              "type": "button",
+              "text": "Admin Link",
+              "url": exchange_admin_link(event["properties"]["order"]["id"])
+            }
+          ]
+        }
+      ]
+    }
+  end
+
   defp order_event(event) do
     event
       |> get_title
@@ -69,26 +128,26 @@ defmodule Aprb.Views.CommerceSlackView do
 
   defp build_message(nil, event), do: nil
   defp build_message(title, event) do
+    seller = fetch_info(event["properties"]["seller_id"], event["properties"]["seller_type"])
+    buyer = fetch_info(event["properties"]["buyer_id"], event["properties"]["buyer_type"])
     %{
       text: "#{title} #{artworks_links_from_line_items(event["properties"]["line_items"])}",
-      attachments: order_attachments(event),
+      attachments: order_attachments(event["properties"], event["object"]["id"], seller, buyer),
       unfurl_links: true
     }
   end
 
-  defp order_attachments(event) do
-    seller = fetch_info(event["properties"]["seller_id"], event["properties"]["seller_type"])
-    buyer = fetch_info(event["properties"]["buyer_id"], event["properties"]["buyer_type"])
-    fields = order_attachment_fields(event, buyer, seller)
+  defp order_attachments(order_properties, order_id, seller, buyer) do
+    fields = order_attachment_fields(order_properties, seller, buyer)
       |> append_admin(seller["admin"])
-      |> append_offer_fields(event["properties"]["mode"])
+      |> append_offer_fields(order_properties["mode"], order_properties)
     [%{
       fields: fields,
       "actions": [
         %{
           "type": "button",
           "text": "Admin Link",
-          "url": exchange_admin_link(event["object"]["id"])
+          "url": exchange_admin_link(order_id)
         }
       ]
     }]
@@ -98,23 +157,23 @@ defmodule Aprb.Views.CommerceSlackView do
   defp append_admin(attachments, admin), do: attachments ++ [%{ title: "Admin", value: admin["name"], short: true}]
 
   defp append_offer_fields(attachments, "offer", properties), do: attachments ++ [%{title: "List Price", value: properties["total_list_proce"], short: true}]
-  defp append_offer_fields(attachments, _), do: attachments
+  defp append_offer_fields(attachments, _, _), do: attachments
 
-  defp order_attachment_fields(event, buyer, seller) do
+  defp order_attachment_fields(order_properties, seller, buyer) do
     [
       %{
         title: "Code",
-        value: event["properties"]["code"],
+        value: order_properties["code"],
         short: true
       },
       %{
         title: "Mode",
-        value: event["properties"]["mode"],
+        value: order_properties["mode"],
         short: true
       },
       %{
         title: "Total Amount",
-        value: format_price(event["properties"]["items_total_cents"] / 100),
+        value: format_price(order_properties["items_total_cents"] / 100),
         short: true
       },
       %{
@@ -130,12 +189,8 @@ defmodule Aprb.Views.CommerceSlackView do
     ]
   end
 
-  defp fetch_info(id, type) do
-    case type do
-      "user" -> Gravity.get!("/users/#{id}").body
-      _ -> Gravity.get!("/v1/partner/#{id}").body
-    end
-  end
+  defp fetch_info(id, "user"), do: Gravity.get!("/users/#{id}").body
+  defp fetch_info(id, _), do: Gravity.get!("/v1/partner/#{id}").body
 
   defp artworks_links_from_line_items(line_items) do
     line_items
