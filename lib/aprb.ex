@@ -8,6 +8,7 @@ defmodule Aprb do
 
     children = [
       supervisor(Aprb.Repo, []),
+      Aprb.Server,
       worker(Aprb.Service.AmqEventService, [%{topic: "conversations", routing_keys: ["conversation.*"]}], id: :conversations),
       worker(Aprb.Service.AmqEventService, [%{topic: "inquiries"}], id: :amq_inquiries),
       worker(Aprb.Service.AmqEventService, [%{topic: "radiation.messages", routing_keys: ["delivery.spamreport", "delivery.bounce"]}], id: :radiation_messages),

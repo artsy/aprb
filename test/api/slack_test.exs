@@ -20,7 +20,7 @@ defmodule Aprb.Api.SlackTest do
     :ok
   end
 
-  def receive_slack_message(token, opts, text, channel_id) do
+  def receive_slack_message(token, _opts, text, channel_id) do
     build_conn()
       |> Plug.Conn.put_req_header("content-type", "application/json")
       |> put_body_or_params(~s({
@@ -39,22 +39,21 @@ defmodule Aprb.Api.SlackTest do
   end
 
   test "requires a token" do
-    assert_raise Maru.Exceptions.InvalidFormat, "Parsing Param Error: token", fn ->
-      post("/slack")
-    end
+    conn = post("/slack")
+    assert conn.status == 400
+    assert text_response(conn) == "Server Error"
   end
 
-  test "returns a 403 with an invalid token" do
+  test "returns a 401 with an invalid token" do
     opts = [
       parsers: [Plug.Parsers.JSON],
       pass: ["*/*"],
       json_decoder: Poison
     ]
 
-    # TODO: check status code
-    assert_raise RuntimeError, "Unauthorized", fn ->
-      receive_slack_message("invalid", opts, "inquiries", "C123456")
-    end
+    conn = receive_slack_message("invalid", opts, "inquiries", "C123456")
+    assert text_response(conn) == "Unauthorized"
+    assert conn.status == 401
   end
 
   describe "subscribe" do
@@ -67,7 +66,7 @@ defmodule Aprb.Api.SlackTest do
       topic1 = insert(:topic)
       conn = receive_slack_message("token", opts, "subscribe #{topic1.name} inquiries", "C123456")
       assert conn.status == 200
-      assert conn.resp_body == "{\"text\":\":+1: Subscribed to #{topic1.name} \",\"response_type\":\"in_channel\"}"
+      assert json_response(conn) == %{"text" => ":+1: Subscribed to #{topic1.name} ", "response_type" => "in_channel"}
       assert Repo.one(Subscriber).channel_id == "C123456"
       subscriber = Repo.get_by(Subscriber, channel_id: "C123456")
       subscriber = Repo.preload(subscriber, :topics)
@@ -89,7 +88,7 @@ defmodule Aprb.Api.SlackTest do
       conn = receive_slack_message("token", opts, "unsubscribe #{topic1.name} inquiries", subscriber.channel_id)
 
       assert conn.status == 200
-      assert conn.resp_body == "{\"text\":\":+1: Unsubscribed from _#{topic1.name}_\",\"response_type\":\"in_channel\"}"
+      assert json_response(conn) == %{"text" => ":+1: Unsubscribed from _#{topic1.name}_", "response_type" => "in_channel"}
       subscriber = Repo.get_by(Subscriber, channel_id: subscriber.channel_id)
       subscriber = Repo.preload(subscriber, :topics)
       assert Enum.count(subscriber.topics) == 0
@@ -107,7 +106,7 @@ defmodule Aprb.Api.SlackTest do
       conn = receive_slack_message("token", opts, "unsubscribe random", subscriber.channel_id)
 
       assert conn.status == 200
-      assert conn.resp_body == "{\"text\":\"Can't find a matching subscription to unsubscribe!\",\"response_type\":\"in_channel\"}"
+      assert json_response(conn) == %{"text" => "Can't find a matching subscription to unsubscribe!", "response_type" => "in_channel"}
       subscriber = Repo.get_by(Subscriber, channel_id: subscriber.channel_id)
       subscriber = Repo.preload(subscriber, :topics)
       assert Enum.count(subscriber.topics) == 1

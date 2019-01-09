@@ -32,11 +32,11 @@ defmodule Aprb.Views.CommerceSlackView do
             short: true
           },
         ] ,
-        "actions": [
+        actions: [
           %{
-            "type": "button",
-            "text": "Admin Link",
-            "url": exchange_admin_link(event["properties"]["order"]["id"])
+            type: "button",
+            text: "Admin Link",
+            url: exchange_admin_link(event["properties"]["order"]["id"])
           }
         ]
       }],
@@ -90,11 +90,11 @@ defmodule Aprb.Views.CommerceSlackView do
               short: true
             }
           ],
-          "actions": [
+          actions: [
             %{
-              "type": "button",
-              "text": "Admin Link",
-              "url": exchange_admin_link(event["properties"]["order"]["id"])
+              type: "button",
+              text: "Admin Link",
+              url: exchange_admin_link(event["properties"]["order"]["id"])
             }
           ]
         }
@@ -126,7 +126,7 @@ defmodule Aprb.Views.CommerceSlackView do
     end
   end
 
-  defp build_message(nil, event), do: nil
+  defp build_message(nil, _event), do: nil
   defp build_message(title, event) do
     seller = fetch_info(event["properties"]["seller_id"], event["properties"]["seller_type"])
     buyer = fetch_info(event["properties"]["buyer_id"], event["properties"]["buyer_type"])
@@ -143,11 +143,11 @@ defmodule Aprb.Views.CommerceSlackView do
       |> append_offer_fields(order_properties["mode"], order_properties)
     [%{
       fields: fields,
-      "actions": [
+      actions: [
         %{
-          "type": "button",
-          "text": "Admin Link",
-          "url": exchange_admin_link(order_id)
+          type: "button",
+          text: "Admin Link",
+          url: exchange_admin_link(order_id)
         }
       ]
     }]
