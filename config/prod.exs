@@ -3,7 +3,8 @@ use Mix.Config
 config :aprb, Aprb.Server,
   adapter: Plug.Cowboy,
   plug: Aprb.Api.Root,
-  http: [port: 4000, ip: {0,0,0,0}]
+  port: 4000,
+  bind_addr: {0,0,0,0}
 
 config :aprb, Aprb.Repo,
   adapter: Ecto.Adapters.Postgres,
