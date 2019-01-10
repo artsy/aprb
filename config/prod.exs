@@ -4,7 +4,8 @@ config :aprb, Aprb.Server,
   adapter: Plug.Cowboy,
   plug: Aprb.Api.Root,
   port: 4000,
-  bind_addr: {0,0,0,0}
+  scheme: :http,
+  bind_addr: "0.0.0.0"
 
 config :aprb, Aprb.Repo,
   adapter: Ecto.Adapters.Postgres,
