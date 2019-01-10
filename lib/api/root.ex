@@ -11,7 +11,7 @@ defmodule Aprb.Api.Root do
   mount Aprb.Api.Ping
   mount Aprb.Api.Slack
 
-  rescue_from Aprb.Api.Errors.Unauthorized, as: e do
+  rescue_from Aprb.Api.Errors.Unauthorized do
     conn
     |> put_status(401)
     |> text("Unauthorized")

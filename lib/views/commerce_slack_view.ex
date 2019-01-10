@@ -56,8 +56,9 @@ defmodule Aprb.Views.CommerceSlackView do
     buyer = fetch_info(event["properties"]["order"]["buyer_id"], event["properties"]["order"]["buyer_type"])
     %{
       text: ":parrotsunnies: Counteroffer submitted",
-      attachments: [
-        %{
+      attachments:
+        line_item_attachments(event["properties"]["order"]["line_items"]) ++
+        [%{
           fields: [
             %{
               title: "Offer Amount",
@@ -97,8 +98,7 @@ defmodule Aprb.Views.CommerceSlackView do
               url: exchange_admin_link(event["properties"]["order"]["id"])
             }
           ]
-        }
-      ]
+        }]
     }
   end
 
@@ -141,16 +141,18 @@ defmodule Aprb.Views.CommerceSlackView do
     fields = order_attachment_fields(order_properties, seller, buyer)
       |> append_admin(seller["admin"])
       |> append_offer_fields(order_properties["mode"], order_properties)
-    [%{
-      fields: fields,
-      actions: [
-        %{
-          type: "button",
-          text: "Admin Link",
-          url: exchange_admin_link(order_id)
-        }
-      ]
-    }]
+    line_item_attachments(order_properties["line_items"]) ++ [
+      %{
+        fields: fields,
+        actions: [
+          %{
+            type: "button",
+            text: "Admin Link",
+            url: exchange_admin_link(order_id)
+          }
+        ]
+      }
+    ]
   end
 
   defp append_admin(attachments, nil), do: attachments
@@ -167,7 +169,7 @@ defmodule Aprb.Views.CommerceSlackView do
         short: true
       },
       %{
-        title: "Mode",
+        title: "Purchase Method",
         value: order_properties["mode"],
         short: true
       },
@@ -196,5 +198,28 @@ defmodule Aprb.Views.CommerceSlackView do
     line_items
       |> Enum.map(fn(li) -> artwork_link(li["artwork_id"]) end)
       |> Enum.map(fn(artwork_link) -> "<#{artwork_link}| >" end)
+  end
+
+  defp line_item_attachments(line_items) do
+    line_items
+      |> Enum.map(&line_item_attachment(&1))
+  end
+
+  defp line_item_attachment(line_item) do
+    artwork = Gravity.get!("/v1/artwork/#{line_item["artwork_id"]}").body
+    %{
+      fields: [
+        %{
+          title: "Available Purchase Modes",
+          value: cond do
+                    artwork["acquireable"] && artwork["offerable"] -> "BNMO"
+                    artwork["acquireable"] -> "BN"
+                    artwork["offerable"] -> "MO"
+                    true -> "!?"
+                 end,
+          short: true
+        }
+      ]
+    }
   end
 end
