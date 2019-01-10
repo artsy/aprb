@@ -5,8 +5,6 @@ config :maru, Aprb.Api.Root,
 
 config :aprb, Aprb.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: System.get_env("DB_USER"),
-  password: System.get_env("DB_PASSWORD"),
   database: "aprb_dev",
   hostname: "localhost",
   pool_size: 10
