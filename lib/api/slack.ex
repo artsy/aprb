@@ -1,5 +1,5 @@
 defmodule Aprb.Api.Slack do
-  use Maru.Router
+  use Aprb.Server
   alias Aprb.Service.SlackCommandService
 
   namespace :slack do
@@ -18,13 +18,8 @@ defmodule Aprb.Api.Slack do
     end
     post do
       # check that token matches, that the POST comes from our slack integration
-      if System.get_env("SLACK_SLASH_COMMAND_TOKEN") != params[:token] do
-        conn
-          |> put_status(403)
-          |> text("Unauthorized")
+      if System.get_env("SLACK_SLASH_COMMAND_TOKEN") != params[:token], do: raise Aprb.Api.Errors.Unauthorized
 
-        raise("Unauthorized")
-      end
       json(conn, SlackCommandService.process_command(params))
     end
   end

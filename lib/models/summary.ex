@@ -7,7 +7,7 @@ defmodule Aprb.Summary do
 
   schema "summaries" do
     field :verb, :string
-    field :summary_date, Ecto.Date
+    field :summary_date, :date
     field :total_count, :integer
     belongs_to :topic, Aprb.Topic
     timestamps()

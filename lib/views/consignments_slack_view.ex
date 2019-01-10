@@ -68,7 +68,7 @@ defmodule Aprb.Views.ConsignmentsSlackView do
                           short: false
                         }
                       ],
-                      "actions": actions(event)
+                      actions: actions(event)
                     }],
       unfurl_links: true
     }
@@ -79,17 +79,17 @@ defmodule Aprb.Views.ConsignmentsSlackView do
       "submitted" ->
         [
           %{
-            "type": "button",
-            "text": "Admin Link",
-            "url": consignments_admin_link(event["object"]["id"])
+            type: "button",
+            text: "Admin Link",
+            url: consignments_admin_link(event["object"]["id"])
           }
         ]
       "approved" ->
         [
           %{
-            "type": "button",
-            "text": "Make Offer",
-            "url": offer_link(event["properties"]["offer_link"], event["object"]["id"])
+            type: "button",
+            text: "Make Offer",
+            url: offer_link(event["properties"]["offer_link"], event["object"]["id"])
           }
         ]
       _ -> []

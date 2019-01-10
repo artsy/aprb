@@ -9,4 +9,4 @@ config :aprb, Aprb.Repo,
   username: System.get_env("DB_USER"),
   password: System.get_env("DB_PASSWORD"),
   database: "aprb_test",
-  hostname: System.get_env("DB_HOST")
+  hostname: System.get_env("DB_HOST") || "localhost"
