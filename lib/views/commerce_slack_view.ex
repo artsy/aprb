@@ -200,9 +200,9 @@ defmodule Aprb.Views.CommerceSlackView do
         %{
           title: "Available Purchase Modes",
           value: cond do
-                    artwork["acquireable"] && artwork["offerable"] -> "BNMO"
-                    artwork["acquireable"] -> "BN"
-                    artwork["offerable"] -> "MO"
+                    artwork["ecommerce"] && artwork["offer"] -> "BNMO"
+                    artwork["ecommerce"] -> "BN"
+                    artwork["offer"] -> "MO"
                     true -> "!?"
                  end,
           short: true
