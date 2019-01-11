@@ -141,18 +141,16 @@ defmodule Aprb.Views.CommerceSlackView do
     fields = order_attachment_fields(order_properties, seller, buyer)
       |> append_admin(seller["admin"])
       |> append_offer_fields(order_properties["mode"], order_properties)
-    line_item_attachments(order_properties["line_items"]) ++ [
+    [
       %{
-        fields: fields,
-        actions: [
-          %{
-            type: "button",
-            text: "Admin Link",
-            url: exchange_admin_link(order_id)
-          }
-        ]
+        color: "#6E1FFF",
+        author_name: order_properties["code"],
+        author_link: exchange_admin_link(order_id),
+        title: seller["name"],
+        title_link: admin_partners_link("partners/#{seller["id"]}"),
+        fields: fields
       }
-    ]
+    ] ++ line_item_attachments(order_properties["line_items"])
   end
 
   defp append_admin(attachments, nil), do: attachments
@@ -164,11 +162,6 @@ defmodule Aprb.Views.CommerceSlackView do
   defp order_attachment_fields(order_properties, seller, buyer) do
     [
       %{
-        title: "Code",
-        value: order_properties["code"],
-        short: true
-      },
-      %{
         title: "Purchase Method",
         value: order_properties["mode"],
         short: true
@@ -176,11 +169,6 @@ defmodule Aprb.Views.CommerceSlackView do
       %{
         title: "Buyer",
         value: cleanup_name(buyer["name"]),
-        short: true
-      },
-      %{
-        title: "Seller",
-        value: seller["name"],
         short: true
       },
       %{
