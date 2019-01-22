@@ -7,6 +7,7 @@ defmodule Aprb.Views.CommerceSlackView do
     case routing_key do
       "transaction.created" -> failed_transaction_event(event)
       "offer.submitted" -> offer_submitted(event)
+      "offer.pending_response" -> offer_pending_response(event)
       _ -> order_event(event)
     end
   end
@@ -49,6 +50,52 @@ defmodule Aprb.Views.CommerceSlackView do
       nil -> nil
       _ -> counter_offer_view(event)
     end
+  end
+
+  defp offer_pending_response(event) do
+    seller = fetch_info(event["properties"]["order"]["seller_id"], event["properties"]["order"]["seller_type"])
+    buyer = fetch_info(event["properties"]["order"]["buyer_id"], event["properties"]["order"]["buyer_type"])
+    %{
+      text: ":hourglass: Waiting Offer Response",
+      attachments:
+        line_item_attachments(event["properties"]["order"]["line_items"]) ++
+        [%{
+          fields: [
+            %{
+              title: "Offer Amount",
+              value: format_price(event["properties"]["amount_cents"] / 100),
+              short: true
+            },
+            %{
+              title: "By",
+              value: event["properties"]["from_participant"],
+              short: true
+            },
+            %{
+              title: "List Price",
+              value: format_price(event["properties"]["order"]["total_list_price_cents"] / 100),
+              short: true
+            },
+            %{
+              title: "Seller",
+              value: seller["name"],
+              short: true
+            },
+            %{
+              title: "Buyer",
+              value: cleanup_name(buyer["name"]),
+              short: true
+            }
+          ],
+          actions: [
+            %{
+              type: "button",
+              text: "Admin Link",
+              url: exchange_admin_link(event["properties"]["order"]["id"])
+            }
+          ]
+        }]
+    }
   end
 
   defp counter_offer_view(event) do
@@ -115,8 +162,14 @@ defmodule Aprb.Views.CommerceSlackView do
       {"approved", _} -> ":yes: Approved"
       {"canceled", _} ->
         case event["properties"]["state_reason"] do
-          "seller_lapsed" -> ":hourglass: Seller Lapsed"
-          "seller_rejected" -> ":soshocked: Rejected"
+          "seller_lapsed" -> ":zzz: Seller Lapsed"
+          "seller_rejected" -> ":soshocked: Seller Rejected"
+          "seller_rejected_offer_too_low" ->  ":soshocked: Seller Rejected - Offer too low"
+          "seller_rejected_shipping_unavailable" ->  ":soshocked: Seller Rejected - Shipping unavailable"
+          "seller_rejected_artwork_unavailable" ->  ":soshocked: Seller Rejected - Artwork unavailable"
+          "seller_rejected_other" ->  ":soshocked: Seller Rejected - other"
+          "buyer_rejected" ->  ":soshocked: Buyer Rejected"
+          "buyer_lapsed" ->  ":zzz: Buyer Lapsed"
         end
       {"refunded", _} -> ":sad-parrot: Refunded"
       {"fulfilled", _} -> " :shipitmoveit: Fulfilled"
