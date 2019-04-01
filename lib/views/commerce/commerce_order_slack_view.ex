@@ -1,4 +1,4 @@
-# https://github.com/artsy/exchange/blob/master/app/events/order_event.rb#L1
+# https://github.com/artsy/exchange/blob/master/app/events/order_event.rb
 defmodule Aprb.Views.CommerceOrderSlackView do
   import Aprb.ViewHelper
 
@@ -27,7 +27,7 @@ defmodule Aprb.Views.CommerceOrderSlackView do
           "buyer_lapsed" ->  ":zzz: Buyer Lapsed"
         end
       {"refunded", _} -> ":sad-parrot: Refunded"
-      {"fulfilled", _} -> " :shipitmoveit: Fulfilled"
+      {"fulfilled", _} -> ":shipitmoveit: Fulfilled"
       {"pending_approval", _} -> ":hourglass: Waiting Approval"
       {"pending_fulfillment", _} -> ":hourglass: Waiting Shipping"
       _ -> nil

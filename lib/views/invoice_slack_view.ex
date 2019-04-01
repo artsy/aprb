@@ -1,4 +1,5 @@
 defmodule Aprb.Views.InvoiceSlackView do
+  @gravity_api Application.get_env(:aprb, :gravity_api)
   import Aprb.ViewHelper
 
   def render(event, routing_key) do
@@ -14,7 +15,7 @@ defmodule Aprb.Views.InvoiceSlackView do
   end
 
   defp fetch_partner_data(partner_id) do
-    Gravity.get!("/partners/#{partner_id}").body
+    @gravity_api.get!("/partners/#{partner_id}").body
   end
 
   defp merchant_account_message(event, partner_data) do

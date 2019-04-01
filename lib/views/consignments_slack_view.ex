@@ -1,4 +1,6 @@
 defmodule Aprb.Views.ConsignmentsSlackView do
+  @gravity_api Application.get_env(:aprb, :gravity_api)
+
   import Aprb.ViewHelper
 
   def render(event) do
@@ -101,7 +103,7 @@ defmodule Aprb.Views.ConsignmentsSlackView do
   end
 
   defp fetch_artist(artist_id) do
-    artist_response = Gravity.get!("/artists/#{artist_id}").body
+    artist_response = @gravity_api.get!("/artists/#{artist_id}").body
     %{
       permalink: artist_response["_links"]["permalink"]["href"],
       name: artist_response["name"]

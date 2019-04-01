@@ -1,6 +1,8 @@
 defmodule Aprb.Views.ComerceHelper do
-  def fetch_participant_info(id, "user"), do: Gravity.get!("/users/#{id}").body
-  def fetch_participant_info(id, _), do: Gravity.get!("/v1/partner/#{id}").body
+  @gravity_api Application.get_env(:aprb, :gravity_api)
+
+  def fetch_participant_info(id, "user"), do: @gravity_api.get!("/users/#{id}").body
+  def fetch_participant_info(id, _), do: @gravity_api.get!("/v1/partner/#{id}").body
 
 
   def line_item_attachments(line_items) do
@@ -9,7 +11,7 @@ defmodule Aprb.Views.ComerceHelper do
   end
 
   def line_item_attachment(line_item) do
-    artwork = Gravity.get!("/v1/artwork/#{line_item["artwork_id"]}").body
+    artwork = @gravity_api.get!("/v1/artwork/#{line_item["artwork_id"]}").body
     %{
       fields: [
         %{

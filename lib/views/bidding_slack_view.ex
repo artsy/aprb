@@ -1,4 +1,6 @@
 defmodule Aprb.Views.BiddingSlackView do
+  @gravity_api Application.get_env(:aprb, :gravity_api)
+
   import Aprb.ViewHelper
 
   def render(event) do
@@ -29,7 +31,7 @@ defmodule Aprb.Views.BiddingSlackView do
   end
 
   defp fetch_sale_artwork(lot_id) do
-    sale_artwork_response = Gravity.get!("/sale_artworks/#{lot_id}").body
+    sale_artwork_response = @gravity_api.get!("/sale_artworks/#{lot_id}").body
     %{
       permalink: sale_artwork_response["_links"]["permalink"]["href"],
       lot_number: sale_artwork_response["lot_number"]
