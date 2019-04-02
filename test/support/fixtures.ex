@@ -29,6 +29,7 @@ defmodule Aprb.Fixtures do
       "verb" => verb,
       "properties" => %{
         "mode" => mode,
+        "state_reason" => state_reason,
         "seller_id" => "partner1",
         "seller_type" => "gallery",
         "buyer_id" => "user1",
@@ -95,12 +96,9 @@ defmodule Aprb.Fixtures do
             }
           ]
         },
-        "in_response_to" => in_response_to,
         "amount_cents" => 3000,
         "from_participant" => "buyer",
-        "in_response_to" => %{
-          "amount_cents" => 4000
-        }
+        "in_response_to" => in_response_to
       }
     }
   end

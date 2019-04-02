@@ -10,7 +10,7 @@ defmodule Aprb.Views.CommerceSlackViewTest do
   end
 
   test "Offer event renders offer message" do
-    event = Aprb.Fixtures.commerce_offer_event("submitted", "order 322")
+    event = Aprb.Fixtures.commerce_offer_event("submitted", %{"amount_cents" => 300})
     slack_view = CommerceSlackView.render(event, "offer.submitted")
     assert slack_view.text  == ":parrotsunnies: Counteroffer submitted"
   end

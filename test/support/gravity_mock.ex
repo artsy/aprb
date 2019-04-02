@@ -26,4 +26,14 @@ defmodule GravityMock do
       }
     }
   end
+
+  def get!("/v1/sale/" <> sale_id) do
+    %{
+      body: %{
+        "id" => sale_id,
+        "sale_type" => "big one",
+        "eligible_sale_artworks_count" => "2"
+      }
+    }
+  end
 end
