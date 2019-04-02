@@ -1,4 +1,6 @@
 defmodule Aprb.Views.SalesSlackView do
+  @gravity_api Application.get_env(:aprb, :gravity_api)
+
   import Aprb.ViewHelper
   def render(event, routing_key) do
     sale = fetch_sale(event["properties"]["id"])
@@ -46,7 +48,7 @@ defmodule Aprb.Views.SalesSlackView do
   end
 
   defp fetch_sale(sale_id) do
-    sale_response = Gravity.get!("/v1/sale/#{sale_id}").body
+    sale_response = @gravity_api.get!("/v1/sale/#{sale_id}").body
     %{
       sale_type: sale_response["sale_type"],
       eligible_sale_artworks_count: sale_response["eligible_sale_artworks_count"],

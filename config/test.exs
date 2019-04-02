@@ -10,3 +10,6 @@ config :aprb, Aprb.Repo,
   password: System.get_env("DB_PASSWORD"),
   database: "aprb_test",
   hostname: System.get_env("DB_HOST") || "localhost"
+
+config :aprb,
+  gravity_api: GravityMock

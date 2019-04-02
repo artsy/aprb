@@ -2,10 +2,10 @@ use Mix.Config
 
 config :slack, api_token: System.get_env("SLACK_API_TOKEN")
 
-config :aprb, ecto_repos: [Aprb.Repo]
-
 config :aprb,
-  maru_servers: [Aprb.Server]
+  maru_servers: [Aprb.Server],
+  ecto_repos: [Aprb.Repo],
+  gravity_api: Gravity
 
 config :aprb, Aprb.Server,
   adapter: Plug.Cowboy,

@@ -1,5 +1,5 @@
 ---
-aws-account-id: '585031190124'
-aws-ecr-region: us-east-1
 project-name: aprb
 pre-deploy: 'mix ecto.migrate'
+hokusai-required-version: "~=0.5.4"
+git-remote: git@github.com:artsy/aprb.git

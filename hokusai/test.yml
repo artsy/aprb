@@ -18,16 +18,16 @@ services:
     - SLACK_API_TOKEN=bar
     - SLACK_SLASH_COMMAND_TOKEN=baz
     extends:
-      file: common.yml
+      file: build.yml
       service: aprb
     depends_on:
       - aprb-postgres
       - aprb-rabbitmq
   aprb-postgres:
-    image: postgres:9.4
+    image: postgres:9.5-alpine
     environment:
     - POSTGRES_USER=postgres
     - POSTGRES_PASSWORD=postgres
     - POSTGRES_DB=postgres
   aprb-rabbitmq:
-    image: rabbitmq:3.6-management
+    image: rabbitmq:3.6-management-alpine

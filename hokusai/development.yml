@@ -18,7 +18,7 @@ services:
     - SLACK_API_TOKEN=bar
     - SLACK_SLASH_COMMAND_TOKEN=baz
     extends:
-      file: common.yml
+      file: build.yml
       service: aprb
     depends_on:
       - aprb-postgres
