@@ -1,6 +1,8 @@
 # https://github.com/artsy/exchange/blob/master/app/events/application_error_event.rb
 
 defmodule Aprb.Views.CommerceErrorSlackView do
+  import Aprb.ViewHelper
+
   def render(event, _routing_key) do
     %{
       text: ":alert: Failed submitting an order",
@@ -13,7 +15,7 @@ defmodule Aprb.Views.CommerceErrorSlackView do
           },
           %{
             title: "Code",
-            value: event["properties"]["failure_message"],
+            value: event["properties"]["code"],
             short: true
           },
         ] ++ data_fields(event["properties"]["data"]),
@@ -26,9 +28,17 @@ defmodule Aprb.Views.CommerceErrorSlackView do
   defp data_fields(data) do
     data
     |>Enum.map(fn({key, value}) ->
+      value_text = case key do
+        "artwork_id" -> "<#{artwork_link(value)}|#{value}>"
+        "order_id" -> "<#{exchange_admin_link(value)}|#{value}>"
+        "seller_id" ->
+          admin_partners_path = "partners/#{value}"
+          "<#{admin_partners_link(admin_partners_path)}|#{value}>"
+        _ -> value
+      end
       %{
         title: key,
-        value: value,
+        value: value_text,
         short: true
       }
     end)
