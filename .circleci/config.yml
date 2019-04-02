@@ -30,7 +30,9 @@ jobs:
     docker:
       - image: artsy/hokusai:0.5.4
     steps:
-      - add_ssh_keys
+      - add_ssh_keys:
+          fingerprints:
+            - "05:c8:1f:ac:f8:a5:76:0e:d0:2d:52:0d:ef:12:2c:30"
       - checkout
       - run:
           name: Configure
