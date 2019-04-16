@@ -46,12 +46,14 @@ workflows:
     jobs:
       - test
       - push:
+          context: hokusai
           filters:
             branches:
               only: master
           requires:
             - test
       - deploy:
+          context: hokusai
           filters:
             branches:
               only: master
