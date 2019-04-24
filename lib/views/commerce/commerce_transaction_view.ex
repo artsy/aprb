@@ -7,6 +7,11 @@ defmodule Aprb.Views.CommerceTransactionSlackView do
       attachments: [%{
         fields: [
           %{
+            title: "Mode",
+            value: event["properties"]["order"]["mode"],
+            short: true
+          },
+          %{
             title: "Failure Code",
             value: event["properties"]["failure_code"],
             short: true
