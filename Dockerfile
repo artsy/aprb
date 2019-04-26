@@ -1,29 +1,17 @@
-FROM elixir:1.8.1-slim
-
-# Set up deploy user and working directory
-RUN adduser --disabled-password --gecos '' deploy
-
-RUN apt-get update && \
-      apt-get -y install sudo git
+FROM bitwalker/alpine-elixir-phoenix:1.8.1
 
 # Set up working directory
 RUN mkdir /app
 ADD . /app
 WORKDIR /app
-RUN chown -R deploy:deploy /app
 
-# Switch to deploy user
-USER deploy
-ENV USER deploy
-ENV HOME /home/deploy
+# Cache elixir deps
+ADD mix.exs mix.lock ./
+RUN mix do deps.get, deps.compile
 
-RUN mix local.hex --force
-RUN mix local.rebar --force
+RUN mix compile
 
 ENV PORT 4000
 ENV MIX_ENV prod
-
-RUN mix deps.get
-RUN mix compile
 
 CMD mix run --no-halt
