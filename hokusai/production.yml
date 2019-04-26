@@ -28,6 +28,11 @@ spec:
           imagePullPolicy: Always
           ports:
           - containerPort: 4000
+      dnsPolicy: ClusterFirst
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -38,11 +43,6 @@ spec:
                 operator: In
                 values:
                 - foreground
-      dnsPolicy: ClusterFirst
-      dnsConfig:
-        options:
-          - name: ndots
-            value: "1"
 ---
 apiVersion: v1
 kind: Service
