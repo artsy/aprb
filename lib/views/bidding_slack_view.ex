@@ -11,12 +11,16 @@ defmodule Aprb.Views.BiddingSlackView do
                       fields: [
                         %{
                           title: "Amount",
-                          value: "#{format_price(event["amountCents"] / 100)}",
+                          value: format_price(event["amountCents"] / 100, artwork_data[:currency]),
                           short: true
                         },
                         %{
+                          title: "Estimate",
+                          value: format_price(artwork_data[:estimate_cents] / 100, artwork_data[:currency])
+                        },
+                        %{
                           title: "Lot number",
-                          value: "#{artwork_data[:lot_number]}",
+                          value: artwork_data[:lot_number],
                           short: true
                         },
                         %{
@@ -34,7 +38,9 @@ defmodule Aprb.Views.BiddingSlackView do
     sale_artwork_response = @gravity_api.get!("/sale_artworks/#{lot_id}").body
     %{
       permalink: sale_artwork_response["_links"]["permalink"]["href"],
-      lot_number: sale_artwork_response["lot_number"]
+      lot_number: sale_artwork_response["lot_number"],
+      currency: sale_artwork_response["currency"],
+      estimate_cents: sale_artwork_response["estimate_cents"]
     }
   end
 end
