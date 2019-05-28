@@ -19,6 +19,14 @@ defmodule Aprb.Views.BiddingSlackView do
                           value: format_price(artwork_data[:estimate_cents] / 100, artwork_data[:currency])
                         },
                         %{
+                          title: "High Estimate",
+                          value: format_price(artwork_data[:high_estimate_cents] / 100, artwork_data[:currency])
+                        },
+                        %{
+                          title: "Low Estimate",
+                          value: format_price(artwork_data[:low_estimate_cents] / 100, artwork_data[:currency])
+                        },
+                        %{
                           title: "Lot number",
                           value: artwork_data[:lot_number],
                           short: true
