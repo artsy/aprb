@@ -33,3 +33,4 @@ vagrant-*.json
 terraform/crash.log
 .env
 log
+.elixir_ls
