@@ -1,5 +1,6 @@
 defmodule Aprb.Views.SalesSlackView do
   @gravity_api Application.get_env(:aprb, :gravity_api)
+  @sales_survey_link "https://docs.google.com/forms/d/e/1FAIpQLSeFjhuqrmTglW0K96GiwEjdEpxd3RuLk__LuNgoUfKbFgdNUg/viewform"
 
   import Aprb.ViewHelper
   def render(event, routing_key) do
@@ -8,19 +9,19 @@ defmodule Aprb.Views.SalesSlackView do
       "sale.started" ->
         %{
           text: ":gavel: :star: ted: <#{artsy_sale_link(event["properties"]["id"])}|#{event["properties"]["name"]}>",
-          attachments: sale_attachments(event, sale),
+          attachments: sale_attachments(event, routing_key, sale),
           unfurl_links: true
         }
       "sale.ended" ->
         %{
           text: ":gavel: :shaka: : ended: <#{artsy_sale_link(event["properties"]["id"])}|#{event["properties"]["name"]}>",
-          attachments: sale_attachments(event, sale),
+          attachments: sale_attachments(event, routing_key, sale),
           unfurl_links: true
         }
     end
   end
 
-  defp sale_attachments(event, sale) do
+  defp sale_attachments(event, routing_key, sale) do
     [%{
       fields: [
         %{
@@ -43,7 +44,8 @@ defmodule Aprb.Views.SalesSlackView do
           value: sale[:eligible_sale_artworks_count],
           short: true
         },
-      ]
+      ],
+      actions: actions(routing_key)
     }]
   end
 
@@ -53,5 +55,16 @@ defmodule Aprb.Views.SalesSlackView do
       sale_type: sale_response["sale_type"],
       eligible_sale_artworks_count: sale_response["eligible_sale_artworks_count"],
     }
+  end
+
+  defp actions(routing_key) do
+    case routing_key do
+      "sale.ended" -> [%{
+                        type: "button",
+                        text: "Survey Link",
+                        url: @sales_survey_link
+                      }]
+      _ -> []
+    end
   end
 end
