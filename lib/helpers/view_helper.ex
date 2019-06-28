@@ -1,4 +1,6 @@
 defmodule Aprb.ViewHelper do
+  @exchange_url "https://exchange.artsy.net"
+
   def artwork_link(artwork_id) do
     "https://www.artsy.net/artwork/#{artwork_id}"
   end
@@ -46,7 +48,15 @@ defmodule Aprb.ViewHelper do
   end
 
   def exchange_admin_link(order_id) do
-    "https://exchange.artsy.net/admin/orders/#{order_id}"
+    "#{@exchange_url}/admin/orders/#{order_id}"
+  end
+
+  def exchange_partner_orders_link(partner_id) do
+    "#{@exchange_url}/admin/orders?q%5Bseller_id_eq=#{partner_id}"
+  end
+
+  def exchange_user_orders_link(user_id) do
+    "#{@exchange_url}/admin/orders?q%5Bbuyer_id_eq=#{user_id}"
   end
 
   def cleanup_name(full_name) do
