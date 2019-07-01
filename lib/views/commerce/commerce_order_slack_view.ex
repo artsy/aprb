@@ -55,7 +55,7 @@ defmodule Aprb.Views.CommerceOrderSlackView do
         author_name: order_properties["code"],
         author_link: exchange_admin_link(order_id),
         title: seller["name"],
-        title_link: exchange_partner_orders_link(seller["id"]),
+        title_link: exchange_partner_orders_link(seller["_id"]),
         fields: fields
       }
     ] ++ ComerceHelper.line_item_attachments(order_properties["line_items"])
