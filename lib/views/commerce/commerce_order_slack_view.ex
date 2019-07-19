@@ -2,7 +2,7 @@
 defmodule Aprb.Views.CommerceOrderSlackView do
   import Aprb.ViewHelper
 
-  alias Aprb.Views.ComerceHelper
+  alias Aprb.Views.CommerceHelper
 
   def render(event, _routing_key) do
     event
@@ -36,8 +36,8 @@ defmodule Aprb.Views.CommerceOrderSlackView do
 
   defp build_message(nil, _event), do: nil
   defp build_message(title, event) do
-    seller = ComerceHelper.fetch_participant_info(event["properties"]["seller_id"], event["properties"]["seller_type"])
-    buyer = ComerceHelper.fetch_participant_info(event["properties"]["buyer_id"], event["properties"]["buyer_type"])
+    seller = CommerceHelper.fetch_participant_info(event["properties"]["seller_id"], event["properties"]["seller_type"])
+    buyer = CommerceHelper.fetch_participant_info(event["properties"]["buyer_id"], event["properties"]["buyer_type"])
     %{
       text: "#{title} #{artworks_links_from_line_items(event["properties"]["line_items"])}",
       attachments: order_attachments(event["properties"], event["object"]["id"], seller, buyer),
@@ -58,7 +58,7 @@ defmodule Aprb.Views.CommerceOrderSlackView do
         title_link: exchange_partner_orders_link(seller["_id"]),
         fields: fields
       }
-    ] ++ ComerceHelper.line_item_attachments(order_properties["line_items"])
+    ] ++ CommerceHelper.line_item_attachments(order_properties["line_items"])
   end
 
   defp append_admin(attachments, nil), do: attachments
@@ -76,7 +76,7 @@ defmodule Aprb.Views.CommerceOrderSlackView do
       },
       %{
         title: "Buyer",
-        value: "<#{exchange_user_orders_link(buyer["_id"])}|#{cleanup_name(buyer["name"])}>",
+        value: "<#{exchange_user_orders_link(buyer["id"])}|#{cleanup_name(buyer["name"])}>",
         short: true
       },
       %{

@@ -1,7 +1,7 @@
 defmodule Aprb.Views.CommerceOfferSlackView do
   import Aprb.ViewHelper
 
-  alias Aprb.Views.ComerceHelper
+  alias Aprb.Views.CommerceHelper
 
   def render(event, routing_key) do
     case routing_key do
@@ -18,12 +18,12 @@ defmodule Aprb.Views.CommerceOfferSlackView do
   end
 
   defp offer_pending_response(event) do
-    seller = ComerceHelper.fetch_participant_info(event["properties"]["order"]["seller_id"], event["properties"]["order"]["seller_type"])
-    buyer = ComerceHelper.fetch_participant_info(event["properties"]["order"]["buyer_id"], event["properties"]["order"]["buyer_type"])
+    seller = CommerceHelper.fetch_participant_info(event["properties"]["order"]["seller_id"], event["properties"]["order"]["seller_type"])
+    buyer = CommerceHelper.fetch_participant_info(event["properties"]["order"]["buyer_id"], event["properties"]["order"]["buyer_type"])
     %{
       text: ":hourglass: Waiting Offer Response",
       attachments:
-        ComerceHelper.line_item_attachments(event["properties"]["order"]["line_items"]) ++
+        CommerceHelper.line_item_attachments(event["properties"]["order"]["line_items"]) ++
         [%{
           fields: [
             %{
@@ -64,12 +64,12 @@ defmodule Aprb.Views.CommerceOfferSlackView do
   end
 
   defp counter_offer_view(event) do
-    seller = ComerceHelper.fetch_participant_info(event["properties"]["order"]["seller_id"], event["properties"]["order"]["seller_type"])
-    buyer = ComerceHelper.fetch_participant_info(event["properties"]["order"]["buyer_id"], event["properties"]["order"]["buyer_type"])
+    seller = CommerceHelper.fetch_participant_info(event["properties"]["order"]["seller_id"], event["properties"]["order"]["seller_type"])
+    buyer = CommerceHelper.fetch_participant_info(event["properties"]["order"]["buyer_id"], event["properties"]["order"]["buyer_type"])
     %{
       text: ":parrotsunnies: Counteroffer submitted",
       attachments:
-        ComerceHelper.line_item_attachments(event["properties"]["order"]["line_items"]) ++
+        CommerceHelper.line_item_attachments(event["properties"]["order"]["line_items"]) ++
         [%{
           fields: [
             %{

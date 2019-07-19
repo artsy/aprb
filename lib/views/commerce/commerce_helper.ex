@@ -1,4 +1,4 @@
-defmodule Aprb.Views.ComerceHelper do
+defmodule Aprb.Views.CommerceHelper do
   @gravity_api Application.get_env(:aprb, :gravity_api)
 
   def fetch_participant_info(id, "user"), do: @gravity_api.get!("/users/#{id}").body
