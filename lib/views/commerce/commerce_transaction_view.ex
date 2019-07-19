@@ -1,10 +1,10 @@
 defmodule Aprb.Views.CommerceTransactionSlackView do
   import Aprb.ViewHelper
-  alias Aprb.Views.ComerceHelper
+  alias Aprb.Views.CommerceHelper
 
   def render(event, _routing_key) do
-    seller = ComerceHelper.fetch_participant_info(event["properties"]["order"]["seller_id"], event["properties"]["order"]["seller_type"])
-    buyer = ComerceHelper.fetch_participant_info(event["properties"]["order"]["buyer_id"], event["properties"]["order"]["buyer_type"])
+    seller = CommerceHelper.fetch_participant_info(event["properties"]["order"]["seller_id"], event["properties"]["order"]["seller_type"])
+    buyer = CommerceHelper.fetch_participant_info(event["properties"]["order"]["buyer_id"], event["properties"]["order"]["buyer_type"])
 
     %{
       text: ":alert: <#{stripe_search_link(event["properties"]["order"]["id"])}|Failed transaction>",
