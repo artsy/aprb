@@ -76,7 +76,7 @@ defmodule Aprb.Views.CommerceOrderSlackView do
       },
       %{
         title: "Buyer",
-        value: "<#{exchange_user_orders_link(buyer["_id"])}|#{cleanup_name(buyer["name"])}>",
+        value: "<#{exchange_user_orders_link(buyer["id"])}|#{cleanup_name(buyer["name"])}>",
         short: true
       },
       %{
