@@ -1,5 +1,6 @@
 defmodule Aprb.ViewHelper do
   @exchange_url "https://exchange.artsy.net"
+  @stripe_search_url "https://dashboard.stripe.com/search"
 
   def artwork_link(artwork_id) do
     "https://www.artsy.net/artwork/#{artwork_id}"
@@ -57,6 +58,10 @@ defmodule Aprb.ViewHelper do
 
   def exchange_user_orders_link(user_id) do
     "#{@exchange_url}/admin/orders?q%5Bbuyer_id_eq=#{user_id}"
+  end
+
+  def stripe_search_link(query) when is_binary(query) do
+    "#{@stripe_search_url}?#{URI.encode_query(query: query)}"
   end
 
   def cleanup_name(full_name) do
