@@ -60,7 +60,8 @@ defmodule Aprb.Fixtures do
       "verb" => "created",
       "properties" => %{
         "order" =>  %{
-          "id" => "order123"
+          "id" => "order123",
+          "items_total_cents" => 2000000
         },
         "failure_code" => "insufficient_funds",
         "failure_message" => ":(",
