@@ -64,10 +64,12 @@ defmodule Aprb.ViewHelper do
     "#{@stripe_search_url}?#{URI.encode_query(query: query)}"
   end
 
+  def cleanup_name(nil), do: ""
+
   def cleanup_name(full_name) do
     full_name
-      |> String.split
-      |> List.first
+    |> String.split()
+    |> List.first()
   end
 
   def format_price(price, currency \\ :USD, symbol \\ true) do
