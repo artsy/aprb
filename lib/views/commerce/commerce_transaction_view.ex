@@ -1,12 +1,15 @@
+
 defmodule Aprb.Views.CommerceTransactionSlackView do
   import Aprb.ViewHelper
   alias Aprb.Views.CommerceHelper
+  alias Stripe.PaymentIntent
 
   def render(event, _routing_key) do
     seller = CommerceHelper.fetch_participant_info(event["properties"]["order"]["seller_id"], event["properties"]["order"]["seller_type"])
     buyer = CommerceHelper.fetch_participant_info(event["properties"]["order"]["buyer_id"], event["properties"]["order"]["buyer_type"])
     fields = basic_fields(event, buyer)
-      |> append_seller_admin(seller)
+             |> append_seller_admin(seller)
+             |> append_stripe_fields(event["properties"]["external_id"], event["properties"]["external_type"])
     %{
       text: ":alert: <#{stripe_search_link(event["properties"]["order"]["id"])}|#{event["properties"]["failure_code"]}>",
       attachments: [%{
@@ -53,4 +56,29 @@ defmodule Aprb.Views.CommerceTransactionSlackView do
 
   defp append_seller_admin(fields, %{"admin" => %{"name" => name}}), do: fields ++ [%{ title: "Admin", value: name, short: true}]
   defp append_seller_admin(fields, _), do: fields
+
+  defp append_stripe_fields(fields, external_id, "payment_intent") do
+    with {:ok, pi} <- PaymentIntent.retrieve(external_id, %{expand: ["payment_method"]}) do
+      fields ++ [
+        %{
+          title: "Card Country",
+          value: pi.last_payment_error.payment_method.card.country,
+          short: true
+        },
+        %{
+          title: "CVC Check",
+          value: pi.last_payment_error.payment_method.card.checks.cvc_check,
+          short: true
+        },
+        %{
+          title: "ZIP Check",
+          value: pi.last_payment_error.payment_method.card.checks.address_postal_code_check,
+          short: true
+        }
+      ]
+    else
+      _ -> fields
+    end
+  end
+  defp append_stripe_fields(fields, _, _), do: fields
 end

@@ -21,5 +21,7 @@ config :aprb, RabbitMQ,
   host: System.get_env("RABBITMQ_HOST"),
   heartbeat: 5
 
+config :stripity_stripe,
+  api_key: System.get_env("STRIPE_API_KEY")
 
 import_config "#{Mix.env}.exs"

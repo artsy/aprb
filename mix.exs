@@ -14,7 +14,7 @@ defmodule Aprb.Mixfile do
 
   def application do
     [ mod: {Aprb, []},
-      applications: [:logger, :amqp, :slack, :postgrex, :ecto, :calendar]]
+      applications: [:logger, :amqp, :slack, :postgrex, :ecto, :calendar, :stripity_stripe]]
   end
 
   defp aliases do
@@ -24,15 +24,15 @@ defmodule Aprb.Mixfile do
   defp deps do
     [ {:maru, "~> 0.13"},
       {:plug_cowboy, "~> 2.0"},
-      {:jason, "~> 1.1"},
       {:amqp, "~> 1.1", override: true},
-      {:poison, "~> 3.1", override: true},
+      {:poison, "~> 3.1.0", override: true},
       {:slack, "~> 0.15.0"},
       {:postgrex, ">= 0.0.0", override: true},
       {:ecto, "~> 2.0"},
       {:money, "~> 1.1.0"},
       {:calendar, "~> 0.17.2"},
       {:ex_machina, "~> 1.0", only: :test},
+      {:stripity_stripe, "~> 2.4.0"},
       {:sentient, git: "https://github.com/rdalin82/sentient.git"} ]
   end
 
