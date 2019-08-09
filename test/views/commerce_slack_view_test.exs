@@ -5,7 +5,7 @@ defmodule Aprb.Views.CommerceSlackViewTest do
 
   test "Transaction event renders transaction message" do
     event = Aprb.Fixtures.commerce_transaction_event()
-    slack_view = CommerceSlackView.render(event, "transaction.failed")
+    slack_view = CommerceSlackView.render(event, "transaction.failure")
     assert slack_view.text  == ":alert: <https://dashboard.stripe.com/search?query=order123|insufficient_funds>"
   end
 
