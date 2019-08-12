@@ -41,6 +41,16 @@ defmodule Aprb.Views.CommerceTransactionSlackView do
         short: true
       },
       %{
+        title: "Buyer Signed Up On",
+        value: iso8601_to_date(buyer["created_at"]),
+        short: true
+      },
+      %{
+        title: "Buyer Sign In Count",
+        value: buyer["sign_in_count"],
+        short: true
+      },
+      %{
         title: "Failure Message",
         value: event["properties"]["failure_message"],
         short: true

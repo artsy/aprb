@@ -83,4 +83,10 @@ defmodule Aprb.ViewHelper do
   def commerce_transaction_failure_text(failure_code, decline_code) do
     "#{failure_code} (#{decline_code})"
   end
+
+  def iso8601_to_date(nil), do: nil
+
+  def iso8601_to_date(iso8601) do
+    iso8601 |> NaiveDateTime.from_iso8601!() |> NaiveDateTime.to_date()
+  end
 end
