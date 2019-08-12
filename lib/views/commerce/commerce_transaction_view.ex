@@ -10,8 +10,12 @@ defmodule Aprb.Views.CommerceTransactionSlackView do
     fields = basic_fields(event, buyer)
              |> append_seller_admin(seller)
              |> append_stripe_fields(event["properties"]["external_id"], event["properties"]["external_type"])
+
+    %{"failure_code" => failure_code, "decline_code" => decline_code} = event["properties"]
+    text = commerce_transaction_failure_text(failure_code, decline_code)
+
     %{
-      text: ":alert: <#{stripe_search_link(event["properties"]["order"]["id"])}|#{event["properties"]["failure_code"]}>",
+      text: ":alert: <#{stripe_search_link(event["properties"]["order"]["id"])}|#{text}>",
       attachments: [%{
         color: "#6E1FFF",
         author_name: event["properties"]["order"]["code"],

@@ -77,4 +77,10 @@ defmodule Aprb.ViewHelper do
       "N/A"
     end
   end
+
+  def commerce_transaction_failure_text(failure_code, nil), do: failure_code
+
+  def commerce_transaction_failure_text(failure_code, decline_code) do
+    "#{failure_code} (#{decline_code})"
+  end
 end
