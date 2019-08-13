@@ -5,21 +5,31 @@ defmodule Aprb.Views.CommerceTransactionSlackView do
   alias Stripe.PaymentIntent
 
   def render(event, _routing_key) do
-    seller = CommerceHelper.fetch_participant_info(event["properties"]["order"]["seller_id"], event["properties"]["order"]["seller_type"])
-    buyer = CommerceHelper.fetch_participant_info(event["properties"]["order"]["buyer_id"], event["properties"]["order"]["buyer_type"])
-    fields = basic_fields(event, buyer)
-             |> append_seller_admin(seller)
-             |> append_stripe_fields(event["properties"]["external_id"], event["properties"]["external_type"])
+    order = event["properties"]["order"]
+    seller = CommerceHelper.fetch_participant_info(order["seller_id"], order["seller_type"])
+    buyer = CommerceHelper.fetch_participant_info(order["buyer_id"], order["buyer_type"])
+
+    fields =
+      basic_fields(event, buyer)
+      |> append_seller_admin(seller)
+      |> append_stripe_fields(event["properties"]["external_id"], event["properties"]["external_type"])
+      |> append_fulfillment_info(order)
+
     %{
-      text: ":alert: <#{stripe_search_link(event["properties"]["order"]["id"])}|#{event["properties"]["failure_code"]}>",
-      attachments: [%{
-        color: "#6E1FFF",
-        author_name: event["properties"]["order"]["code"],
-        author_link: exchange_admin_link(event["properties"]["order"]["id"]),
-        title: seller["name"],
-        title_link: exchange_partner_orders_link(seller["_id"]),
-        fields: fields
-      }],
+      text:
+        ":alert: <#{stripe_search_link(event["properties"]["order"]["id"])}|#{
+          event["properties"]["failure_code"]
+        }>",
+      attachments: [
+        %{
+          color: "#6E1FFF",
+          author_name: event["properties"]["order"]["code"],
+          author_link: exchange_admin_link(event["properties"]["order"]["id"]),
+          title: seller["name"],
+          title_link: exchange_partner_orders_link(seller["_id"]),
+          fields: fields
+        }
+      ],
       unfurl_links: true
     }
   end
@@ -54,7 +64,9 @@ defmodule Aprb.Views.CommerceTransactionSlackView do
     ]
   end
 
-  defp append_seller_admin(fields, %{"admin" => %{"name" => name}}), do: fields ++ [%{ title: "Admin", value: name, short: true}]
+  defp append_seller_admin(fields, %{"admin" => %{"name" => name}}),
+    do: fields ++ [%{title: "Admin", value: name, short: true}]
+
   defp append_seller_admin(fields, _), do: fields
 
   defp append_stripe_fields(fields, external_id, "payment_intent") do
@@ -80,5 +92,24 @@ defmodule Aprb.Views.CommerceTransactionSlackView do
       _ -> fields
     end
   end
+
   defp append_stripe_fields(fields, _, _), do: fields
+
+  defp append_fulfillment_info(fields, order) do
+    case order["fulfillment_type"] do
+      "ship" ->
+        fields ++
+          [
+            %{title: "Fulfillment Type", value: order["fulfillment_type"], short: true},
+            %{title: "Shipping Country", value: order["shipping_country"], short: true},
+            %{title: "Shipping Name", value: cleanup_name(order["shipping_name"]), short: true}
+          ]
+
+      "pickup" ->
+        fields ++ [%{title: "Fulfillment Type", value: order["fulfillment_type"], short: true}]
+
+      _ ->
+        fields
+    end
+  end
 end

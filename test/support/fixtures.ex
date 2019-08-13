@@ -46,8 +46,7 @@ defmodule Aprb.Fixtures do
     }
   end
 
-
-  def commerce_transaction_event() do
+  def commerce_transaction_event(order \\ nil) do
     %{
       "object" => %{
         "id" => "transaction123",
@@ -59,10 +58,7 @@ defmodule Aprb.Fixtures do
       },
       "verb" => "created",
       "properties" => %{
-        "order" =>  %{
-          "id" => "order123",
-          "items_total_cents" => 2000000
-        },
+        "order" =>  order,
         "failure_code" => "insufficient_funds",
         "failure_message" => ":(",
         "transaction_type" => "capture"
