@@ -69,7 +69,6 @@ defmodule Aprb.Views.CommerceTransactionSlackView do
 
   defp append_seller_admin(fields, _), do: fields
 
-<<<<<<< HEAD
   defp append_stripe_fields(fields, external_id, "payment_intent") do
     with {:ok, pi} <- PaymentIntent.retrieve(external_id, %{expand: ["payment_method"]}) do
       fields ++ [
@@ -93,8 +92,9 @@ defmodule Aprb.Views.CommerceTransactionSlackView do
       _ -> fields
     end
   end
+
   defp append_stripe_fields(fields, _, _), do: fields
-=======
+
   defp append_fulfillment_info(fields, order) do
     case order["fulfillment_type"] do
       "ship" ->
@@ -112,5 +112,4 @@ defmodule Aprb.Views.CommerceTransactionSlackView do
         fields
     end
   end
->>>>>>> c24009d... Includes fulfillment information in the Slack message for failed transactions.
 end
