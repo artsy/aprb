@@ -58,7 +58,7 @@ defmodule Aprb.Views.CommerceTransactionSlackView do
       },
       %{
         title: "Total Amount",
-        value: format_price(event["properties"]["order"]["items_total_cents"] / 100),
+        value: format_price(event["properties"]["order"]["items_total_cents"], event["properties"]["order"]["currency_code"]),
         short: true
       }
     ]

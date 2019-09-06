@@ -28,7 +28,7 @@ defmodule Aprb.Views.CommerceOfferSlackView do
           fields: [
             %{
               title: "Offer Amount",
-              value: format_price(event["properties"]["amount_cents"] / 100),
+              value: format_price(event["properties"]["amount_cents"], event["properties"]["order"]["currency_code"]),
               short: true
             },
             %{
@@ -38,7 +38,7 @@ defmodule Aprb.Views.CommerceOfferSlackView do
             },
             %{
               title: "List Price",
-              value: format_price(event["properties"]["order"]["total_list_price_cents"] / 100),
+              value: format_price(event["properties"]["order"]["total_list_price_cents"], event["properties"]["order"]["currency_code"]),
               short: true
             },
             %{
@@ -74,7 +74,7 @@ defmodule Aprb.Views.CommerceOfferSlackView do
           fields: [
             %{
               title: "Offer Amount",
-              value: format_price(event["properties"]["amount_cents"] / 100),
+              value: format_price(event["properties"]["amount_cents"], event["properties"]["order"]["currency_code"]),
               short: true
             },
             %{
@@ -84,12 +84,12 @@ defmodule Aprb.Views.CommerceOfferSlackView do
             },
             %{
               title: "Counter to",
-              value: format_price(event["properties"]["in_response_to"]["amount_cents"] / 100),
+              value: format_price(event["properties"]["in_response_to"]["amount_cents"], event["properties"]["order"]["currency_code"]),
               short: true
             },
             %{
               title: "List Price",
-              value: format_price(event["properties"]["order"]["total_list_price_cents"] / 100),
+              value: format_price(event["properties"]["order"]["total_list_price_cents"], event["properties"]["order"]["currency_code"]),
               short: true
             },
             %{

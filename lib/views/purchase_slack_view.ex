@@ -8,27 +8,27 @@ defmodule Aprb.Views.PurchaseSlackView do
                       fields: [
                         %{
                           title: "Price",
-                          value: "#{format_price(event["properties"]["sale_price"] || 0)}",
+                          value: format_price(event["properties"]["sale_price"] || 0 * 100),
                           short: true
                         },
                         %{
                           title: "Partner name",
-                          value: "#{event["properties"]["partner"]["name"]}",
+                          value: event["properties"]["partner"]["name"],
                           short: true
                         },
                         %{
                           title: "Contract Type",
-                          value: "#{event["properties"]["partner"]["contract_type"]}",
+                          value: event["properties"]["partner"]["contract_type"],
                           short: true
                         },
                         %{
                           title: "Outreach Admin",
-                          value: "#{event["properties"]["partner"]["outreach_admin"]}",
+                          value: event["properties"]["partner"]["outreach_admin"],
                           short: true
                         },
                         %{
                           title: "Admin",
-                          value: "#{event["properties"]["partner"]["admin"]["name"]}",
+                          value: event["properties"]["partner"]["admin"]["name"],
                           short: true
                         }
                       ]

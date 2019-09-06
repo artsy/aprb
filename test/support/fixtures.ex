@@ -34,6 +34,7 @@ defmodule Aprb.Fixtures do
         "seller_type" => "gallery",
         "buyer_id" => "user1",
         "buyer_type" => "user",
+        "currency_code" => "USD",
         "items_total_cents" => 2000000,
         "total_list_price_cents" => 3000,
         "line_items" => [
@@ -84,6 +85,7 @@ defmodule Aprb.Fixtures do
           "seller_type" => "gallery",
           "buyer_id" => "user1",
           "buyer_type" => "user",
+          "currency_code" => "USD",
           "items_total_cents" => 2000000,
           "total_list_price_cents" => 3000,
           "line_items" => [
