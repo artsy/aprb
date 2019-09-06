@@ -74,7 +74,7 @@ defmodule Aprb.ViewHelper do
 
   def format_price(price, currency \\ :USD, symbol \\ true) do
     if price do
-      Money.to_string(Money.new(round(price * 100), currency), symbol: symbol)
+      Money.to_string(Money.new(round(price), currency), symbol: symbol)
     else
       "N/A"
     end

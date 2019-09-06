@@ -6,6 +6,7 @@ defmodule Aprb.Views.CommerceTransactionSlackViewTest do
     event = Aprb.Fixtures.commerce_transaction_event(%{
       "id" => "order123",
       "items_total_cents" => 2000000,
+      "currency_code" => "USD",
       "seller_id" => "partner1",
       "seller_type" => "gallery",
       "buyer_id" => "user1",
@@ -25,6 +26,7 @@ defmodule Aprb.Views.CommerceTransactionSlackViewTest do
     event = Aprb.Fixtures.commerce_transaction_event(%{
       "id" => "order123",
       "items_total_cents" => 2000000,
+      "currency_code" => "USD",
       "seller_id" => "partner1",
       "seller_type" => "gallery",
       "buyer_id" => "user1",
@@ -42,6 +44,7 @@ defmodule Aprb.Views.CommerceTransactionSlackViewTest do
     event = Aprb.Fixtures.commerce_transaction_event(%{
       "id" => "order123",
       "items_total_cents" => 2000000,
+      "currency_code" => "USD",
       "seller_id" => "partner1",
       "seller_type" => "gallery",
       "buyer_id" => "user1",

@@ -11,7 +11,7 @@ defmodule Aprb.Views.BiddingSlackView do
                       fields: [
                         %{
                           title: "Amount",
-                          value: format_price(event["amountCents"] / 100, artwork_data[:currency]),
+                          value: format_price(event["amountCents"], artwork_data[:currency]),
                           short: true
                         },
                         %{
@@ -44,21 +44,20 @@ defmodule Aprb.Views.BiddingSlackView do
     }
   end
 
-  @spec estimate_field_value(nil | bitstring() | integer()) :: nil | float()
-  def estimate_field_value(nil), do: nil
-  def estimate_field_value(value) when is_integer(value), do: value / 100
-  def estimate_field_value(value) when is_bitstring(value), do: String.to_integer(value) / 100
+  @spec field_value_to_i(nil | bitstring() | integer()) :: nil | integer()
+  def field_value_to_i(nil), do: nil
+  def field_value_to_i(value) when is_integer(value), do: value
+  def field_value_to_i(value) when is_bitstring(value), do: field_value_to_i(String.to_integer(value))
 
   defp fetch_sale_artwork(lot_id) do
     sale_artwork_response = @gravity_api.get!("/sale_artworks/#{lot_id}").body
-    IO.puts(sale_artwork_response["currency"])
     %{
       permalink: sale_artwork_response["_links"]["permalink"]["href"],
       lot_number: sale_artwork_response["lot_number"],
       currency: sale_artwork_response["currency"],
-      estimate_cents: estimate_field_value(sale_artwork_response["estimate_cents"]),
-      high_estimate_cents: estimate_field_value(sale_artwork_response["high_estimate_cents"]),
-      low_estimate_cents: estimate_field_value(sale_artwork_response["low_estimate_cents"])
+      estimate_cents: field_value_to_i(sale_artwork_response["estimate_cents"]),
+      high_estimate_cents: field_value_to_i(sale_artwork_response["high_estimate_cents"]),
+      low_estimate_cents: field_value_to_i(sale_artwork_response["low_estimate_cents"])
     }
   end
 end

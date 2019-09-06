@@ -43,7 +43,7 @@ defmodule Aprb.Views.InvoiceSlackView do
           },
           %{
             title: "Total",
-            value: format_price(event["properties"]["invoice"]["total_cents"] / 100),
+            value: format_price(event["properties"]["invoice"]["total_cents"]),
             short: true
           },
           %{
@@ -72,7 +72,7 @@ defmodule Aprb.Views.InvoiceSlackView do
                         },
                         %{
                           title: "Total",
-                          value: format_price(event["properties"]["total_cents"] / 100),
+                          value: format_price(event["properties"]["total_cents"]),
                           short: true
                         },
                         %{

@@ -8,17 +8,17 @@ defmodule Aprb.Views.InquirySlackView do
                       fields: [
                         %{
                           title: "Professional Buyer?",
-                          value: "#{event["properties"]["inquirer"]["professional_buyer"]}",
+                          value: event["properties"]["inquirer"]["professional_buyer"],
                           short: true
                         },
                         %{
                           title: "Confirmed Buyer?",
-                          value: "#{event["properties"]["inquirer"]["confirmed_buyer"]}",
+                          value: event["properties"]["inquirer"]["confirmed_buyer"],
                           short: true
                         },
                         %{
                           title: "Message Snippet",
-                          value: "#{event["properties"]["initial_message_snippet"]}",
+                          value: event["properties"]["initial_message_snippet"],
                           short: false
                         }
                       ]

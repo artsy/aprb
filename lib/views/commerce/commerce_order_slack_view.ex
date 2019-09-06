@@ -64,7 +64,7 @@ defmodule Aprb.Views.CommerceOrderSlackView do
   defp append_admin(attachments, nil), do: attachments
   defp append_admin(attachments, admin), do: attachments ++ [%{ title: "Admin", value: admin["name"], short: true}]
 
-  defp append_offer_fields(attachments, "offer", properties), do: attachments ++ [%{title: "List Price", value: format_price(properties["total_list_price_cents"] / 100), short: true}]
+  defp append_offer_fields(attachments, "offer", properties), do: attachments ++ [%{title: "List Price", value: format_price(properties["total_list_price_cents"], properties["currency_code"]), short: true}]
   defp append_offer_fields(attachments, _, _), do: attachments
 
   defp order_attachment_fields(order_properties, _seller, buyer) do
@@ -81,7 +81,7 @@ defmodule Aprb.Views.CommerceOrderSlackView do
       },
       %{
         title: "Total Amount",
-        value: format_price(order_properties["items_total_cents"] / 100),
+        value: format_price(order_properties["items_total_cents"], order_properties["currency_code"]),
         short: true
       }
     ]
