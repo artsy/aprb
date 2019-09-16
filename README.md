@@ -13,8 +13,8 @@ Aprb is a fairly generic consumer of RabbitMQ events (see [Service.AmqEventServi
 * __State:__ production
 * __Production:__ [http://aprb-production-http-1702133716.us-east-1.elb.amazonaws.com/slack](http://aprb-production-http-1702133716.us-east-1.elb.amazonaws.com/slack)
 * __GitHub:__ [https://github.com/artsy/aprb](https://github.com/artsy/aprb)
-* __CI:__ [https://circleci.com/gh/artsy/aprb](https://circleci.com/gh/artsy/aprb)
-* __Point People:__ [@ashkan18](https://github.com/ashkan18), [@dblock](https://github.com/dblock)
+* __CI/Deploys:__ [CircleCi](https://circleci.com/gh/artsy/aprb); merged PRs to `artsy/aprb#master` are automatically deployed to staging; PRs from `staging` to `release` are automatically deployed to production. [Start a deploy...](https://github.com/artsy/aprb/compare/release...staging?expand=1)
+* __Point People:__ [@ashkan18](https://github.com/ashkan18)
 
 ## Development
 
