@@ -41,27 +41,27 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 15
             timeoutSeconds: 10
+          resources:
+            requests:
+              cpu: 700m
+              memory: 1024Mi
+            limits:
+              memory: 1536Mi
       dnsPolicy: ClusterFirst
       dnsConfig:
         options:
           - name: ndots
             value: "1"
-      resources:
-        requests:
-          cpu: 700m
-          memory: 1024Mi
-        limits:
-          memory: 1536Mi
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            preference:
-              matchExpressions:
-              - key: tier
-                operator: In
-                values:
-                - foreground
+            - weight: 1
+              preference:
+                matchExpressions:
+                  - key: tier
+                    operator: In
+                    values:
+                      - foreground
 
 ---
 apiVersion: autoscaling/v1

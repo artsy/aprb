@@ -1,5 +1,5 @@
 ---
 project-name: aprb
-pre-deploy: 'mix ecto.migrate'
+pre-deploy: "mix ecto.migrate"
 hokusai-required-version: "~=0.5"
 git-remote: git@github.com:artsy/aprb.git
