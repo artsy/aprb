@@ -46,6 +46,12 @@ spec:
         options:
         - name: ndots
           value: "1"
+      resources:
+        requests:
+          cpu: 700m
+          memory: 1024Mi
+        limits:
+          memory: 1536Mi
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
