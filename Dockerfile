@@ -1,17 +1,29 @@
 FROM bitwalker/alpine-elixir-phoenix:1.8.1
 
 # Set up working directory
-RUN mkdir /app
-ADD . /app
 WORKDIR /app
+
+# Install system dependencies
+# Create deploy user
+RUN apk --no-cache --quiet add dumb-init && \
+    adduser -D -g '' deploy
 
 # Cache elixir deps
 ADD mix.exs mix.lock ./
-RUN mix do deps.get, deps.compile
 
-RUN mix compile
+# Install app dependencies
+RUN mix do deps.get, deps.compile && \
+    mix compile
 
-ENV PORT 4000
 ENV MIX_ENV prod
 
-CMD mix run --no-halt
+# Copy application code
+COPY . ./
+
+# Grant permissions to user
+# Switch to less-privileged user
+RUN chown -R deploy:deploy ./
+USER deploy
+
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+CMD ["mix", "run", "--no-halt"]

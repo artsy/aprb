@@ -1,22 +1,22 @@
 ---
-version: '2'
+version: "2"
 services:
   aprb:
     command: bash -c 'mix ecto.migrate && mix run --no-halt'
     environment:
-    - MIX_ENV=dev
-    - DB_USER=postgres
-    - DB_NAME=postgres
-    - DB_HOST=aprb-postgres
-    - DB_PASSWORD=postgres
-    - RABBITMQ_HOST=aprb-rabbitmq
-    - RABBITMQ_USER=guest
-    - RABBITMQ_PASSWORD=guest
-    - RABBITMQ_PORT=5672
-    - GRAVITY_API_URL=https://api.artsy.net/api
-    - GRAVITY_API_TOKEN=foo
-    - SLACK_API_TOKEN=bar
-    - SLACK_SLASH_COMMAND_TOKEN=baz
+      - MIX_ENV=dev
+      - DB_USER=postgres
+      - DB_NAME=postgres
+      - DB_HOST=aprb-postgres
+      - DB_PASSWORD=postgres
+      - RABBITMQ_HOST=aprb-rabbitmq
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+      - RABBITMQ_PORT=5672
+      - GRAVITY_API_URL=https://api.artsy.net/api
+      - GRAVITY_API_TOKEN=foo
+      - SLACK_API_TOKEN=bar
+      - SLACK_SLASH_COMMAND_TOKEN=baz
     extends:
       file: build.yml
       service: aprb
@@ -24,17 +24,17 @@ services:
       - aprb-postgres
       - aprb-rabbitmq
     ports:
-    - 4000:4000
+      - 4000:4000
     volumes:
-    - ../:/app
+      - ../:/app
   aprb-postgres:
     image: postgres:9.4
     environment:
-    - POSTGRES_USER=postgres
-    - POSTGRES_PASSWORD=postgres
-    - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
     ports:
-    - 5432:5432
+      - 5432:5432
   aprb-rabbitmq:
     image: rabbitmq:3.6-management
     ports:

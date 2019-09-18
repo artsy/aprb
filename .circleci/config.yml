@@ -5,8 +5,7 @@ orbs:
 
 jobs:
   test:
-    docker:
-      - image: artsy/hokusai
+    executor: hokusai/deploy
     steps:
       - add_ssh_keys
       - checkout
@@ -45,8 +44,8 @@ workflows:
     jobs:
       # pre-staging
       - test:
-          name: test
           <<: *not_staging_or_release
+          context: hokusai
 
       # staging
       - hokusai/push:
