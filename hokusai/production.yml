@@ -4,7 +4,6 @@ kind: Deployment
 metadata:
   name: aprb-web
 spec:
-  replicas: 2
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -21,13 +20,33 @@ spec:
     spec:
       containers:
         - name: aprb-web
+          env:
+            - name: PORT
+              value: "4000"
           envFrom:
-          - configMapRef:
-              name: aprb-environment
+            - configMapRef:
+                name: aprb-environment
           image: 585031190124.dkr.ecr.us-east-1.amazonaws.com/aprb:production
           imagePullPolicy: Always
           ports:
-          - containerPort: 4000
+            - name: aprb-http
+              containerPort: 4000
+          readinessProbe:
+            httpGet:
+              port: aprb-http
+              path: /ping
+              httpHeaders:
+                - name: X-FORWARDED-PROTO
+                  value: https
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 10
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              memory: 500Mi
       dnsPolicy: ClusterFirst
       dnsConfig:
         options:
@@ -36,13 +55,29 @@ spec:
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            preference:
-              matchExpressions:
-              - key: tier
-                operator: In
-                values:
-                - foreground
+            - weight: 1
+              preference:
+                matchExpressions:
+                  - key: tier
+                    operator: In
+                    values:
+                      - foreground
+
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: aprb-web
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: aprb-web
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+
 ---
 apiVersion: v1
 kind: Service
@@ -55,9 +90,9 @@ metadata:
   namespace: default
 spec:
   ports:
-  - port: 80
-    targetPort: 4000
-    protocol: TCP
+    - port: 80
+      targetPort: aprb-http
+      protocol: TCP
   selector:
     app: aprb
     layer: application
