@@ -8,7 +8,7 @@ defmodule Aprb.Views.PurchaseSlackView do
                       fields: [
                         %{
                           title: "Price",
-                          value: format_price(event["properties"]["sale_price"] || 0 * 100),
+                          value: format_price((event["properties"]["sale_price"] || 0 ) * 100),
                           short: true
                         },
                         %{
