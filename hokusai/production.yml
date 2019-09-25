@@ -131,8 +131,8 @@ spec:
       targetPort: nginx-http
     - port: 443
       protocol: TCP
-      name: http
-      targetPort: nginx-https
+      name: https
+      targetPort: nginx-http
   selector:
     app: aprb
     layer: application
