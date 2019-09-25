@@ -22,7 +22,7 @@ spec:
         - name: aprb-web
           env:
             - name: PORT
-              value: "4000"
+              value: "8080"
           envFrom:
             - configMapRef:
                 name: aprb-environment
@@ -30,7 +30,7 @@ spec:
           imagePullPolicy: Always
           ports:
             - name: aprb-http
-              containerPort: 4000
+              containerPort: 8080
           readinessProbe:
             httpGet:
               port: aprb-http
@@ -47,6 +47,35 @@ spec:
               memory: 256Mi
             limits:
               memory: 500Mi
+        - name: aprb-nginx
+          image: artsy/docker-nginx:1.14.2
+          ports:
+            - name: nginx-http
+              containerPort: 80
+          readinessProbe:
+            tcpSocket:
+              port: nginx-http
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 5
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/usr/sbin/nginx", "-s", "quit"]
+          env:
+            - name: "NGINX_DEFAULT_CONF"
+              valueFrom:
+                configMapKeyRef:
+                  name: nginx-config
+                  key: default
+          volumeMounts:
+            - name: nginx-secrets
+              mountPath: /etc/nginx/ssl
+      volumes:
+        - name: nginx-secrets
+          secret:
+            secretName: nginx-secrets
+            defaultMode: 420
       dnsPolicy: ClusterFirst
       dnsConfig:
         options:
@@ -97,8 +126,13 @@ metadata:
 spec:
   ports:
     - port: 80
-      targetPort: aprb-http
       protocol: TCP
+      name: http
+      targetPort: nginx-http
+    - port: 443
+      protocol: TCP
+      name: http
+      targetPort: nginx-https
   selector:
     app: aprb
     layer: application
