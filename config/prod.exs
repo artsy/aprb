@@ -4,7 +4,7 @@ config :aprb, Aprb.Server,
   adapter: Plug.Cowboy,
   plug: Aprb.Api.Root,
   port: System.get_env("PORT"),
-  scheme: :https,
+  scheme: :http,
   bind_addr: "0.0.0.0"
 
 config :aprb, Aprb.Repo,
