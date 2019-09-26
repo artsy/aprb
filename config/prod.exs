@@ -3,7 +3,7 @@ use Mix.Config
 config :aprb, Aprb.Server,
   adapter: Plug.Cowboy,
   plug: Aprb.Api.Root,
-  port: 4000,
+  port: System.get_env("PORT"),
   scheme: :http,
   bind_addr: "0.0.0.0"
 
